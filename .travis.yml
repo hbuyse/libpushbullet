@@ -1,0 +1,18 @@
+language: c
+
+notifications:
+  email: false
+
+compiler:
+  - clang
+  - gcc
+
+os:
+  - linux
+  - osx
+
+before_script:
+- echo ${LANG}
+- echo ${LC_ALL}
+
+script: make V=1 CC=${CC} LD=${CC}
