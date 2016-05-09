@@ -16,9 +16,9 @@
 
 unsigned short pb_get_devices(PB_user_t user)
 {
-    char                *result     = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
-    unsigned char       res         = 0;
-    json_object         *json_obj __attribute__((unused))  = NULL;
+    char                *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
+    unsigned char       res     = 0;
+    json_object         *json_obj __attribute__( (unused) ) = NULL;
 
 
     res = pb_get(result, API_URL_DEVICES, user.token_key);
