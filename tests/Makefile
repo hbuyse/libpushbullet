@@ -19,7 +19,7 @@ DIR_OBJ     = $(DIR_TARGET)/obj
 DIR_DEP     = $(DIR_TARGET)/dep
 
 
-$(shell mkdir -p $(DIR_SRC))
+$(shell mkdir -p $(DIR_SRC) $(DIR_OBJ) $(DIR_DEP))
 
 
 CFLAGS  += -W -Wall -Wextra -Wno-unused-function -fmessage-length=0 -D_REENTRANT -I $(DIR_INC) $(shell pkg-config --cflags json-c)

@@ -24,7 +24,7 @@ LIB_SHARED = $(DIR_LIB)/lib$(EXEC:.out=.so)
 LIB_STATIC = $(DIR_LIB)/lib$(EXEC:.out=.a)
 
 
-$(shell mkdir -p $(DIR_SRC))
+$(shell mkdir -p $(DIR_SRC) $(DIR_OBJ) $(DIR_DEP))
 
 
 CFLAGS  += -W -Wall -Wextra -Wno-unused-function -fmessage-length=0 -D_REENTRANT -I $(DIR_INC) $(shell pkg-config --cflags json-c)
