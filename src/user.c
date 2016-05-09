@@ -17,7 +17,7 @@
 
 void dump_user_info(PB_user_t user)
 {
-    fprintf(stdout, "\e[1mtoken_key =\e[0m %s\n", user.token_key);
+    // fprintf(stdout, "\e[1mtoken_key =\e[0m %s\n", user.token_key);
     fprintf(stdout, "\e[1mactive =\e[0m %u\n", user.active);
     fprintf(stdout, "\e[1memail =\e[0m %s\n", user.email);
     fprintf(stdout, "\e[1memail_normalized =\e[0m %s\n", user.email_normalized);
