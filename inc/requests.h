@@ -90,7 +90,7 @@ unsigned short pb_post(char *result, char *url_request, char *token_key, char *d
  *
  * \return     HTTP status code
  */
-unsigned short pb_delete(char   *result, char   *url_request, char   *token_key);
+unsigned short pb_delete(char *result, char *url_request, char *token_key);
 
 
 #ifdef __cplusplus

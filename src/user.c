@@ -1,5 +1,5 @@
 /**
- * @file requests.c
+ * @file user.c
  * @date 08/05/2016
  */
 
@@ -28,9 +28,9 @@ void dump_user_info(PB_user_t user)
 
 
 
-unsigned char pb_get_user_info(PB_user_t *user,
-                          char      *token_key
-                          )
+unsigned char pb_get_user_info(PB_user_t    *user,
+                               char         *token_key
+                               )
 {
     char                *result     = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
     unsigned char       res         = 0;
