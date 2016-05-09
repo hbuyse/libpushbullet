@@ -21,5 +21,5 @@ before_script:
   - if [ ${TRAVIS_OS_NAME} == "linux" ]; then sudo apt-get update -qq; sudo apt-get install -y libjson0-dev; fi
 
 script:
-  - make CC=${CC} LD=${CC}
-  - ./pushbullet.out -t ${PB_TOKEN_KEY}
+  - make CC=${CC} LD=${CC} test
+  - ./tests/test.out -t ${PB_TOKEN_KEY}
