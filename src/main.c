@@ -8,6 +8,9 @@
 #include <http_code.h>          // HTTP_OK
 
 // TOKEN_KEY
+#ifndef TOKEN_KEY
+#define TOKEN_KEY "0000000000000000000000000000000000"
+#endif
 
 int main(void)
 {
@@ -15,11 +18,7 @@ int main(void)
     unsigned char       res = 0;
 
 
-    #ifdef TOKEN_KEY
     res = pb_get_user_info(&user, TOKEN_KEY);
-    #else
-    res = pb_get_user_info(&user, "0000000000000000000000000000000000");
-    #endif
 
     if ( res == HTTP_OK )
     {
