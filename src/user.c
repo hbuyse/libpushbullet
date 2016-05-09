@@ -44,14 +44,14 @@ unsigned char pb_get_user_info(PB_user_t    *user,
     // Access the API using the token
     res = pb_get(result, API_URL_ME, user->token_key);
 
+    #ifdef __DEBUG__
+    fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1m[%s]\e[0m %s\n", __func__, result);
+    #endif
+
     if ( res != HTTP_OK )
     {
         return (res);
     }
-
-    #ifdef __DEBUG__
-    fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, result);
-    #endif
 
     json_obj = json_tokener_parse(result);
     json_object_object_foreach(json_obj, key, val)
