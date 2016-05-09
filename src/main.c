@@ -12,7 +12,7 @@ int main(void)
     unsigned char       res = 0;
 
 
-    res = pb_get_user(&user, "0000000000000000000000000000000000");
+    res = pb_get_user_info(&user, "0000000000000000000000000000000000");
 
     if ( res == HTTP_OK )
     {
