@@ -1,47 +1,44 @@
-/**
- * @file: main.c
- * @author: hbuyse
- */
-
-#include <stdio.h>          // fprintf, stdout, stderr
-#include <stdlib.h>          // exit, EXIT_FAILURE, EXIT_SUCCESS
 #include <unistd.h>          // getopt, opterr, optarg, optopt, optind
 #include <getopt.h>          // struct option
+#include <stdlib.h>             // exit, EXIT_FAILURE, EXIT_SUCCESS
+#include <string.h>         // strcmp
 
-#include <user.h>          // pb_get_user_info
-#include <devices.h>          // pb_get_devices
+#include <user.h>          // PB_user_t, pb_get_user_info
 #include <http_code.h>          // HTTP_OK
 
+#include "../minunit/minunit.h"
 
-/**
- * @brief Shows how to use the program
- *
- * @param program_name The program's name
- */
-static void usage(char *program_name)
+char     *token_key = NULL;
+
+MU_TEST(test_user)
 {
-    fprintf(stdout, "Usage: %s [-h] -t token_key \n", program_name);
-    fprintf(stdout, "\t-h | --help         Display this help.\n");
-    fprintf(stdout, "\t-t | --token-key    Pushbullet token key\n");
+    unsigned char       res = 0;
+    PB_user_t           user;
+
+
+    res = pb_get_user_info(&user, token_key);
+
+    mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+    mu_assert(user.active == 1, "user.active should be 1.");
+    mu_assert(strcmp(user.name, "Henri Buyse") == 0, "user.name should be \"Henri Buyse\"");
+    mu_assert(strcmp(user.email, "henri.buyse@gmail.com") == 0, "user.email should be \"henri.buyse@gmail.com\"");
+    mu_assert(strcmp(user.email_normalized, "henribuyse@gmail.com") == 0, "user.email_normalized should be \"henribuyse@gmail.com\"");
+
 }
 
 
 
-/**
- * @brief The program
- *
- * @param argc Number of arguments
- * @param argv Lists of pointers that points to the arguments
- *
- * @return Exit code
- */
+MU_TEST_SUITE(test_suite)
+{
+    MU_RUN_TEST(test_user);
+}
+
 int main(int    argc,
-         char   **argv
+         char   *argv[]
          )
 {
     int                         opt             = 0;
     int                         long_index      = 0;
-    char                        *token_key      = NULL;
 
     PB_user_t                   user;
     unsigned char               res             = 0;
@@ -51,14 +48,13 @@ int main(int    argc,
 
     static struct option        long_options[]  =
     {
-        {"help", no_argument, 0, 'h'},
         {"token-key", required_argument, 0, 't'},
         {0, 0, 0, 0}
     };
 
     if ( argc == 1 )
     {
-        usage(argv[0]);
+        fprintf(stderr, "Usage: %s [-h] -t token_key \n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -78,13 +74,6 @@ int main(int    argc,
                 break;
             }
 
-
-            case 'h':
-            {
-                usage(argv[0]);
-                exit(EXIT_SUCCESS);
-            }
-
             case '?':
             {
                 if ( optopt == 't' )
@@ -96,26 +85,18 @@ int main(int    argc,
                     fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
                 }
 
-                usage(argv[0]);
                 exit(EXIT_FAILURE);
             }
 
             default:
             {
-                usage(argv[0]);
                 exit(EXIT_FAILURE);
             }
         }
     }
 
-    res = pb_get_user_info(&user, token_key);
-
-    if ( res == HTTP_OK )
-    {
-        dump_user_info(user);
-    }
-
-    res = pb_get_devices(user);
+    MU_RUN_SUITE(test_suite);
+    MU_REPORT();
 
     return (0);
 }
