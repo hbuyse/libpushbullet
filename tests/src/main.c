@@ -8,7 +8,8 @@
 
 #include "../minunit/minunit.h"
 
-char     *token_key = NULL;
+static char     *token_key = NULL;
+
 
 MU_TEST(test_user)
 {
@@ -39,9 +40,6 @@ int main(int    argc,
 {
     int                         opt             = 0;
     int                         long_index      = 0;
-
-    PB_user_t                   user;
-    unsigned char               res             = 0;
 
 
     opterr = 0;
