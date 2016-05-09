@@ -34,6 +34,7 @@ MU_TEST_SUITE(test_suite)
     MU_RUN_TEST(test_user);
 }
 
+
 int main(int    argc,
          char   *argv[]
          )
