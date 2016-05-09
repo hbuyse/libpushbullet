@@ -3,6 +3,10 @@ language: c
 notifications:
   email: false
 
+sudo: required
+
+dist: trusty
+
 compiler:
   - clang
   - gcc
@@ -12,7 +16,9 @@ os:
   - osx
 
 before_script:
-- echo ${LANG}
-- echo ${LC_ALL}
+  - echo ${LANG}
+  - echo ${LC_ALL}
+  - if [ ${TRAVIS_OS_NAME} == "linux" ]; then sudo apt-get update -qq; sudo apt-get install -y libjson0-dev; fi
 
-script: make V=1 CC=${CC} LD=${CC}
+script:
+  - make CC=${CC} LD=${CC}

@@ -27,8 +27,8 @@ LIB_STATIC = $(DIR_LIB)/lib$(EXEC:.out=.a)
 $(shell mkdir -p $(DIR_SRC))
 
 
-CFLAGS  += -W -Wall -Wextra -Wno-unused-function -fmessage-length=0 -D_REENTRANT -I $(DIR_INC)
-LDFLAGS += -lcurl -ljson
+CFLAGS  += -W -Wall -Wextra -Wno-unused-function -fmessage-length=0 -D_REENTRANT -I $(DIR_INC) $(shell pkg-config --cflags json-c)
+LDFLAGS += -lcurl $(shell pkg-config --libs json-c)
 
 
 SRC      = $(shell find $(DIR_SRC) -name '*.c' | sort)
