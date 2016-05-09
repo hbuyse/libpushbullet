@@ -28,7 +28,7 @@ $(shell mkdir -p $(DIR_SRC))
 
 
 CFLAGS  += -W -Wall -Wextra -Wno-unused-function -fmessage-length=0 -D_REENTRANT -I $(DIR_INC)
-LDFLAGS += -lpthread -lcurl
+LDFLAGS += -lcurl -ljson
 
 
 SRC      = $(shell find $(DIR_SRC) -name '*.c' | sort)
@@ -44,7 +44,7 @@ ifeq ($(OPTIM),SIZE)
 else ifeq ($(OPTIM),SPEED)
 	CFLAGS   += -Ofast
 else ifeq ($(OPTIM),DEBUG)
-	CFLAGS   += -g3 -O1 -D__DEBUG__
+	CFLAGS   += -g3 -O0 -D__DEBUG__
 else ifeq ($(OPTIM),NONE)
 	CFLAGS   +=
 endif
