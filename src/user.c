@@ -13,7 +13,12 @@
                                 // json_object_get_int
 #include <http_code.h>          // HTTP_OK
 
-#define     MAX_SIZE_BUF 4096
+
+/**
+ * \brief Maximum size of the buffer (4ko - 4096 - 0x1000)
+ */
+#define     MAX_SIZE_BUF 0x1000
+
 
 static void _dump_user_info(PB_user_t user)
 {

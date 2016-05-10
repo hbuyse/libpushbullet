@@ -11,7 +11,10 @@
 #include <http_code.h>          // HTTP_OK
 
 
-#define     MAX_SIZE_BUF 4096
+/**
+ * \brief Maximum size of the buffer (4ko - 4096 - 0x1000)
+ */
+#define     MAX_SIZE_BUF 0x1000
 
 
 unsigned short pb_get_devices(PB_user_t user)
