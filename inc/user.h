@@ -34,14 +34,6 @@ typedef struct {
 
 
 /**
- * \brief      Print the user's informations on STDOUT
- *
- * \param[in]  user  The user
- */
-void dump_user_info(PB_user_t user);
-
-
-/**
  * \brief      Download the user's informations from PushBullet using its API
  *
  * \param      user_to_fill  The user structure that we fill

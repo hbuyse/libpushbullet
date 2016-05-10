@@ -110,11 +110,6 @@ int main(int    argc,
 
     res = pb_get_user_info(&user, token_key);
 
-    if ( res == HTTP_OK )
-    {
-        dump_user_info(user);
-    }
-
     res = pb_get_devices(user);
 
     return (0);

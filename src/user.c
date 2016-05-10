@@ -15,15 +15,17 @@
 
 #define     MAX_SIZE_BUF 4096
 
-void dump_user_info(PB_user_t user)
+static void _dump_user_info(PB_user_t user)
 {
     // fprintf(stdout, "\e[1mtoken_key =\e[0m %s\n", user.token_key);
-    fprintf(stdout, "\e[1mactive =\e[0m %u\n", user.active);
-    fprintf(stdout, "\e[1memail =\e[0m %s\n", user.email);
-    fprintf(stdout, "\e[1memail_normalized =\e[0m %s\n", user.email_normalized);
-    fprintf(stdout, "\e[1miden =\e[0m %s\n", user.iden);
-    fprintf(stdout, "\e[1mimage_url =\e[0m %s\n", user.image_url);
-    fprintf(stdout, "\e[1mname =\e[0m %s\n", user.name);
+    fprintf(stdout, "\e[1m[%s]\e[0m %s - %s\n", __func__, user.name, user.email);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, user.active);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__, user.created);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__, user.modified);
+    fprintf(stdout, "\e[1m[%s]\e[0m\temail_normalized : %s\n", __func__, user.email_normalized);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tiden : %s\n", __func__, user.iden);
+    fprintf(stdout, "\e[1m[%s]\e[0m\timage_url : %s\n", __func__, user.image_url);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tmax_upload_size : %d\n", __func__, user.max_upload_size);
 }
 
 
