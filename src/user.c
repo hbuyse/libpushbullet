@@ -20,6 +20,17 @@
 #define     MAX_SIZE_BUF 0x1000
 
 
+/**
+ * \brief      Macro to associate a key in a structure
+ *
+ * \param      type  The type
+ * \param      var   The pointer we fill
+ * \param      k     The JSON key
+ */
+#define     JSON_ASSOCIATE(type, var, k)          \
+    if ( strcmp(key, # k) == 0 ) {var->k = json_object_get_ ## type(val); }
+
+
 static void _dump_user_info(PB_user_t user)
 {
     // fprintf(stdout, "\e[1mtoken_key =\e[0m %s\n", user.token_key);
@@ -63,31 +74,20 @@ unsigned char pb_get_user_info(PB_user_t    *user,
     json_obj = json_tokener_parse(result);
     json_object_object_foreach(json_obj, key, val)
     {
-        if ( strcmp(key, "active") == 0 )
-        {
-            user->active = json_object_get_int(val);
-        }
-        else if ( strcmp(key, "email") == 0 )
-        {
-            user->email = json_object_get_string(val);
-        }
-        else if ( strcmp(key, "email_normalized") == 0 )
-        {
-            user->email_normalized = json_object_get_string(val);
-        }
-        else if ( strcmp(key, "iden") == 0 )
-        {
-            user->iden = json_object_get_string(val);
-        }
-        else if ( strcmp(key, "image_url") == 0 )
-        {
-            user->image_url = json_object_get_string(val);
-        }
-        else if ( strcmp(key, "name") == 0 )
-        {
-            user->name = json_object_get_string(val);
-        }
+        JSON_ASSOCIATE(int, user, active)
+        JSON_ASSOCIATE(double, user, created)
+        JSON_ASSOCIATE(double, user, modified)
+        JSON_ASSOCIATE(string, user, email)
+        JSON_ASSOCIATE(string, user, email_normalized)
+        JSON_ASSOCIATE(string, user, iden)
+        JSON_ASSOCIATE(string, user, image_url)
+        JSON_ASSOCIATE(string, user, name)
+        JSON_ASSOCIATE(int, user, max_upload_size)
     }
+
+    #ifdef __DEBUG__
+    _dump_user_info(*user);
+    #endif
 
     if ( result )
     {
