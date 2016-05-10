@@ -4,6 +4,7 @@
 #include <string.h>          // strcmp
 
 #include <user.h>          // PB_user_t, pb_get_user_info
+#include <devices.h>          // pb_get_devices
 #include <http_code.h>          // HTTP_OK
 
 #include "../minunit/minunit.h"
@@ -29,10 +30,25 @@ MU_TEST(test_user)
 }
 
 
+MU_TEST(test_devices)
+{
+    unsigned char       res     = 0;
+    PB_user_t           user    =
+    {
+        .token_key = token_key
+    };
+
+
+    res = pb_get_devices(user);
+
+    mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+}
+
 
 MU_TEST_SUITE(test_suite)
 {
     MU_RUN_TEST(test_user);
+    MU_RUN_TEST(test_devices);
 }
 
 
