@@ -1,7 +1,7 @@
 #include <unistd.h>          // getopt, opterr, optarg, optopt, optind
 #include <getopt.h>          // struct option
 #include <stdlib.h>             // exit, EXIT_FAILURE, EXIT_SUCCESS
-#include <string.h>         // strcmp
+#include <string.h>          // strcmp
 
 #include <user.h>          // PB_user_t, pb_get_user_info
 #include <http_code.h>          // HTTP_OK
@@ -22,9 +22,10 @@ MU_TEST(test_user)
     mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
     mu_assert(user.active == 1, "user.active should be 1.");
     mu_assert(strcmp(user.name, "Henri Buyse") == 0, "user.name should be \"Henri Buyse\"");
+    mu_assert(strcmp(user.iden, "ujEIL5AaxhY") == 0, "user.iden should be \"ujEIL5AaxhY\"");
     mu_assert(strcmp(user.email, "henri.buyse@gmail.com") == 0, "user.email should be \"henri.buyse@gmail.com\"");
-    mu_assert(strcmp(user.email_normalized, "henribuyse@gmail.com") == 0, "user.email_normalized should be \"henribuyse@gmail.com\"");
-
+    mu_assert(strcmp(user.email_normalized, "henribuyse@gmail.com") == 0,
+              "user.email_normalized should be \"henribuyse@gmail.com\"");
 }
 
 
@@ -39,13 +40,13 @@ int main(int    argc,
          char   *argv[]
          )
 {
-    int                         opt             = 0;
-    int                         long_index      = 0;
+    int     opt         = 0;
+    int     long_index  = 0;
 
 
     opterr = 0;
 
-    static struct option        long_options[]  =
+    static struct option     long_options[] =
     {
         {"token-key", required_argument, 0, 't'},
         {0, 0, 0, 0}
