@@ -20,29 +20,64 @@
 static char     *token_key = NULL;
 
 
-MU_TEST(test_user)
+MU_TEST(test_get_user_info)
 {
     unsigned char       res = 0;
     PB_user_t           user;
 
+    fprintf(stdout, "\e[1m[%s]\e[0m\t", __func__);
 
     res = pb_get_user_info(&user, token_key);
 
-    fprintf(stdout, "\e[1m[%s]\e[0m\t", __func__);
-
     mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+    mu_assert(user.token_key != NULL, "user.token_key should not be NULL.");
     mu_assert(user.active == 1, "user.active should be 1.");
-    mu_assert(strcmp(user.name, "Henri Buyse") == 0, "user.name should be \"Henri Buyse\"");
-    mu_assert(strcmp(user.iden, "ujEIL5AaxhY") == 0, "user.iden should be \"ujEIL5AaxhY\"");
-    mu_assert(strcmp(user.email, "henri.buyse@gmail.com") == 0, "user.email should be \"henri.buyse@gmail.com\"");
-    mu_assert(strcmp(user.email_normalized, "henribuyse@gmail.com") == 0,
-              "user.email_normalized should be \"henribuyse@gmail.com\"");
+    mu_assert(user.created != 0, "user.created should not be 0.");
+    mu_assert(user.modified != 0, "user.modified should not be 0.");
+    mu_assert(user.name != NULL, "user.name should not be NULL");
+    mu_assert(user.iden != NULL, "user.iden should not be NULL");
+    mu_assert(user.email != NULL, "user.email should not be NULL");
+    mu_assert(user.email_normalized != NULL, "user.email_normalized should not be NULL");
+    mu_assert(user.max_upload_size == 26214400, "user.max_upload_size should be 26214400");
 
     fprintf(stdout, "\n");
 }
 
 
-MU_TEST(test_devices)
+MU_TEST(test_free_user)
+{
+    unsigned char       res = 0;
+    PB_user_t           user;
+
+    fprintf(stdout, "\e[1m[%s]\e[0m\t", __func__);
+
+    mu_check(&user != NULL);
+
+    // pb_free_user(&user);
+
+    mu_check(&user != NULL);
+
+    res = pb_get_user_info(&user, token_key);
+
+    mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+    
+    pb_free_user(&user);
+
+    mu_assert(user.token_key == 0, "user.active should be NULL.");
+    mu_assert(user.active == 0, "user.active should be 0.");
+    mu_assert(user.created == 0, "user.created should be 0.");
+    mu_assert(user.modified == 0, "user.modified should be 0.");
+    mu_assert(user.name == NULL, "user.name should be NULL");
+    mu_assert(user.iden == NULL, "user.iden should be NULL");
+    mu_assert(user.email == NULL, "user.email should be NULL");
+    mu_assert(user.email_normalized == NULL, "user.email_normalized should be NULL");
+    mu_assert(user.max_upload_size == 0, "user.max_upload_size should be 0");
+
+    fprintf(stdout, "\n");
+}
+
+
+MU_TEST(test_get_devices)
 {
     PB_device_t         *tmp        = NULL;
     PB_device_t         *devices    = NULL;
@@ -58,6 +93,7 @@ MU_TEST(test_devices)
     fprintf(stdout, "\e[1m[%s]\e[0m\t", __func__);
 
     mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+    mu_assert(user.devices != NULL, "user.devices should not be NULL");
 
     devices = user.devices;
 
@@ -82,14 +118,18 @@ MU_TEST(test_devices)
         }
     }
 
+    pb_free_devices(&user);
+    mu_assert(user.devices == NULL, "user.devices should be NULL");
+
     fprintf(stdout, "\n");
 }
 
 
 MU_TEST_SUITE(test_suite)
 {
-    MU_RUN_TEST(test_user);
-    MU_RUN_TEST(test_devices);
+    MU_RUN_TEST(test_get_user_info);
+    MU_RUN_TEST(test_free_user);
+    MU_RUN_TEST(test_get_devices);
 }
 
 
