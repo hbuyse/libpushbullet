@@ -23,7 +23,7 @@ extern "C" {
  *
  * \return     Error code
  */
-unsigned short pb_get_devices(PB_user_t user);
+unsigned short pb_get_devices(PB_user_t *user);
 
 
 #ifdef __cplusplus

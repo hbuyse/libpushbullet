@@ -39,7 +39,7 @@ MU_TEST(test_devices)
     };
 
 
-    res = pb_get_devices(user);
+    res     = pb_get_devices(&user);
 
     mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
 }

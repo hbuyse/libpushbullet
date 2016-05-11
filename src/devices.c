@@ -159,7 +159,34 @@ static void _dump_browser_infos(PB_browser_t browser)
 
 
 
-unsigned short pb_get_devices(PB_user_t user)
+static void _dump_devices_list(PB_user_t *user)
+{
+    PB_device_t     *tmp = NULL;
+
+
+    for ( tmp = user->devices; tmp != NULL; tmp = tmp->next )
+    {
+        switch ( tmp->type_device )
+        {
+            case TYPE_ANDROID:
+            case TYPE_IPHONE:
+                _dump_phone_infos(tmp->phone);
+                break;
+
+            case TYPE_FIREFOX:
+            case TYPE_CHROME:
+                _dump_browser_infos(tmp->browser);
+                break;
+
+            default:
+                printf("Unknown type...\n");
+        }
+    }
+}
+
+
+
+unsigned short pb_get_devices(PB_user_t *user)
 {
     unsigned char       i                   = 0;
 
@@ -176,7 +203,7 @@ unsigned short pb_get_devices(PB_user_t user)
     int                 json_devices_len    = 0;
 
 
-    res                 = pb_get(result, API_URL_DEVICES, user.token_key);
+    res                 = pb_get(result, API_URL_DEVICES, user->token_key);
 
     #ifdef __DEBUG__
     fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1m[%s]\e[0m %s\n", __func__, result);
@@ -199,8 +226,7 @@ unsigned short pb_get_devices(PB_user_t user)
     // Parse all the devices in the list
     for ( i = 0; i < json_devices_len; ++i )
     {
-        json_object     *json_active    = NULL;
-        json_object     *json_kind      = NULL;
+        json_object     *json_active = NULL;
 
 
         // Getting the array element at position i
@@ -211,11 +237,16 @@ unsigned short pb_get_devices(PB_user_t user)
         json_object_object_get_ex(json_value, ACTIVE_JSON_KEY, &json_active);
 
 
-        // Pass this increment since the device is not active
+        // Pass this increment if the device is not active
         if ( json_object_get_boolean(json_active) != 1 )
         {
             continue;
         }
+
+
+        // Declaration of the needed variables
+        json_object     *json_kind  = NULL;
+        PB_device_t     *device     = (PB_device_t *) calloc(1, sizeof(PB_device_t) );
 
 
         // Get the kind of PushBullet device
@@ -223,23 +254,37 @@ unsigned short pb_get_devices(PB_user_t user)
 
         if ( strcmp(json_object_get_string(json_kind), ANDROID_KIND) == 0 )
         {
-            PB_phone_t     *phone = (PB_phone_t *) calloc(1, sizeof(PB_phone_t) );
-            _get_phone_device(phone, json_value);
-
-            #ifdef __DEBUG__
-            _dump_phone_infos(*phone);
-            #endif
+            device->type_device = TYPE_ANDROID;
+            _get_phone_device(&(device->phone), json_value);
         }
         else if ( strcmp(json_object_get_string(json_kind), CHROME_KIND) == 0 )
         {
-            PB_browser_t     *browser = (PB_browser_t *) calloc(1, sizeof(PB_browser_t) );
-            _get_browser_device(browser, json_value);
+            device->type_device = TYPE_CHROME;
+            _get_browser_device(&(device->browser), json_value);
+        }
 
-            #ifdef __DEBUG__
-            _dump_browser_infos(*browser);
-            #endif
+
+        // Add the device to the linked list
+        if ( user->devices == NULL )
+        {
+            user->devices = device;
+        }
+        else
+        {
+            PB_device_t     *tmp = NULL;
+
+            for ( tmp = user->devices; tmp->next != NULL; tmp = tmp->next )
+            {
+                ;
+            }
+
+            tmp->next = device;
         }
     }
+
+    #ifdef __DEBUG__
+    _dump_devices_list(user);
+    #endif
 
     if ( result )
     {
