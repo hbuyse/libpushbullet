@@ -17,6 +17,14 @@
 extern "C" {
 #endif
 
+enum {
+    TYPE_ANDROID = 0,
+    TYPE_IPHONE,
+    TYPE_CHROME,
+    TYPE_FIREFOX,
+    TYPE_DEVICE
+};
+
 
 /**
  * \typedef PB_phone_t
@@ -99,7 +107,7 @@ struct PB_device_s {
         PB_browser_t browser;          ///< Browser device if the type is a browser
     };
 
-    PB_device_t *nxt;                   ///< Pointer to the next
+    PB_device_t *next;                   ///< Pointer to the next
 };
 
 
