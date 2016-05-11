@@ -27,6 +27,16 @@ extern "C" {
 unsigned short pb_get_user_info(PB_user_t *user_to_fill, char *token_key);
 
 
+/**
+ * \brief      Free the user structure
+ *
+ * \param      user  The user we want to free
+ *
+ * \return     Error code
+ */
+unsigned char pb_free_user(PB_user_t *user);
+
+
 #ifdef __cplusplus
 }
 #endif

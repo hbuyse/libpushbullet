@@ -31,6 +31,14 @@
     if ( strcmp(key, # k) == 0 ) {var->k = json_object_get_ ## type(val); }
 
 
+/**
+ * \brief      Free a pointer if it exists
+ *
+ * \param      ptr   The pointer
+ */
+#define     FREE(ptr)                             \
+    if ( ptr ) {free( (void *) ptr); ptr = NULL; }
+
 static void _dump_user_info(PB_user_t user)
 {
     // fprintf(stdout, "\e[1mtoken_key =\e[0m %s\n", user.token_key);
@@ -95,4 +103,22 @@ unsigned short pb_get_user_info(PB_user_t   *user,
     }
 
     return (res);
+}
+
+
+
+unsigned char pb_free_user(PB_user_t *user)
+{
+    FREE(user->token_key);
+    FREE(user->email);
+    FREE(user->email_normalized);
+    FREE(user->iden);
+    FREE(user->image_url);
+    FREE(user->name);
+
+
+    // Set all structure to 0 or NULL
+    memset(user, 0, sizeof(PB_user_t) );
+
+    return (0);
 }
