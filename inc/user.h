@@ -9,28 +9,11 @@
 #ifndef __USER_H__
 #define __USER_H__
 
+#include <pb_structures.h>          // PB_user_t
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
-/**
- * \struct PB_user_t
- * \brief Contains the user informations.
- */
-typedef struct {
-    char *token_key;          ///< The user's token_key
-    unsigned char active;          ///< Boolean that tells if the user is active or not
-    double created;
-    double modified;
-    const char *email;          ///< The user's email
-    const char *email_normalized;          ///< The user's email normalized
-    const char *iden;           ///< The user's identification
-    const char *image_url;          ///< The URL to the user's photo
-    const char *name;           ///< The user's name
-    int max_upload_size;
-    void *devices;          ///< The list of active devices
-} PB_user_t;
 
 
 /**
