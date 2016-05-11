@@ -2,6 +2,7 @@
 #include <getopt.h>          // struct option
 #include <stdlib.h>             // exit, EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>          // strcmp
+#include <stdio.h>          // fprintf
 
 #include <user.h>          // PB_user_t, pb_get_user_info
 #include <devices.h>          // pb_get_devices
@@ -20,6 +21,8 @@ MU_TEST(test_user)
 
     res = pb_get_user_info(&user, token_key);
 
+    fprintf(stdout, "\e[1m[%s]\e[0m\t", __func__);
+
     mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
     mu_assert(user.active == 1, "user.active should be 1.");
     mu_assert(strcmp(user.name, "Henri Buyse") == 0, "user.name should be \"Henri Buyse\"");
@@ -27,6 +30,8 @@ MU_TEST(test_user)
     mu_assert(strcmp(user.email, "henri.buyse@gmail.com") == 0, "user.email should be \"henri.buyse@gmail.com\"");
     mu_assert(strcmp(user.email_normalized, "henribuyse@gmail.com") == 0,
               "user.email_normalized should be \"henribuyse@gmail.com\"");
+
+    fprintf(stdout, "\n");
 }
 
 
@@ -42,6 +47,8 @@ MU_TEST(test_devices)
 
 
     res     = pb_get_devices(&user);
+
+    fprintf(stdout, "\e[1m[%s]\e[0m\t", __func__);
 
     mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
 
@@ -67,6 +74,8 @@ MU_TEST(test_devices)
                 mu_fail("type_device: unknown\n");
         }
     }
+
+    fprintf(stdout, "\n");
 }
 
 
