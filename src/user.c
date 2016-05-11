@@ -121,6 +121,10 @@ void pb_free_user(PB_user_t *user)
          * FREE(user->token_key);
          */
         user->token_key = NULL;
+        user->active = 0;
+        user->created = 0;
+        user->modified = 0;
+        user->max_upload_size = 0;
 
         FREE(user->email);
         FREE(user->email_normalized);
