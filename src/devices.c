@@ -159,6 +159,11 @@ static void _dump_browser_infos(PB_browser_t browser)
 
 
 
+/**
+ * \brief      Display all the devices of a given user
+ *
+ * \param      user  The user
+ */
 static void _dump_devices_list(PB_user_t *user)
 {
     PB_device_t     *tmp = NULL;
