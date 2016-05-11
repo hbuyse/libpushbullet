@@ -26,6 +26,16 @@ extern "C" {
 unsigned short pb_get_devices(PB_user_t *user);
 
 
+/**
+ * \brief      Clear all the devices list of ta given user
+ *
+ * \param      user  The user
+ *
+ * \return     { description_of_the_return_value }
+ */
+void pb_free_devices(PB_user_t *user);
+
+
 #ifdef __cplusplus
 }
 #endif

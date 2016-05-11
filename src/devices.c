@@ -293,3 +293,30 @@ unsigned short pb_get_devices(PB_user_t *user)
 
     return (res);
 }
+
+
+
+void pb_free_devices(PB_user_t *user)
+{
+    PB_device_t     *tmp = NULL;
+
+
+    // Pass through the list
+    for ( tmp = user->devices; user->devices != NULL; )
+    {
+        // Get the pointer
+        tmp             = user->devices;
+
+
+        // Pass to the next pointer
+        user->devices   = user->devices->next;
+
+
+        // Free the temporary pointer
+        free(tmp);
+    }
+
+    #ifdef __DEBUG__
+    _dump_devices_list(user);
+    #endif
+}
