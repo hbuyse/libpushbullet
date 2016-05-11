@@ -108,18 +108,25 @@ unsigned short pb_get_user_info(PB_user_t   *user,
 
 
 
-unsigned char pb_free_user(PB_user_t *user)
+void pb_free_user(PB_user_t *user)
 {
-    FREE(user->token_key);
-    FREE(user->email);
-    FREE(user->email_normalized);
-    FREE(user->iden);
-    FREE(user->image_url);
-    FREE(user->name);
+    if ( user )
+    {
+        /* Do not remove user->token_key because it causes a munmap_chunk since the token_key is given as an argument of
+         * the program.
+         * The free() function frees the memory space pointed to by ptr, which must have been returned by a previous
+         * call to malloc(), calloc() or realloc(). Otherwise, or if free(ptr) has already been called before, undefined
+         * behavior occurs. If ptr is NULL, no operation is performed.
+         * FREE(user->token_key);
+         */
+        user->token_key = NULL;
 
+        FREE(user->email);
+        FREE(user->email_normalized);
+        FREE(user->iden);
+        FREE(user->image_url);
+        FREE(user->name);
 
-    // Set all structure to 0 or NULL
-    memset(user, 0, sizeof(PB_user_t) );
-
-    return (0);
+        pb_free_devices(user);
+    }
 }

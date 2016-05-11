@@ -110,7 +110,7 @@ int main(int    argc,
 
     res = pb_get_user_info(&user, token_key);
     res = pb_get_devices(&user);
-    pb_free_devices(&user);
+    pb_free_user(&user);
 
     return (0);
 }
