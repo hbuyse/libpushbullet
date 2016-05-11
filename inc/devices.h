@@ -54,6 +54,13 @@ typedef struct {
     const char *icon;          // "browser"
 } PB_browser_t;
 
+/**
+ * \brief      Get the devices informations and stores it int a linked list in the user structure
+ *
+ * \param[in]  user  The user in which we store the devices
+ *
+ * \return     Error code
+ */
 unsigned short pb_get_devices(PB_user_t user);
 
 
