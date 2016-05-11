@@ -32,8 +32,10 @@ MU_TEST(test_user)
 
 MU_TEST(test_devices)
 {
-    unsigned char       res     = 0;
-    PB_user_t           user    =
+    PB_device_t         *tmp        = NULL;
+    PB_device_t         *devices    = NULL;
+    unsigned char       res         = 0;
+    PB_user_t           user        =
     {
         .token_key = token_key
     };
@@ -42,6 +44,29 @@ MU_TEST(test_devices)
     res     = pb_get_devices(&user);
 
     mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+
+    devices = user.devices;
+
+    for ( tmp = devices; tmp != NULL; tmp = tmp->next )
+    {
+        switch ( tmp->type_device )
+        {
+            case TYPE_ANDROID:
+            case TYPE_IPHONE:
+                mu_assert(tmp->phone.active == 1, "Phone should be active");
+                mu_assert(strcmp(tmp->phone.icon, "phone") == 0, "Phone icon should be \"phone\"");
+                break;
+
+            case TYPE_CHROME:
+            case TYPE_FIREFOX:
+                mu_assert(tmp->browser.active == 1, "Browser should be active");
+                mu_assert(strcmp(tmp->browser.icon, "browser") == 0, "Browser icon should be \"browser\"");
+                break;
+
+            default:
+                mu_fail("type_device: unknown\n");
+        }
+    }
 }
 
 
