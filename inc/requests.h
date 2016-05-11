@@ -1,5 +1,6 @@
 /**
  * @file requests.h
+ * @author hbuyse
  * @date 08/05/2016
  *
  * @brief Contains all the methods in order to communicate to the Pushbullet API

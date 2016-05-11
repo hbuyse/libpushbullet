@@ -1,5 +1,6 @@
 /**
  * @file pb_structures.h
+ * @author hbuyse
  * @date 11/05/2016
  *
  * @brief Contains all the strutures needed by the program

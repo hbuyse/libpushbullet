@@ -1,3 +1,10 @@
+/**
+ * @file: main.c
+ * @author: hbuyse
+ *
+ * @brief Testing program
+ */
+
 #include <unistd.h>          // getopt, opterr, optarg, optopt, optind
 #include <getopt.h>          // struct option
 #include <stdlib.h>             // exit, EXIT_FAILURE, EXIT_SUCCESS

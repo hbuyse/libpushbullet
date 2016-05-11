@@ -1,5 +1,6 @@
 /**
  * @file user.c
+ * @author hbuyse
  * @date 08/05/2016
  */
 

@@ -1,5 +1,6 @@
 /**
  * @file devices.c
+ * @author hbuyse
  * @date 08/05/2016
  */
 
@@ -15,26 +16,56 @@
 
 
 /**
- * \brief Maximum size of the buffer (4ko - 4096 - 0x1000)
+ * \ded Maximum size of the buffer (4ko - 4096 - 0x1000)
  */
 #define     MAX_SIZE_BUF 0x1000
 
+
+/**
+ * \def DEVICES_JSON_KEY
+ * String defining the "devices" key
+ */
 #define DEVICES_JSON_KEY "devices"
+
+
+/**
+ * \def ACTIVE_JSON_KEY
+ * String defining the "active" key
+ */
 #define ACTIVE_JSON_KEY "active"
+
+
+/**
+ * \def KIND_JSON_KEY
+ * String defining the "kind" key
+ */
 #define KIND_JSON_KEY "kind"
 
 
+/**
+ * \def ANDROID_KIND
+ * String defining the "android" key
+ */
 #define ANDROID_KIND "android"
+
+
+/**
+ * \def CHROME_KIND
+ * String defining the "chrome" key
+ */
 #define CHROME_KIND "chrome"
+
+
+/**
+ * \def IPHONE_KIND
+ * String defining the "iphone" key
+ */
 #define IPHONE_KIND "iphone"
 
 
 /**
- * \brief      Macro to associate a key in a structure
- *
- * \param      type  The type
- * \param      var   The pointer we fill
- * \param      k     The JSON key
+ * \def      JSON_ASSOCIATE(type, var, k)
+ * Macro to associate a key in a structure
  */
 #define     JSON_ASSOCIATE(type, var, k)          \
     if ( strcmp(key, # k) == 0 ) {var->k = json_object_get_ ## type(val); }
@@ -327,15 +358,17 @@ void pb_free_devices(PB_user_t *user)
 }
 
 
+
 unsigned char pb_get_number_active_devices(PB_user_t user)
 {
-    unsigned char i = 0;
-    PB_device_t     *tmp = NULL;
+    unsigned char       i       = 0;
+    PB_device_t         *tmp    = NULL;
 
-    for (tmp = user.devices, i = 0; tmp != NULL; tmp = tmp->next, ++i)
+
+    for ( tmp = user.devices, i = 0; tmp != NULL; tmp = tmp->next, ++i )
     {
         ;
     }
 
-    return i;
+    return (i);
 }
