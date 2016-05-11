@@ -27,7 +27,7 @@ unsigned short pb_get_devices(PB_user_t *user);
 
 
 /**
- * \brief      Clear all the devices list of ta given user
+ * \brief      Clear all the devices list of the given user
  *
  * \param      user  The user
  *
@@ -35,6 +35,15 @@ unsigned short pb_get_devices(PB_user_t *user);
  */
 void pb_free_devices(PB_user_t *user);
 
+
+/**
+ * \brief      Get the number of active devices of the given user
+ *
+ * \param[in]  user  The user
+ *
+ * \return     Number of active devices
+ */
+unsigned char pb_get_number_active_devices(PB_user_t user);
 
 #ifdef __cplusplus
 }

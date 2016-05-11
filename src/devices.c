@@ -325,3 +325,17 @@ void pb_free_devices(PB_user_t *user)
     _dump_devices_list(user);
     #endif
 }
+
+
+unsigned char pb_get_number_active_devices(PB_user_t user)
+{
+    unsigned char i = 0;
+    PB_device_t     *tmp = NULL;
+
+    for (tmp = user.devices, i = 0; tmp != NULL; tmp = tmp->next, ++i)
+    {
+        ;
+    }
+
+    return i;
+}
