@@ -5,12 +5,12 @@
 
 #include <stdio.h>          // fprintf, stdout
 #include <string.h>          // strcmpt
+#include <json/json.h>          // json_object, json_tokener_parse, json_object_object_foreach, json_object_get_array,
+                                // array_list
 
 #include <requests.h>          // pb_get, API_URL_DEVICES
 #include <user.h>          // PB_user_t
-#include <devices.h>          // PB_browser_t
-#include <json/json.h>          // json_object, json_tokener_parse, json_object_object_foreach, json_object_get_array,
-                                // array_list
+#include <devices.h>          // PB_browser_t, PB_phone_t, PB_device_t
 #include <http_code.h>          // HTTP_OK
 
 

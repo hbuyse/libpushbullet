@@ -6,12 +6,13 @@
 #include <stdio.h>          // fprintf, stderr
 #include <stdlib.h>          // calloc, free, abort
 #include <string.h>          // strcmp
+#include <json/json.h>          // json_object, json_tokener_parse, json_object_get_string, json_object_object_foreach,
+                                // json_object_get_int
 
 #include <requests.h>          // pb_get
 #include <user.h>          // PB_user_t
-#include <json/json.h>          // json_object, json_tokener_parse, json_object_get_string, json_object_object_foreach,
-                                // json_object_get_int
 #include <http_code.h>          // HTTP_OK
+#include <devices.h>          // pb_free_devices
 
 
 /**
