@@ -24,7 +24,7 @@ extern "C" {
  *
  * \return     HTTP status code
  */
-unsigned char pb_get_user_info(PB_user_t *user_to_fill, char *token_key);
+unsigned short pb_get_user_info(PB_user_t *user_to_fill, char *token_key);
 
 
 #ifdef __cplusplus

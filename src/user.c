@@ -46,9 +46,9 @@ static void _dump_user_info(PB_user_t user)
 
 
 
-unsigned char pb_get_user_info(PB_user_t    *user,
-                               char         *token_key
-                               )
+unsigned short pb_get_user_info(PB_user_t   *user,
+                                char        *token_key
+                                )
 {
     char                *result     = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
     unsigned char       res         = 0;
