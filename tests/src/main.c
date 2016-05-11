@@ -199,5 +199,5 @@ int main(int    argc,
     MU_RUN_SUITE(test_suite);
     MU_REPORT();
 
-    return (0);
+    return ((minunit_fail == 0) ? 0 : 1);
 }
