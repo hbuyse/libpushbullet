@@ -119,8 +119,8 @@ struct PB_device_s {
 struct PB_user_s {
     char *token_key;          ///< The user's token_key
     unsigned char active;          ///< Boolean that tells if the user is active or not
-    double created;
-    double modified;
+    double created;             ///< Epoch time when the user was created
+    double modified;            ///< Epoch time when the user was last modified
     const char *email;          ///< The user's email
     const char *email_normalized;          ///< The user's email normalized
     const char *iden;           ///< The user's identification
