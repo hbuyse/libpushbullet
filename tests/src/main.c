@@ -49,38 +49,6 @@ MU_TEST(test_get_user_info)
 }
 
 
-MU_TEST(test_free_user)
-{
-    unsigned char       res = 0;
-    PB_user_t           user;
-
-
-    // All datas to zero
-    memset(&user, 0, sizeof(PB_user_t));
-
-    fprintf(stdout, "\e[1m[%s]\e[0m\t", __func__);
-
-    res = pb_get_user_info(&user, token_key);
-
-    mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
-
-    pb_free_user(&user);
-
-    mu_assert(user.token_key == 0, "user.active should be NULL.");
-    mu_assert(user.active == 0, "user.active should be 0.");
-    mu_assert(user.created == 0, "user.created should be 0.");
-    mu_assert(user.modified == 0, "user.modified should be 0.");
-    mu_assert(user.name == NULL, "user.name should be NULL");
-    mu_assert(user.iden == NULL, "user.iden should be NULL");
-    mu_assert(user.image_url == NULL, "user.image_url should be NULL");
-    mu_assert(user.email == NULL, "user.email should be NULL");
-    mu_assert(user.email_normalized == NULL, "user.email_normalized should be NULL");
-    mu_assert(user.max_upload_size == 0, "user.max_upload_size should be 0");
-
-    fprintf(stdout, "\n");
-}
-
-
 MU_TEST(test_get_devices)
 {
     PB_device_t         *tmp        = NULL;
@@ -129,11 +97,105 @@ MU_TEST(test_get_devices)
 }
 
 
+MU_TEST(test_free_devices)
+{
+    unsigned char       res = 0;
+    PB_user_t           user;
+
+
+    // All datas to zero
+    memset(&user, 0, sizeof(PB_user_t));
+
+    fprintf(stdout, "\e[1m[%s]\e[0m\t", __func__);
+
+    // Get the user
+    res = pb_get_user_info(&user, token_key);
+    // Check the results after downloading the user informations
+    mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+
+    // Get the devices
+    res = pb_get_devices(&user);
+
+    // Check the results after downloading the devices informations
+    mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+    mu_assert(user.devices != NULL, "user.modified should not be 0.");
+
+    // Free the list of devices
+    pb_free_devices(&user);
+
+    mu_assert(user.devices == NULL, "user.devices should not NULL");
+
+    fprintf(stdout, "\n");
+}
+
+MU_TEST(test_free_user)
+{
+    unsigned char       res = 0;
+    PB_user_t           user;
+
+
+    // All datas to zero
+    memset(&user, 0, sizeof(PB_user_t));
+
+    fprintf(stdout, "\e[1m[%s]\e[0m\t", __func__);
+
+    res = pb_get_user_info(&user, token_key);
+
+    mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+
+    pb_free_user(&user);
+
+    mu_assert(user.token_key == 0, "user.active should be NULL.");
+    mu_assert(user.active == 0, "user.active should be 0.");
+    mu_assert(user.created == 0, "user.created should be 0.");
+    mu_assert(user.modified == 0, "user.modified should be 0.");
+    mu_assert(user.name == NULL, "user.name should be NULL");
+    mu_assert(user.iden == NULL, "user.iden should be NULL");
+    mu_assert(user.image_url == NULL, "user.image_url should be NULL");
+    mu_assert(user.email == NULL, "user.email should be NULL");
+    mu_assert(user.email_normalized == NULL, "user.email_normalized should be NULL");
+    mu_assert(user.max_upload_size == 0, "user.max_upload_size should be 0");
+
+    fprintf(stdout, "\n");
+}
+
+
+MU_TEST(test_get_number_active_devices)
+{
+    unsigned char       res = 0;
+    PB_user_t           user;
+
+
+    // All datas to zero
+    memset(&user, 0, sizeof(PB_user_t));
+
+    fprintf(stdout, "\e[1m[%s]\e[0m\t", __func__);
+
+    // Get the user
+    res = pb_get_user_info(&user, token_key);
+    // Check the results after downloading the user informations
+    mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+
+    // Get the devices
+    res = pb_get_devices(&user);
+
+    // Check the results after downloading the devices informations
+    mu_assert(res == HTTP_OK, "res should be HTTP_OK.");
+    mu_assert(user.devices != NULL, "user.devices should not be NULL");
+    mu_assert(pb_get_number_active_devices(user) != 0, "pb_get_number_active_devices should not be 0");
+
+    pb_free_user(&user);
+    fprintf(stdout, "\n");
+}
+
+
 MU_TEST_SUITE(test_suite)
 {
     MU_RUN_TEST(test_get_user_info);
     MU_RUN_TEST(test_get_devices);
+    MU_RUN_TEST(test_free_devices);
     MU_RUN_TEST(test_free_user);
+    MU_RUN_TEST(test_get_number_active_devices);
 }
 
 
