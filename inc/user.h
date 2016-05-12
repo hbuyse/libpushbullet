@@ -3,7 +3,7 @@
  * @author hbuyse
  * @date 08/05/2016
  *
- * @brief Contains all the functions that have a report with the user informations
+ * @brief  Functions that have a report with the user informations
  */
 
 

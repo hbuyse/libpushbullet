@@ -3,7 +3,7 @@
  * @author hbuyse
  * @date 08/05/2016
  *
- * @brief Contains all the functions that reports to the user's devices
+ * @brief  Functions that reports to the user's devices
  */
 
 

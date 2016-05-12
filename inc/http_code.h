@@ -3,7 +3,7 @@
  * @author hbuyse
  * @date 10/05/2016
  *
- * @brief Contains all the HTTP status code available
+ * @brief  HTTP status code available
  */
 
 #ifndef __HTTP_CODE_H__

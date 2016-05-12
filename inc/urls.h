@@ -3,7 +3,7 @@
  * @author hbuyse
  * @date 12/05/2016
  *
- * @brief Contains all the URLs that are needed for the libpushbullet
+ * @brief  URLs that are needed for the libpushbullet
  */
 
 

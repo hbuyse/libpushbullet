@@ -3,7 +3,7 @@
  * @author hbuyse
  * @date 11/05/2016
  *
- * @brief Contains all the strutures needed by the program
+ * @brief  Strutures needed by the program
  */
 
 
