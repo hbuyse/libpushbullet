@@ -124,7 +124,7 @@ unsigned short pb_get(char  *result,
         if ( r != CURLE_OK )
         {
             #ifdef __DEBUG__
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
+            fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_perform() failed: %s", __func__, curl_easy_strerror(r) );
             #endif
 
             return (http_code);
@@ -136,7 +136,7 @@ unsigned short pb_get(char  *result,
     else
     {
         #ifdef __DEBUG__
-        fprintf(stderr, "curl_easy_init() could not be initiated.\n");
+        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.", __func__);
         #endif
 
         return (0);
@@ -163,7 +163,8 @@ unsigned short pb_post(char *result,
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
      */
-    struct Memory_struct_s     ms =
+    unsigned short              http_code   = 0;
+    struct Memory_struct_s      ms          =
     {
         .memory = (char *) calloc(1, sizeof(char) ),
         .size   = 0
@@ -201,6 +202,7 @@ unsigned short pb_post(char *result,
         /* Get data
          */
         r = curl_easy_perform(s);
+        curl_easy_getinfo(s, CURLINFO_RESPONSE_CODE, &http_code);
 
 
         /* Checking errors
@@ -208,10 +210,10 @@ unsigned short pb_post(char *result,
         if ( r != CURLE_OK )
         {
             #ifdef __DEBUG__
-            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
+            fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_perform() failed: %s", __func__, curl_easy_strerror(r) );
             #endif
 
-            return (2);
+            return (http_code);
         }
 
         curl_easy_cleanup(s);
@@ -220,10 +222,10 @@ unsigned short pb_post(char *result,
     else
     {
         #ifdef __DEBUG__
-        fprintf(stderr, "curl_easy_init() could not be initiated.\n");
+        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.", __func__);
         #endif
 
-        return (1);
+        return (0);
     }
 
 
@@ -234,7 +236,7 @@ unsigned short pb_post(char *result,
         free(ms.memory);
     }
 
-    return (0);
+    return (http_code);
 }
 
 
@@ -246,7 +248,8 @@ unsigned short pb_delete(char   *result,
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
      */
-    struct Memory_struct_s     ms =
+    unsigned short              http_code   = 0;
+    struct Memory_struct_s      ms          =
     {
         .memory = (char *) calloc(1, sizeof(char) ),
         .size   = 0
@@ -285,6 +288,7 @@ unsigned short pb_delete(char   *result,
         /* Get data
          */
         r = curl_easy_perform(s);
+        curl_easy_getinfo(s, CURLINFO_RESPONSE_CODE, &http_code);
 
 
         /* Checking errors
@@ -292,10 +296,10 @@ unsigned short pb_delete(char   *result,
         if ( r != CURLE_OK )
         {
             #ifdef __DEBUG__
-            fprintf(stderr, "curl_easy_perform() failed: %s", curl_easy_strerror(r) );
+            fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_perform() failed: %s", __func__, curl_easy_strerror(r) );
             #endif
 
-            return (2);
+            return (http_code);
         }
 
         curl_easy_cleanup(s);
@@ -304,10 +308,10 @@ unsigned short pb_delete(char   *result,
     else
     {
         #ifdef __DEBUG__
-        fprintf(stderr, "curl_easy_init() could not be initiated.");
+        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.", __func__);
         #endif
 
-        return (1);
+        return (0);
     }
 
 
@@ -318,5 +322,5 @@ unsigned short pb_delete(char   *result,
         free(ms.memory);
     }
 
-    return (0);
+    return (http_code);
 }
