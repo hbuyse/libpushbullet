@@ -22,7 +22,7 @@ extern "C" {
  *
  * \param[in]  user  The user in which we store the devices
  *
- * \return     Error code
+ * \return     HTTP status code
  */
 unsigned short pb_get_devices(PB_user_t *user);
 
