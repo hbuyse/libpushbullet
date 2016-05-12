@@ -61,7 +61,7 @@ unsigned short pb_get_user_info(PB_user_t   *user,
                                 )
 {
     char                *result     = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
-    unsigned char       res         = 0;
+    unsigned short      res         = 0;
     json_object         *json_obj   = NULL;
 
 
@@ -120,11 +120,11 @@ void pb_free_user(PB_user_t *user)
          * behavior occurs. If ptr is NULL, no operation is performed.
          * FREE(user->token_key);
          */
-        user->token_key = NULL;
-        user->active = 0;
-        user->created = 0;
-        user->modified = 0;
-        user->max_upload_size = 0;
+        user->token_key         = NULL;
+        user->active            = 0;
+        user->created           = 0;
+        user->modified          = 0;
+        user->max_upload_size   = 0;
 
         FREE(user->email);
         FREE(user->email_normalized);

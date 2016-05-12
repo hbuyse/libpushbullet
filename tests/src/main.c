@@ -17,10 +17,10 @@
 
 #include "../minunit/minunit.h"
 
-static char     *token_key = NULL;
+static char                 *token_key  = NULL;
 
-static PB_user_t    user;
-static unsigned short res = 0;
+static PB_user_t            user;
+static unsigned short       res         = 0;
 
 
 /**
@@ -28,19 +28,22 @@ static unsigned short res = 0;
  */
 void setup_user(void)
 {
-    memset(&user, 0, sizeof(PB_user_t));
+    memset(&user, 0, sizeof(PB_user_t) );
 }
+
+
 
 /**
  * \brief      Setup function for devices related functions
  */
 void setup_devices(void)
 {
-    memset(&user, 0, sizeof(PB_user_t));
+    memset(&user, 0, sizeof(PB_user_t) );
 
     res = pb_get_user_info(&user, token_key);
     mu_check(res == HTTP_OK);
 }
+
 
 
 /**
@@ -48,14 +51,15 @@ void setup_devices(void)
  */
 void setup(void)
 {
-    memset(&user, 0, sizeof(PB_user_t));
+    memset(&user, 0, sizeof(PB_user_t) );
 
     res = pb_get_user_info(&user, token_key);
     mu_check(res == HTTP_OK);
 
-    res     = pb_get_devices(&user);
+    res = pb_get_devices(&user);
     mu_check(res == HTTP_OK);
 }
+
 
 
 /**
@@ -65,6 +69,8 @@ void teardown(void)
 {
     pb_free_user(&user);
 }
+
+
 
 MU_TEST(test_get_user_info)
 {
@@ -92,7 +98,7 @@ MU_TEST(test_free_user)
 
 
     // All datas to zero
-    memset(&user, 0, sizeof(PB_user_t));
+    memset(&user, 0, sizeof(PB_user_t) );
 
     res = pb_get_user_info(&user, token_key);
 
@@ -115,11 +121,13 @@ MU_TEST(test_free_user)
 
 MU_TEST(test_get_devices)
 {
-    PB_device_t         *tmp        = NULL;
-    PB_device_t         *devices    = NULL;
+    PB_device_t     *tmp        = NULL;
+    PB_device_t     *devices    = NULL;
+
 
     // Get the devices
-    res = pb_get_devices(&user);
+    res     = pb_get_devices(&user);
+
 
     // Check the results after downloading the devices informations
     mu_check(res == HTTP_OK);
@@ -160,19 +168,25 @@ MU_TEST(test_free_devices)
 
 
     // All datas to zero
-    memset(&user, 0, sizeof(PB_user_t));
+    memset(&user, 0, sizeof(PB_user_t) );
+
 
     // Get the user
     res = pb_get_user_info(&user, token_key);
+
+
     // Check the results after downloading the user informations
     mu_check(res == HTTP_OK);
+
 
     // Get the devices
     res = pb_get_devices(&user);
 
+
     // Check the results after downloading the devices informations
     mu_check(res == HTTP_OK);
     mu_check(user.devices != NULL);
+
 
     // Free the list of devices
     pb_free_devices(&user);
@@ -196,6 +210,7 @@ MU_TEST(test_get_iden_from_name)
     mu_check(res == HTTP_OK);
     mu_check(user.devices != NULL);
 
+
     // Check the function pb_get_iden_from_name
     mu_check(pb_get_iden_from_name(user, NULL) == NULL);
     mu_check(pb_get_iden_from_name(user, "null") == NULL);
@@ -206,6 +221,7 @@ MU_TEST(test_get_iden_from_name)
 MU_TEST_SUITE(test_user)
 {
     MU_SUITE_CONFIGURE(&setup_user, NULL);
+
 
     // Test
 
@@ -220,6 +236,7 @@ MU_TEST_SUITE(test_devices)
 {
     MU_SUITE_CONFIGURE(&setup_devices, NULL);
 
+
     // Test
     fprintf(stdout, "\n\e[1m[test_get_devices]\e[0m\t");
     MU_RUN_TEST(test_get_devices);
@@ -230,6 +247,8 @@ MU_TEST_SUITE(test_devices)
 MU_TEST_SUITE(test_devices_2)
 {
     MU_SUITE_CONFIGURE(&setup, &teardown);
+
+
     // Test
     fprintf(stdout, "\n\e[1m[test_get_number_active_devices]\e[0m\t");
     MU_RUN_TEST(test_get_number_active_devices);
@@ -302,5 +321,5 @@ int main(int    argc,
     MU_RUN_SUITE(test_devices_2);
     MU_REPORT();
 
-    return ((minunit_fail == 0) ? 0 : 1);
+    return ( (minunit_fail == 0) ? 0 : 1);
 }

@@ -229,7 +229,7 @@ unsigned short pb_get_devices(PB_user_t *user)
 
     // cUrl results
     char                *result             = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
-    unsigned char       res                 = 0;
+    unsigned short      res                 = 0;
 
 
     // JSON variables
@@ -374,13 +374,17 @@ unsigned char pb_get_number_active_devices(PB_user_t user)
 }
 
 
-const char* pb_get_iden_from_name(const PB_user_t user, const char* name)
+
+const char* pb_get_iden_from_name(const PB_user_t   user,
+                                  const char        *name
+                                  )
 {
     PB_device_t     *tmp = NULL;
 
-    if (!name)
+
+    if ( ! name )
     {
-        return NULL;
+        return (NULL);
     }
 
     for ( tmp = user.devices; tmp != NULL; tmp = tmp->next )
@@ -389,18 +393,22 @@ const char* pb_get_iden_from_name(const PB_user_t user, const char* name)
         {
             case TYPE_ANDROID:
             case TYPE_IPHONE:
-                if (strcmp(tmp->phone.nickname, name) == 0)
+
+                if ( strcmp(tmp->phone.nickname, name) == 0 )
                 {
                     return (tmp->phone.iden);
                 }
+
                 break;
 
             case TYPE_FIREFOX:
             case TYPE_CHROME:
-                if (strcmp(tmp->browser.nickname, name) == 0)
+
+                if ( strcmp(tmp->browser.nickname, name) == 0 )
                 {
                     return (tmp->browser.iden);
                 }
+
                 break;
 
             default:

@@ -53,7 +53,7 @@ unsigned char pb_get_number_active_devices(PB_user_t user);
  *
  * \return     The device's identification
  */
-const char* pb_get_iden_from_name(const PB_user_t user, const char* name);
+const char* pb_get_iden_from_name(const PB_user_t user, const char *name);
 
 
 #ifdef __cplusplus
