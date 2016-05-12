@@ -7,10 +7,8 @@
 #include <stdio.h>          // fprintf, stderr
 #include <stdlib.h>          // realloc, free
 #include <string.h>          // memcpy
-
 #include <curl/curl.h>          // CURL, CURLcode, struct curl_slist, curl_slist_append, curl_easy_init,
                                 // curl_easy_setopt, curl_easy_perform, curl_easy_cleanup, curl_slist_free_all
-#include <json/json.h>
 
 
 /**

@@ -9,9 +9,10 @@
 #include <json/json.h>          // json_object, json_tokener_parse, json_object_object_foreach, json_object_get_array,
                                 // array_list
 
-#include <requests.h>          // pb_get, API_URL_DEVICES
+#include <urls.h>          // API_URL_DEVICES
+#include <requests.h>          // pb_get
 #include <user.h>          // PB_user_t
-#include <devices.h>          // PB_browser_t, PB_phone_t, PB_device_t
+#include <pb_structures.h>          // PB_browser_t, PB_phone_t, PB_device_t
 #include <http_code.h>          // HTTP_OK
 
 

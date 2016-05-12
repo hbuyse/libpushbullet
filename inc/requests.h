@@ -10,8 +10,6 @@
 #ifndef __REQUESTS_H__
 #define __REQUESTS_H__
 
-#include <urls.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
