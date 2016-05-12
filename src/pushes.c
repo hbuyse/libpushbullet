@@ -12,36 +12,49 @@
 #include <user.h>          // PB_user_t
 #include <requests.h>          // pb_port
 #include <http_code.h>          // HTTP_OK
+#include <devices.h>            // pb_get_iden_from_name
 
 
+/**
+ * \brief      Get a JSON note to send with \a pb_post
+ *
+ * \param[in]  title        The title
+ * \param[in]  body         The body
+ * \param[in]  device_iden  The device identification
+ *
+ * \return     A string containing the JSON note
+ */
 static const char* _create_note(const char  *title,
                                 const char  *body,
                                 const char  *device_iden
                                 )
 {
-    json_object     *root               = json_object_new_object();
+    json_object     *root       = json_object_new_object();
 
 
     // Add type
-    json_object     *jstr_type          = json_object_new_string("note");
+    json_object     *jstr_type  = json_object_new_string("note");
 
 
     json_object_object_add(root, "type", jstr_type);
 
 
     // Add title
-    json_object     *jstr_title         = json_object_new_string(title);
+    json_object     *jstr_title = json_object_new_string(title);
     json_object_object_add(root, "title", jstr_title);
 
 
     // Add body
-    json_object     *jstr_body          = json_object_new_string(body);
+    json_object     *jstr_body  = json_object_new_string(body);
     json_object_object_add(root, "body", jstr_body);
 
 
     // Add device_iden
-    json_object     *jstr_device_iden   = json_object_new_string(device_iden);
-    json_object_object_add(root, "device_iden", jstr_device_iden);
+    if ( device_iden )
+    {
+        json_object     *jstr_device_iden = json_object_new_string(device_iden);
+        json_object_object_add(root, "device_iden", jstr_device_iden);
+    }
 
 
     // Return the JSON as a string
@@ -50,40 +63,52 @@ static const char* _create_note(const char  *title,
 
 
 
+/**
+ * \brief      Get a JSON link to send with \a pb_post
+ *
+ * \param[in]  title        The title
+ * \param[in]  body         The body
+ * \param[in]  device_iden  The device identification
+ *
+ * \return     A string containing the JSON link
+ */
 static const char* _create_link(const char  *title,
                                 const char  *body,
                                 const char  *url,
                                 const char  *device_iden
                                 )
 {
-    json_object     *root               = json_object_new_object();
+    json_object     *root       = json_object_new_object();
 
 
     // Add type
-    json_object     *jstr_type          = json_object_new_string("link");
+    json_object     *jstr_type  = json_object_new_string("link");
 
 
     json_object_object_add(root, "type", jstr_type);
 
 
     // Add title
-    json_object     *jstr_title         = json_object_new_string(title);
+    json_object     *jstr_title = json_object_new_string(title);
     json_object_object_add(root, "title", jstr_title);
 
 
     // Add body
-    json_object     *jstr_body          = json_object_new_string(body);
+    json_object     *jstr_body  = json_object_new_string(body);
     json_object_object_add(root, "body", jstr_body);
 
 
     // Add url
-    json_object     *jstr_url           = json_object_new_string(url);
+    json_object     *jstr_url   = json_object_new_string(url);
     json_object_object_add(root, "url", jstr_url);
 
 
     // Add device_iden
-    json_object     *jstr_device_iden   = json_object_new_string(device_iden);
-    json_object_object_add(root, "device_iden", jstr_device_iden);
+    if ( device_iden )
+    {
+        json_object     *jstr_device_iden = json_object_new_string(device_iden);
+        json_object_object_add(root, "device_iden", jstr_device_iden);
+    }
 
 
     // Return the JSON as a string
@@ -95,7 +120,7 @@ static const char* _create_link(const char  *title,
 unsigned short pb_push_note(char            *result,
                             const char      *title,
                             const char      *body,
-                            const char      *device_iden,
+                            const char      *device_nickname,
                             const PB_user_t user
                             )
 {
@@ -104,7 +129,7 @@ unsigned short pb_push_note(char            *result,
 
 
     // Create the JSON data
-    data    = _create_note(title, body, device_iden);
+    data    = _create_note(title, body, pb_get_iden_from_name(user, device_nickname) );
 
     #ifdef __DEBUG__
     fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, data);
@@ -139,7 +164,7 @@ unsigned short pb_push_link(char            *result,
                             const char      *title,
                             const char      *body,
                             const char      *url,
-                            const char      *device_iden,
+                            const char      *device_nickname,
                             const PB_user_t user
                             )
 {
@@ -148,7 +173,7 @@ unsigned short pb_push_link(char            *result,
 
 
     // Create the JSON data
-    data    = _create_link(title, body, url, device_iden);
+    data    = _create_link(title, body, url, pb_get_iden_from_name(user, device_nickname) );
 
     #ifdef __DEBUG__
     fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, data);

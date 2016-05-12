@@ -119,7 +119,7 @@ int main(int    argc,
     res = pb_get_devices(&user);
 
     char     *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
-    pb_push_note(result, "Hello", "Hello World", pb_get_iden_from_name(user, "LGE Nexus 5X"), user);
+    pb_push_note(result, "Hello", "Hello World", "LGE Nexus 5X", user);
 
 
     // pb_push_link("Google", "Hello World", "http://www.google.fr", pb_get_iden_from_name(user, "LGE Nexus 5X"), user);

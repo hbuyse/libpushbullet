@@ -14,11 +14,21 @@
 #include <user.h>          // PB_user_t, pb_get_user_info, pb_free_user
 #include <devices.h>          // pb_get_devices
 #include <http_code.h>          // HTTP_OK
+#include <pushes.h>          // pb_push_note, pb_push_link
 
 #include "../minunit/minunit.h"
 
-static char                 *token_key  = NULL;
 
+/**
+ * \brief Maximum size of the buffer (4ko - 4096 - 0x1000)
+ */
+#define     MAX_SIZE_BUF 0x1000
+
+
+/**
+ * \brief Stores the token key given as option
+ */
+static char                 *token_key  = NULL;
 static PB_user_t            user;
 static unsigned short       res         = 0;
 
@@ -218,6 +228,30 @@ MU_TEST(test_get_iden_from_name)
 }
 
 
+MU_TEST(test_push_note)
+{
+    // Check the results after downloading the devices informations
+    mu_check(res == HTTP_OK);
+
+
+    // Check the function pb_push_note
+    char     *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
+    mu_check(pb_push_note(result, "Test", "test", NULL, user) == HTTP_OK);
+}
+
+
+MU_TEST(test_push_link)
+{
+    // Check the results after downloading the devices informations
+    mu_check(res == HTTP_OK);
+
+
+    // Check the function pb_push_link
+    char     *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
+    mu_check(pb_push_link(result, "Test", "test", "http://www.google.fr", NULL, user) == HTTP_OK);
+}
+
+
 MU_TEST_SUITE(test_user)
 {
     MU_SUITE_CONFIGURE(&setup_user, NULL);
@@ -244,7 +278,8 @@ MU_TEST_SUITE(test_devices)
     MU_RUN_TEST(test_free_devices);
 }
 
-MU_TEST_SUITE(test_devices_2)
+
+MU_TEST_SUITE(test_on_devices_info)
 {
     MU_SUITE_CONFIGURE(&setup, &teardown);
 
@@ -254,6 +289,19 @@ MU_TEST_SUITE(test_devices_2)
     MU_RUN_TEST(test_get_number_active_devices);
     fprintf(stdout, "\n\e[1m[test_get_iden_from_name]\e[0m\t");
     MU_RUN_TEST(test_get_iden_from_name);
+}
+
+
+MU_TEST_SUITE(test_pushes)
+{
+    MU_SUITE_CONFIGURE(&setup, &teardown);
+
+
+    // Test
+    fprintf(stdout, "\n\e[1m[test_push_note]\e[0m\t");
+    MU_RUN_TEST(test_push_note);
+    fprintf(stdout, "\n\e[1m[test_push_link]\e[0m\t");
+    MU_RUN_TEST(test_push_link);
 }
 
 
@@ -316,9 +364,15 @@ int main(int    argc,
         }
     }
 
+
+    // Launch the test suites
     MU_RUN_SUITE(test_user);
     MU_RUN_SUITE(test_devices);
-    MU_RUN_SUITE(test_devices_2);
+    MU_RUN_SUITE(test_on_devices_info);
+    MU_RUN_SUITE(test_pushes);
+
+
+    // Print the report
     MU_REPORT();
 
     return ( (minunit_fail == 0) ? 0 : 1);
