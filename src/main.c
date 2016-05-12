@@ -11,6 +11,13 @@
 #include <user.h>          // pb_get_user_info
 #include <devices.h>          // pb_get_devices
 #include <http_code.h>          // HTTP_OK
+#include <pushes.h>          // pb_push_note
+
+
+/**
+ * \brief Maximum size of the buffer (4ko - 4096 - 0x1000)
+ */
+#define     MAX_SIZE_BUF 0x1000
 
 
 /**
@@ -111,16 +118,11 @@ int main(int    argc,
     res = pb_get_user_info(&user, token_key);
     res = pb_get_devices(&user);
 
-    printf("Active devices : %u\n", pb_get_number_active_devices(user) );
+    char     *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
+    pb_push_note(result, "Hello", "Hello World", pb_get_iden_from_name(user, "LGE Nexus 5X"), user);
 
-    char* iden_chrome = (char*) pb_get_iden_from_name(user, "Chrome");
-    printf("Chrome : %s\n", iden_chrome);
-    char* iden_nexus_5X = (char*) pb_get_iden_from_name(user, "LGE Nexus 5X");
-    printf("LGE Nexus 5X : %s\n", iden_nexus_5X);
-    char* iden_null = (char*) pb_get_iden_from_name(user, "null");
-    printf("null : %s\n", iden_null);
-    iden_null = (char*) pb_get_iden_from_name(user, NULL);
-    printf("null : %s\n", iden_null);
+
+    // pb_push_link("Google", "Hello World", "http://www.google.fr", pb_get_iden_from_name(user, "LGE Nexus 5X"), user);
 
     pb_free_user(&user);
 
