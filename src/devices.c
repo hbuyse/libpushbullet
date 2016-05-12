@@ -372,3 +372,41 @@ unsigned char pb_get_number_active_devices(PB_user_t user)
 
     return (i);
 }
+
+
+const char* pb_get_iden_from_name(const PB_user_t user, const char* name)
+{
+    PB_device_t     *tmp = NULL;
+
+    if (!name)
+    {
+        return NULL;
+    }
+
+    for ( tmp = user.devices; tmp != NULL; tmp = tmp->next )
+    {
+        switch ( tmp->type_device )
+        {
+            case TYPE_ANDROID:
+            case TYPE_IPHONE:
+                if (strcmp(tmp->phone.nickname, name) == 0)
+                {
+                    return (tmp->phone.iden);
+                }
+                break;
+
+            case TYPE_FIREFOX:
+            case TYPE_CHROME:
+                if (strcmp(tmp->browser.nickname, name) == 0)
+                {
+                    return (tmp->browser.iden);
+                }
+                break;
+
+            default:
+                printf("Unknown type...\n");
+        }
+    }
+
+    return (NULL);
+}

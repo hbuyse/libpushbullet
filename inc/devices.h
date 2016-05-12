@@ -45,6 +45,17 @@ void pb_free_devices(PB_user_t *user);
 unsigned char pb_get_number_active_devices(PB_user_t user);
 
 
+/**
+ * \brief      Get the identification of a device from its name
+ *
+ * \param[in]  user  The user that have the devices
+ * \param[in]  name  The name of the device
+ *
+ * \return     The device's identification
+ */
+const char* pb_get_iden_from_name(const PB_user_t user, const char* name);
+
+
 #ifdef __cplusplus
 }
 #endif

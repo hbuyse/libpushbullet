@@ -112,6 +112,16 @@ int main(int    argc,
     res = pb_get_devices(&user);
 
     printf("Active devices : %u\n", pb_get_number_active_devices(user) );
+
+    char* iden_chrome = (char*) pb_get_iden_from_name(user, "Chrome");
+    printf("Chrome : %s\n", iden_chrome);
+    char* iden_nexus_5X = (char*) pb_get_iden_from_name(user, "LGE Nexus 5X");
+    printf("LGE Nexus 5X : %s\n", iden_nexus_5X);
+    char* iden_null = (char*) pb_get_iden_from_name(user, "null");
+    printf("null : %s\n", iden_null);
+    iden_null = (char*) pb_get_iden_from_name(user, NULL);
+    printf("null : %s\n", iden_null);
+
     pb_free_user(&user);
 
     return (0);
