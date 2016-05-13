@@ -17,7 +17,8 @@
 
 
 /**
- * \ded Maximum size of the buffer (4ko - 4096 - 0x1000)
+ * \def MAX_SIZE_BUF
+ * Maximum size of the buffer (4ko - 4096 - 0x1000)
  */
 #define     MAX_SIZE_BUF 0x1000
 
