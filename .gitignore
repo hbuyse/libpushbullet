@@ -104,4 +104,5 @@ docs/_build/
 target/
 
 ### Personnal stuff ###
-doxygen/
+doxygen/html
+doxygen/latex
