@@ -24,7 +24,7 @@ $(shell mkdir -p $(DIR_SRC) $(DIR_OBJ) $(DIR_DEP))
 
 CFLAGS  += -W -Wall -Wextra -Wno-unused-function -fmessage-length=0 -D_REENTRANT -I $(DIR_INC) $(shell pkg-config --cflags json-c)
 CFLAGS  += -I $(DIR_PB_INC)
-LDFLAGS +=  $(DIR_PB_LIB)/libpushbullet.a -lcurl $(shell pkg-config --libs json-c)
+LDFLAGS += $(DIR_PB_LIB)/libpushbullet.a -lcurl $(shell pkg-config --libs json-c)
 
 
 SRC      = $(shell find $(DIR_SRC) -name '*.c' | sort)
