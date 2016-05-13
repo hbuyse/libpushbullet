@@ -10,7 +10,7 @@
 #ifndef __USER_H__
 #define __USER_H__
 
-#include <pb_structures.h>          // PB_user_t
+#include <pb_structures.h>          // pb_user_t
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,7 +25,7 @@ extern "C" {
  *
  * \return     HTTP status code
  */
-unsigned short pb_get_user_info(PB_user_t *user_to_fill, char *token_key);
+unsigned short pb_get_user_info(pb_user_t *user_to_fill, char *token_key);
 
 
 /**
@@ -33,7 +33,7 @@ unsigned short pb_get_user_info(PB_user_t *user_to_fill, char *token_key);
  *
  * \param      user  The user we want to free
  */
-void pb_free_user(PB_user_t *user);
+void pb_free_user(pb_user_t *user);
 
 
 #ifdef __cplusplus

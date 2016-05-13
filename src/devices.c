@@ -11,8 +11,8 @@
 
 #include <urls.h>          // API_URL_DEVICES
 #include <requests.h>          // pb_get
-#include <user.h>          // PB_user_t
-#include <pb_structures.h>          // PB_browser_t, PB_phone_t, PB_device_t
+#include <user.h>          // pb_user_t
+#include <pb_structures.h>          // pb_browser_t, pb_phone_t, pb_device_t
 #include <http_code.h>          // HTTP_OK
 
 
@@ -79,7 +79,7 @@
  * \param[out]  browser  The browser structure we fill
  * \param[in]  json_obj  The JSON object
  */
-static void _get_browser_device(PB_browser_t    *browser,
+static void _get_browser_device(pb_browser_t    *browser,
                                 json_object     *json_obj
                                 )
 {
@@ -111,7 +111,7 @@ static void _get_browser_device(PB_browser_t    *browser,
  * \param[out]  phone  The phone structure we fill
  * \param[in]  json_obj  The JSON object
  */
-static void _get_phone_device(PB_phone_t    *phone,
+static void _get_phone_device(pb_phone_t    *phone,
                               json_object   *json_obj
                               )
 {
@@ -147,7 +147,7 @@ static void _get_phone_device(PB_phone_t    *phone,
  *
  * \param[in]  phone  The phone
  */
-static void _dump_phone_infos(PB_phone_t phone)
+static void _dump_phone_infos(pb_phone_t phone)
 {
     fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__, phone.kind[0] - 32, phone.kind + 1, phone.iden);
     fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, phone.active);
@@ -175,7 +175,7 @@ static void _dump_phone_infos(PB_phone_t phone)
  *
  * \param[in]  browser  The browser
  */
-static void _dump_browser_infos(PB_browser_t browser)
+static void _dump_browser_infos(pb_browser_t browser)
 {
     fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__, browser.kind[0] - 32, browser.kind + 1, browser.iden);
     fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, browser.active);
@@ -197,9 +197,9 @@ static void _dump_browser_infos(PB_browser_t browser)
  *
  * \param      user  The user
  */
-static void _dump_devices_list(PB_user_t *user)
+static void _dump_devices_list(pb_user_t *user)
 {
-    PB_device_t     *tmp = NULL;
+    pb_device_t     *tmp = NULL;
 
 
     for ( tmp = user->devices; tmp != NULL; tmp = tmp->next )
@@ -224,7 +224,7 @@ static void _dump_devices_list(PB_user_t *user)
 
 
 
-unsigned short pb_get_devices(PB_user_t *user)
+unsigned short pb_get_devices(pb_user_t *user)
 {
     unsigned char       i                   = 0;
 
@@ -284,7 +284,7 @@ unsigned short pb_get_devices(PB_user_t *user)
 
         // Declaration of the needed variables
         json_object     *json_kind  = NULL;
-        PB_device_t     *device     = (PB_device_t *) calloc(1, sizeof(PB_device_t) );
+        pb_device_t     *device     = (pb_device_t *) calloc(1, sizeof(pb_device_t) );
 
 
         // Get the kind of PushBullet device
@@ -309,7 +309,7 @@ unsigned short pb_get_devices(PB_user_t *user)
         }
         else
         {
-            PB_device_t     *tmp = NULL;
+            pb_device_t     *tmp = NULL;
 
             for ( tmp = user->devices; tmp->next != NULL; tmp = tmp->next )
             {
@@ -334,9 +334,9 @@ unsigned short pb_get_devices(PB_user_t *user)
 
 
 
-void pb_free_devices(PB_user_t *user)
+void pb_free_devices(pb_user_t *user)
 {
-    PB_device_t     *tmp = NULL;
+    pb_device_t     *tmp = NULL;
 
 
     // Pass through the list
@@ -361,10 +361,10 @@ void pb_free_devices(PB_user_t *user)
 
 
 
-unsigned char pb_get_number_active_devices(PB_user_t user)
+unsigned char pb_get_number_active_devices(pb_user_t user)
 {
     unsigned char       i       = 0;
-    PB_device_t         *tmp    = NULL;
+    pb_device_t         *tmp    = NULL;
 
 
     for ( tmp = user.devices, i = 0; tmp != NULL; tmp = tmp->next, ++i )
@@ -377,11 +377,11 @@ unsigned char pb_get_number_active_devices(PB_user_t user)
 
 
 
-const char* pb_get_iden_from_name(const PB_user_t   user,
+const char* pb_get_iden_from_name(const pb_user_t   user,
                                   const char        *name
                                   )
 {
-    PB_device_t     *tmp = NULL;
+    pb_device_t     *tmp = NULL;
 
 
     if ( ! name )

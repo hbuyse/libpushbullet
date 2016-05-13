@@ -12,7 +12,7 @@
 
 #include <urls.h>           // API_URL_ME
 #include <requests.h>          // pb_get
-#include <pb_structures.h>          // PB_user_t
+#include <pb_structures.h>          // pb_user_t
 #include <http_code.h>          // HTTP_OK
 #include <devices.h>          // pb_free_devices
 
@@ -42,7 +42,7 @@
 #define     FREE(ptr)                             \
     if ( ptr ) {free( (void *) ptr); ptr = NULL; }
 
-static void _dump_user_info(PB_user_t user)
+static void _dump_user_info(pb_user_t user)
 {
     // fprintf(stdout, "\e[1mtoken_key =\e[0m %s\n", user.token_key);
     fprintf(stdout, "\e[1m[%s]\e[0m %s - %s\n", __func__, user.name, user.email);
@@ -57,7 +57,7 @@ static void _dump_user_info(PB_user_t user)
 
 
 
-unsigned short pb_get_user_info(PB_user_t   *user,
+unsigned short pb_get_user_info(pb_user_t   *user,
                                 char        *token_key
                                 )
 {
@@ -110,7 +110,7 @@ unsigned short pb_get_user_info(PB_user_t   *user,
 
 
 
-void pb_free_user(PB_user_t *user)
+void pb_free_user(pb_user_t *user)
 {
     if ( user )
     {

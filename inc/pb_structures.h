@@ -7,8 +7,8 @@
  */
 
 
-#ifndef __PB_STRUCTURES_H__
-#define __PB_STRUCTURES_H__
+#ifndef __pb_STRUCTURES_H__
+#define __pb_STRUCTURES_H__
 
 
 #include <json/json.h>          // json_object
@@ -19,10 +19,10 @@ extern "C" {
 #endif
 
 /**
- * \enum PB_device_type
+ * \enum pb_device_type
  * \brief Device's type
  */
-enum PB_device_type {
+enum pb_device_type {
     TYPE_ANDROID = 0,   ///< Android
     TYPE_IPHONE,   ///< Iphone
     TYPE_CHROME,   ///< Chrome
@@ -32,45 +32,45 @@ enum PB_device_type {
 
 
 /**
- * \typedef PB_push_t
- * \brief Type definition of the structure PB_push_s
+ * \typedef pb_push_t
+ * \brief Type definition of the structure pb_push_s
  */
-typedef struct PB_push_s PB_push_t;
+typedef struct pb_push_s pb_push_t;
 
 
 /**
- * \typedef PB_phone_t
- * \brief Type definition of the structure PB_phone_s
+ * \typedef pb_phone_t
+ * \brief Type definition of the structure pb_phone_s
  */
-typedef struct PB_phone_s PB_phone_t;
+typedef struct pb_phone_s pb_phone_t;
 
 
 /**
- * \typedef PB_device_t
- * \brief Type definition of the structure PB_device_s
+ * \typedef pb_device_t
+ * \brief Type definition of the structure pb_device_s
  */
-typedef struct PB_device_s PB_device_t;
+typedef struct pb_device_s pb_device_t;
 
 
 /**
- * \typedef PB_browser_t
- * \brief Type definition of the structure PB_browser_s
+ * \typedef pb_browser_t
+ * \brief Type definition of the structure pb_browser_s
  */
-typedef struct PB_browser_s PB_browser_t;
+typedef struct pb_browser_s pb_browser_t;
 
 
 /**
- * \typedef PB_user_t
- * \brief Type definition of the structure PB_user_s
+ * \typedef pb_user_t
+ * \brief Type definition of the structure pb_user_s
  */
-typedef struct PB_user_s PB_user_t;
+typedef struct pb_user_s pb_user_t;
 
 
 /**
- * \struct PB_push_s
+ * \struct pb_push_s
  * \brief Structure containing all the informations concerning a PushBullet push
  */
-struct PB_push_s {
+struct pb_push_s {
     unsigned char active;          ///< Push's activity
     const char *body;          ///< Push's body
     double created;          ///< Push's creation
@@ -91,10 +91,10 @@ struct PB_push_s {
 
 
 /**
- * \struct PB_phone_s
+ * \struct pb_phone_s
  * \brief Structure containing all the informations concerning a PushBullet phone
  */
-struct PB_phone_s {
+struct pb_phone_s {
     unsigned char active;           ///< Activity of the phone
     const char *iden;           ///< Phone's indentification
     double created;           ///< Phone's creation
@@ -117,10 +117,10 @@ struct PB_phone_s {
 
 
 /**
- * \struct PB_browser_s
+ * \struct pb_browser_s
  * \brief Structure containing all the informations concerning a PushBullet browser
  */
-struct PB_browser_s {
+struct pb_browser_s {
     unsigned char active;       ///< Activity of the browser
     const char *iden;       ///< Browser's indentification
     double created;     ///< Browser's creation
@@ -137,25 +137,25 @@ struct PB_browser_s {
 
 
 /**
- * \struct PB_device_s
+ * \struct pb_device_s
  * \brief Element of a linked list containing either a browser or a phone
  */
-struct PB_device_s {
+struct pb_device_s {
     unsigned char type_device;          ///< The type of the device
     union {
-        PB_phone_t phone;              ///< Phone device if the type is a phone
-        PB_browser_t browser;          ///< Browser device if the type is a browser
+        pb_phone_t phone;              ///< Phone device if the type is a phone
+        pb_browser_t browser;          ///< Browser device if the type is a browser
     };
 
-    PB_device_t *next;                   ///< Pointer to the next
+    pb_device_t *next;                   ///< Pointer to the next
 };
 
 
 /**
- * \struct PB_user_s
+ * \struct pb_user_s
  * \brief Contains the user informations.
  */
-struct PB_user_s {
+struct pb_user_s {
     char *token_key;          ///< The user's token_key
     unsigned char active;          ///< Boolean that tells if the user is active or not
     double created;             ///< Epoch time when the user was created
@@ -166,11 +166,11 @@ struct PB_user_s {
     const char *image_url;          ///< The URL to the user's photo
     const char *name;           ///< The user's name
     int max_upload_size;        ///< The maximum size of a file the user can upload in bytes
-    PB_device_t *devices;          ///< The list of active devices
+    pb_device_t *devices;          ///< The list of active devices
 };
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif          // __PB_STRUCTURES_H__
+#endif          // __pb_STRUCTURES_H__

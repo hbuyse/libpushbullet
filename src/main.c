@@ -50,7 +50,7 @@ int main(int    argc,
     int                         long_index      = 0;
     char                        *token_key      = NULL;
 
-    PB_user_t                   user;
+    pb_user_t                   user;
     unsigned char               res             = 0;
 
 

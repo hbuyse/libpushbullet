@@ -30,7 +30,7 @@ unsigned short pb_push_note(char            *result,
                             const char      *title,
                             const char      *body,
                             const char      *device_nickname,
-                            const PB_user_t user);
+                            const pb_user_t user);
 
 
 /**
@@ -49,7 +49,7 @@ unsigned short pb_push_link(char            *result,
                             const char      *body,
                             const char      *url,
                             const char      *device_nickname,
-                            const PB_user_t user);
+                            const pb_user_t user);
 
 
 #ifdef __cplusplus

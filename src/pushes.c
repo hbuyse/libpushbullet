@@ -9,7 +9,7 @@
                                 // json_object_to_json_string
 
 #include <urls.h>          // API_URL_PUSHES
-#include <user.h>          // PB_user_t
+#include <user.h>          // pb_user_t
 #include <requests.h>          // pb_port
 #include <http_code.h>          // HTTP_OK
 #include <devices.h>            // pb_get_iden_from_name
@@ -121,7 +121,7 @@ unsigned short pb_push_note(char            *result,
                             const char      *title,
                             const char      *body,
                             const char      *device_nickname,
-                            const PB_user_t user
+                            const pb_user_t user
                             )
 {
     const char          *data   = NULL;
@@ -165,7 +165,7 @@ unsigned short pb_push_link(char            *result,
                             const char      *body,
                             const char      *url,
                             const char      *device_nickname,
-                            const PB_user_t user
+                            const pb_user_t user
                             )
 {
     const char          *data   = NULL;

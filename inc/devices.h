@@ -10,7 +10,7 @@
 #ifndef __DEVICES_H__
 #define __DEVICES_H__
 
-#include <pb_structures.h>          // PB_user_t
+#include <pb_structures.h>          // pb_user_t
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,7 +24,7 @@ extern "C" {
  *
  * \return     HTTP status code
  */
-unsigned short pb_get_devices(PB_user_t *user);
+unsigned short pb_get_devices(pb_user_t *user);
 
 
 /**
@@ -32,7 +32,7 @@ unsigned short pb_get_devices(PB_user_t *user);
  *
  * \param      user  The user's
  */
-void pb_free_devices(PB_user_t *user);
+void pb_free_devices(pb_user_t *user);
 
 
 /**
@@ -42,7 +42,7 @@ void pb_free_devices(PB_user_t *user);
  *
  * \return     Number of active devices
  */
-unsigned char pb_get_number_active_devices(PB_user_t user);
+unsigned char pb_get_number_active_devices(pb_user_t user);
 
 
 /**
@@ -53,7 +53,7 @@ unsigned char pb_get_number_active_devices(PB_user_t user);
  *
  * \return     The device's identification
  */
-const char* pb_get_iden_from_name(const PB_user_t user, const char *name);
+const char* pb_get_iden_from_name(const pb_user_t user, const char *name);
 
 
 #ifdef __cplusplus
