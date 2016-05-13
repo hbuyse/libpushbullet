@@ -35,7 +35,7 @@ enum pb_device_type {
  * \typedef pb_push_t
  * \brief Type definition of the structure pb_push_s
  */
-typedef struct pb_push_s pb_push_t;
+typedef struct pb_structurespush_s pb_push_t;
 
 
 /**
