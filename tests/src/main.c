@@ -11,7 +11,7 @@
 #include <string.h>          // strcmp
 #include <stdio.h>          // fprintf
 
-#include <user.h>          // PB_user_t, pb_get_user_info, pb_free_user
+#include <user.h>          // pb_user_t, pb_get_user_info, pb_free_user
 #include <devices.h>          // pb_get_devices
 #include <http_code.h>          // HTTP_OK
 #include <pushes.h>          // pb_push_note, pb_push_link
@@ -29,7 +29,7 @@
  * \brief Stores the token key given as option
  */
 static char                 *token_key  = NULL;
-static PB_user_t            user;
+static pb_user_t            user;
 static unsigned short       res         = 0;
 
 
@@ -38,7 +38,7 @@ static unsigned short       res         = 0;
  */
 void setup_user(void)
 {
-    memset(&user, 0, sizeof(PB_user_t) );
+    memset(&user, 0, sizeof(pb_user_t) );
 }
 
 
@@ -48,7 +48,7 @@ void setup_user(void)
  */
 void setup_devices(void)
 {
-    memset(&user, 0, sizeof(PB_user_t) );
+    memset(&user, 0, sizeof(pb_user_t) );
 
     res = pb_get_user_info(&user, token_key);
     mu_check(res == HTTP_OK);
@@ -61,7 +61,7 @@ void setup_devices(void)
  */
 void setup(void)
 {
-    memset(&user, 0, sizeof(PB_user_t) );
+    memset(&user, 0, sizeof(pb_user_t) );
 
     res = pb_get_user_info(&user, token_key);
     mu_check(res == HTTP_OK);
@@ -104,11 +104,11 @@ MU_TEST(test_get_user_info)
 MU_TEST(test_free_user)
 {
     unsigned char       res = 0;
-    PB_user_t           user;
+    pb_user_t           user;
 
 
     // All datas to zero
-    memset(&user, 0, sizeof(PB_user_t) );
+    memset(&user, 0, sizeof(pb_user_t) );
 
     res = pb_get_user_info(&user, token_key);
 
@@ -131,8 +131,8 @@ MU_TEST(test_free_user)
 
 MU_TEST(test_get_devices)
 {
-    PB_device_t     *tmp        = NULL;
-    PB_device_t     *devices    = NULL;
+    pb_device_t     *tmp        = NULL;
+    pb_device_t     *devices    = NULL;
 
 
     // Get the devices
@@ -174,11 +174,11 @@ MU_TEST(test_get_devices)
 MU_TEST(test_free_devices)
 {
     unsigned char       res = 0;
-    PB_user_t           user;
+    pb_user_t           user;
 
 
     // All datas to zero
-    memset(&user, 0, sizeof(PB_user_t) );
+    memset(&user, 0, sizeof(pb_user_t) );
 
 
     // Get the user
