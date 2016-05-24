@@ -369,7 +369,7 @@ int main(int    argc,
     MU_RUN_SUITE(test_user);
     MU_RUN_SUITE(test_devices);
     MU_RUN_SUITE(test_on_devices_info);
-    MU_RUN_SUITE(test_pushes);
+    // MU_RUN_SUITE(test_pushes);
 
 
     // Print the report
