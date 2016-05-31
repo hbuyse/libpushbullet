@@ -14,6 +14,8 @@
 extern "C" {
 #endif
 
+#include <pb_structures.h>          // NUMBER_PROXIES, PROXY_MAX_LENGTH
+
 
 /**
  * \brief      GET request for the PushBullet API
@@ -24,7 +26,10 @@ extern "C" {
  *
  * \return     HTTP status code
  */
-unsigned short pb_get(char *result, char *url_request, char *token_key);
+unsigned short pb_get(char          *result,
+                      const char    *url_request,
+                      const char    *token_key,
+                      const char    proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]);
 
 
 /**
@@ -37,7 +42,11 @@ unsigned short pb_get(char *result, char *url_request, char *token_key);
  *
  * \return     HTTP status code
  */
-unsigned short pb_post(char *result, char *url_request, char *token_key, char *data);
+unsigned short pb_post(char         *result,
+                       const char   *url_request,
+                       const char   *token_key,
+                       const char   *data,
+                       const char   proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]);
 
 
 /**
@@ -49,7 +58,10 @@ unsigned short pb_post(char *result, char *url_request, char *token_key, char *d
  *
  * \return     HTTP status code
  */
-unsigned short pb_delete(char *result, char *url_request, char *token_key);
+unsigned short pb_delete(char       *result,
+                         const char *url_request,
+                         const char *token_key,
+                         const char proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]);
 
 
 #ifdef __cplusplus

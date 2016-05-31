@@ -12,6 +12,7 @@
 #include <devices.h>          // pb_get_devices
 #include <http_code.h>          // HTTP_OK
 #include <pushes.h>          // pb_push_note
+#include <config.h>          // pb_get_proxies_from_json_config
 
 
 /**
@@ -50,9 +51,11 @@ int main(int    argc,
     int                         opt                 = 0;
     int                         long_index          = 0;
     char                        *token_key          = NULL;
+    char                        *config_file_path   = NULL;
+    char                        proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH];
 
     pb_user_t                   user;
-    unsigned char               res             = 0;
+    unsigned char               res                 = 0;
 
 
     opterr = 0;
@@ -61,6 +64,7 @@ int main(int    argc,
     {
         {"help", no_argument, 0, 'h'},
         {"token", required_argument, 0, 't'},
+        {"config", required_argument, 0, 'c'},
         {0, 0, 0, 0}
     };
 
@@ -76,13 +80,19 @@ int main(int    argc,
      * argument. If an option character is followed by two colons (‘::’), its argument is optional; this is a GNU
      * extension.
      */
-    while ( (opt = getopt_long(argc, argv, "ht:", long_options, &long_index) ) != -1 )
+    while ( (opt = getopt_long(argc, argv, "ht:c:", long_options, &long_index) ) != -1 )
     {
         switch ( opt )
         {
             case 't':
             {
                 token_key = optarg;
+                break;
+            }
+
+            case 'c':
+            {
+                config_file_path = optarg;
                 break;
             }
 
@@ -95,7 +105,7 @@ int main(int    argc,
 
             case '?':
             {
-                if ( optopt == 't' )
+                if ( (optopt == 't') || (optopt == 'c') )
                 {
                     fprintf(stderr, "Option -%c requires an argument.\n", optopt);
                 }
@@ -116,8 +126,10 @@ int main(int    argc,
         }
     }
 
-    res = pb_get_user_info(&user, token_key);
+    res = pb_get_proxies_from_json_config(proxies, config_file_path);
+    res = pb_get_user_info(&user, token_key, proxies);
     res = pb_get_devices(&user);
+
 
     // char     *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
     // pb_push_note(result, "Hello", "Hello World", "LGE Nexus 5X", user);

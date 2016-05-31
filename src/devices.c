@@ -79,11 +79,11 @@
  * \param[out]  browser  The browser structure we fill
  * \param[in]  json_obj  The JSON object
  */
-static void _get_browser_device(pb_browser_t    *browser,
-                                json_object     *json_obj
+static void _get_browser_device(pb_browser_t        *browser,
+                                const json_object   *json_obj
                                 )
 {
-    json_object_object_foreach(json_obj, key, val)
+    json_object_object_foreach( (json_object *) json_obj, key, val)
     {
         JSON_ASSOCIATE(boolean, browser, active)
         JSON_ASSOCIATE(string, browser, iden)
@@ -111,11 +111,11 @@ static void _get_browser_device(pb_browser_t    *browser,
  * \param[out]  phone  The phone structure we fill
  * \param[in]  json_obj  The JSON object
  */
-static void _get_phone_device(pb_phone_t    *phone,
-                              json_object   *json_obj
+static void _get_phone_device(pb_phone_t        *phone,
+                              const json_object *json_obj
                               )
 {
-    json_object_object_foreach(json_obj, key, val)
+    json_object_object_foreach( (json_object *) json_obj, key, val)
     {
         JSON_ASSOCIATE(boolean, phone, active)
         JSON_ASSOCIATE(string, phone, iden)
@@ -147,7 +147,7 @@ static void _get_phone_device(pb_phone_t    *phone,
  *
  * \param[in]  phone  The phone
  */
-static void _dump_phone_infos(pb_phone_t phone)
+static void _dump_phone_infos(const pb_phone_t phone)
 {
     fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__, phone.kind[0] - 32, phone.kind + 1, phone.iden);
     fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, phone.active);
@@ -175,7 +175,7 @@ static void _dump_phone_infos(pb_phone_t phone)
  *
  * \param[in]  browser  The browser
  */
-static void _dump_browser_infos(pb_browser_t browser)
+static void _dump_browser_infos(const pb_browser_t browser)
 {
     fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__, browser.kind[0] - 32, browser.kind + 1, browser.iden);
     fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, browser.active);
@@ -241,7 +241,7 @@ unsigned short pb_get_devices(pb_user_t *user)
     int                 json_devices_len    = 0;
 
 
-    res                 = pb_get(result, API_URL_DEVICES, user->token_key);
+    res                 = pb_get(result, API_URL_DEVICES, user->token_key, user->proxies);
 
     #ifdef __DEBUG__
     fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1m[%s]\e[0m %s\n", __func__, result);

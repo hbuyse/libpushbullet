@@ -13,10 +13,15 @@
 
 #include <json/json.h>          // json_object
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define NUMBER_PROXIES 2          // http_proxy and https_proxy
+#define PROXY_MAX_LENGTH 22          // 255.255.255.255:65535 (21+1)
+#define HTTP_PROXY 0           // http_proxy in user.proxies
+#define HTTPS_PROXY 1           // https_proxy in user.proxies
+
 
 /**
  * \enum pb_device_type

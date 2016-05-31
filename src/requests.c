@@ -10,6 +10,8 @@
 #include <curl/curl.h>          // CURL, CURLcode, struct curl_slist, curl_slist_append, curl_easy_init,
                                 // curl_easy_setopt, curl_easy_perform, curl_easy_cleanup, curl_slist_free_all
 
+#include <pb_structures.h>          // NUMBER_PROXIES, PROXY_MAX_LENGTH, HTTPS_PROXY
+
 
 /**
  * \struct Memory_struct_s
@@ -70,9 +72,10 @@ static size_t write_memory_callback(void    *contents,
 
 
 
-unsigned short pb_get(char  *result,
-                      char  *url_request,
-                      char  *token_key
+unsigned short pb_get(char          *result,
+                      const char    *url_request,
+                      const char    *token_key,
+                      const char    proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]
                       )
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
@@ -105,6 +108,7 @@ unsigned short pb_get(char  *result,
          *  Send all data to the write_memory_callback method
          */
         curl_easy_setopt(s, CURLOPT_URL, url_request);
+        curl_easy_setopt(s, CURLOPT_PROXY, proxies[HTTPS_PROXY]);
         curl_easy_setopt(s, CURLOPT_USERPWD, token_key);
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
@@ -153,10 +157,11 @@ unsigned short pb_get(char  *result,
 
 
 
-unsigned short pb_post(char *result,
-                       char *url_request,
-                       char *token_key,
-                       char *data
+unsigned short pb_post(char         *result,
+                       const char   *url_request,
+                       const char   *token_key,
+                       const char   *data,
+                       const char   proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]
                        )
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
@@ -195,6 +200,11 @@ unsigned short pb_post(char *result,
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
         curl_easy_setopt(s, CURLOPT_WRITEDATA, (void *) &ms);
+
+        if ( strlen(proxies[HTTPS_PROXY]) != 0 )
+        {
+            curl_easy_setopt(s, CURLOPT_PROXY, proxies[HTTPS_PROXY]);
+        }
 
 
         /* Get data
@@ -239,9 +249,10 @@ unsigned short pb_post(char *result,
 
 
 
-unsigned short pb_delete(char   *result,
-                         char   *url_request,
-                         char   *token_key
+unsigned short pb_delete(char       *result,
+                         const char *url_request,
+                         const char *token_key,
+                         const char proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]
                          )
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
@@ -276,6 +287,11 @@ unsigned short pb_delete(char   *result,
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
         curl_easy_setopt(s, CURLOPT_WRITEDATA, (void *) &ms);
+
+        if ( strlen(proxies[HTTPS_PROXY]) != 0 )
+        {
+            curl_easy_setopt(s, CURLOPT_PROXY, proxies[HTTPS_PROXY]);
+        }
 
 
         /* Set the DELETE command

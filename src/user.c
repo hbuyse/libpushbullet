@@ -42,7 +42,7 @@
 #define     FREE(ptr)                             \
     if ( ptr ) {free( (void *) ptr); ptr = NULL; }
 
-static void _dump_user_info(pb_user_t user)
+static void _dump_user_info(const pb_user_t user)
 {
     // fprintf(stdout, "\e[1mtoken_key =\e[0m %s\n", user.token_key);
     fprintf(stdout, "\e[1m[%s]\e[0m %s - %s\n", __func__, user.name, user.email);
@@ -58,9 +58,11 @@ static void _dump_user_info(pb_user_t user)
 
 
 unsigned short pb_get_user_info(pb_user_t   *user,
-                                char        *token_key
+                                const char  *token_key,
+                                const char  proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]
                                 )
 {
+    unsigned char       i           = 0;
     char                *result     = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
     unsigned short      res         = 0;
     json_object         *json_obj   = NULL;
@@ -70,8 +72,20 @@ unsigned short pb_get_user_info(pb_user_t   *user,
     user->token_key = token_key;
 
 
+    // Copy the proxies
+    for ( i = 0; i < NUMBER_PROXIES; ++i )
+    {
+        // Clear old proxies
+        memset(&(user->proxies[i]), 0, PROXY_MAX_LENGTH);
+
+
+        // Copy a proxy
+        strncpy(user->proxies[i], proxies[i], strlen(proxies[i]) );
+    }
+
+
     // Access the API using the token
-    res = pb_get(result, API_URL_ME, user->token_key);
+    res = pb_get(result, API_URL_ME, user->token_key, user->proxies);
 
     #ifdef __DEBUG__
     fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1m[%s]\e[0m %s\n", __func__, result);

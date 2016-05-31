@@ -42,7 +42,7 @@ void pb_free_devices(pb_user_t *user);
  *
  * \return     Number of active devices
  */
-unsigned char pb_get_number_active_devices(pb_user_t user);
+unsigned char pb_get_number_active_devices(const pb_user_t user);
 
 
 /**
