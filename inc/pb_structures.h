@@ -7,8 +7,8 @@
  */
 
 
-#ifndef __pb_STRUCTURES_H__
-#define __pb_STRUCTURES_H__
+#ifndef __PB_STRUCTURES_H__
+#define __PB_STRUCTURES_H__
 
 
 #include <json/json.h>          // json_object
@@ -35,7 +35,7 @@ enum pb_device_type {
  * \typedef pb_push_t
  * \brief Type definition of the structure pb_push_s
  */
-typedef struct pb_structurespush_s pb_push_t;
+typedef struct pb_push_s pb_push_t;
 
 
 /**
@@ -173,4 +173,4 @@ struct pb_user_s {
 }
 #endif
 
-#endif          // __pb_STRUCTURES_H__
+#endif          // __PB_STRUCTURES_H__
