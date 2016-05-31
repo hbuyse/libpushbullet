@@ -23,11 +23,11 @@ extern "C" {
  * \brief Device's type
  */
 enum pb_device_type {
-    TYPE_ANDROID = 0,   ///< Android
-    TYPE_IPHONE,   ///< Iphone
-    TYPE_CHROME,   ///< Chrome
-    TYPE_FIREFOX,   ///< Firefox
-    TYPE_DEVICE   ///< Device
+    TYPE_ANDROID = 0,          ///< Android
+    TYPE_IPHONE,          ///< Iphone
+    TYPE_CHROME,          ///< Chrome
+    TYPE_FIREFOX,          ///< Firefox
+    TYPE_DEVICE          ///< Device
 };
 
 
@@ -108,10 +108,10 @@ struct pb_phone_s {
     short app_version;          ///< Phone's application version
     json_object *fingerprint;          ///< Phone's fingerprint
     const char *push_token;          ///< Phone's push token
-    unsigned char pushable;     ///< Is the phone pushable?
+    unsigned char pushable;          ///< Is the phone pushable?
     unsigned char has_sms;          ///< Can we send SMS?
     unsigned char has_mms;          ///< Can we send MMS?
-    const char *icon;       ///< Phone's icon
+    const char *icon;          ///< Phone's icon
     const char *remote_files;          ///< Remote files
 };
 
@@ -121,18 +121,18 @@ struct pb_phone_s {
  * \brief Structure containing all the informations concerning a PushBullet browser
  */
 struct pb_browser_s {
-    unsigned char active;       ///< Activity of the browser
-    const char *iden;       ///< Browser's indentification
-    double created;     ///< Browser's creation
-    double modified;        ///< Browser's modification
-    const char *type;       ///< Browser's type
-    const char *kind;       ///< Browser's kind
-    const char *nickname;       ///< Browser's nickname
-    const char *manufacturer;       ///< Browser's manufacturer
-    const char *model;      ///< Browser's model
-    short app_version;      ///< Browser's application version
-    unsigned char pushable;     ///< Is the browser pushable?
-    const char *icon;       ///< Browser's icon
+    unsigned char active;          ///< Activity of the browser
+    const char *iden;          ///< Browser's indentification
+    double created;          ///< Browser's creation
+    double modified;          ///< Browser's modification
+    const char *type;          ///< Browser's type
+    const char *kind;          ///< Browser's kind
+    const char *nickname;          ///< Browser's nickname
+    const char *manufacturer;          ///< Browser's manufacturer
+    const char *model;          ///< Browser's model
+    short app_version;          ///< Browser's application version
+    unsigned char pushable;          ///< Is the browser pushable?
+    const char *icon;          ///< Browser's icon
 };
 
 
@@ -156,7 +156,7 @@ struct pb_device_s {
  * \brief Contains the user informations.
  */
 struct pb_user_s {
-    char *token_key;          ///< The user's token_key
+    const char *token_key;          ///< The user's token_key
     unsigned char active;          ///< Boolean that tells if the user is active or not
     double created;             ///< Epoch time when the user was created
     double modified;            ///< Epoch time when the user was last modified
@@ -165,7 +165,8 @@ struct pb_user_s {
     const char *iden;           ///< The user's identification
     const char *image_url;          ///< The URL to the user's photo
     const char *name;           ///< The user's name
-    int max_upload_size;        ///< The maximum size of a file the user can upload in bytes
+    int max_upload_size;          ///< The maximum size of a file the user can upload in bytes
+    char proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH];          ///< Proxy from the config file
     pb_device_t *devices;          ///< The list of active devices
 };
 

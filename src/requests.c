@@ -17,8 +17,8 @@
  * \details    It stores its data and its size.
  */
 struct Memory_struct_s {
-    char *memory;       ///< Pointer to the memory
-    size_t size;        ///< Size of the memory allocated
+    char *memory;          ///< Pointer to the memory
+    size_t size;          ///< Size of the memory allocated
 };
 
 

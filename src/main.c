@@ -27,9 +27,10 @@
  */
 static void usage(char *program_name)
 {
-    fprintf(stdout, "Usage: %s [-h] -t token_key \n", program_name);
-    fprintf(stdout, "\t-h | --help         Display this help.\n");
-    fprintf(stdout, "\t-t | --token-key    Pushbullet token key\n");
+    fprintf(stdout, "Usage: %s [-h] -t token_key -c config_file_path\n", program_name);
+    fprintf(stdout, "\t-h | --help              Display this help.\n");
+    fprintf(stdout, "\t-t | --token=API_KEY     Pushbullet token key\n");
+    fprintf(stdout, "\t-c | --config=FILE       Pushbullet configuration file\n");
 }
 
 
@@ -46,9 +47,9 @@ int main(int    argc,
          char   **argv
          )
 {
-    int                         opt             = 0;
-    int                         long_index      = 0;
-    char                        *token_key      = NULL;
+    int                         opt                 = 0;
+    int                         long_index          = 0;
+    char                        *token_key          = NULL;
 
     pb_user_t                   user;
     unsigned char               res             = 0;
@@ -56,10 +57,10 @@ int main(int    argc,
 
     opterr = 0;
 
-    static struct option        long_options[]  =
+    static struct option        long_options[]      =
     {
         {"help", no_argument, 0, 'h'},
-        {"token-key", required_argument, 0, 't'},
+        {"token", required_argument, 0, 't'},
         {0, 0, 0, 0}
     };
 
