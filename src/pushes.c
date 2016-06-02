@@ -29,24 +29,35 @@ static const char* _create_note(const char  *title,
                                 const char  *device_iden
                                 )
 {
-    json_object     *root       = json_object_new_object();
+    json_object     *root       = NULL;
+    json_object     *jstr_type  = NULL;
+
+
+    // Create the root
+    root       = json_object_new_object();
 
 
     // Add type
-    json_object     *jstr_type  = json_object_new_string("note");
+    jstr_type  = json_object_new_string("note");
 
 
     json_object_object_add(root, "type", jstr_type);
 
 
     // Add title
-    json_object     *jstr_title = json_object_new_string(title);
-    json_object_object_add(root, "title", jstr_title);
+    if ( title )
+    {
+        json_object     *jstr_title = json_object_new_string(title);
+        json_object_object_add(root, "title", jstr_title);
+    }
 
 
     // Add body
-    json_object     *jstr_body  = json_object_new_string(body);
-    json_object_object_add(root, "body", jstr_body);
+    if ( body )
+    {
+        json_object     *jstr_body = json_object_new_string(body);
+        json_object_object_add(root, "body", jstr_body);
+    }
 
 
     // Add device_iden
@@ -78,29 +89,50 @@ static const char* _create_link(const char  *title,
                                 const char  *device_iden
                                 )
 {
-    json_object     *root       = json_object_new_object();
+    json_object     *root       = NULL;
+    json_object     *jstr_type  = NULL;
+
+
+    // If we do not have an URL, it is simply a note, so we send one
+    if (url == NULL)
+    {
+        return _create_note(title, body, device_iden);
+    }
+
+
+    // Create the root
+    root        = json_object_new_object();
 
 
     // Add type
-    json_object     *jstr_type  = json_object_new_string("link");
+    jstr_type   = json_object_new_string("link");
 
 
     json_object_object_add(root, "type", jstr_type);
 
 
     // Add title
-    json_object     *jstr_title = json_object_new_string(title);
-    json_object_object_add(root, "title", jstr_title);
+    if ( title )
+    {
+        json_object     *jstr_title = json_object_new_string(title);
+        json_object_object_add(root, "title", jstr_title);
+    }
 
 
     // Add body
-    json_object     *jstr_body  = json_object_new_string(body);
-    json_object_object_add(root, "body", jstr_body);
+    if ( body )
+    {
+        json_object     *jstr_body = json_object_new_string(body);
+        json_object_object_add(root, "body", jstr_body);
+    }
 
 
     // Add url
-    json_object     *jstr_url   = json_object_new_string(url);
-    json_object_object_add(root, "url", jstr_url);
+    if ( url )
+    {
+        json_object     *jstr_url = json_object_new_string(url);
+        json_object_object_add(root, "url", jstr_url);
+    }
 
 
     // Add device_iden
@@ -118,8 +150,7 @@ static const char* _create_link(const char  *title,
 
 
 unsigned short pb_push_note(char            *result,
-                            const char      *title,
-                            const char      *body,
+                            const pb_note_t note,
                             const char      *device_nickname,
                             const pb_user_t user
                             )
@@ -129,7 +160,7 @@ unsigned short pb_push_note(char            *result,
 
 
     // Create the JSON data
-    data    = _create_note(title, body, pb_get_iden_from_name(user, device_nickname) );
+    data    = _create_note(note.title, note.body, pb_get_iden_from_name(user, device_nickname) );
 
     #ifdef __DEBUG__
     fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, data);
@@ -161,9 +192,7 @@ unsigned short pb_push_note(char            *result,
 
 
 unsigned short pb_push_link(char            *result,
-                            const char      *title,
-                            const char      *body,
-                            const char      *url,
+                            const pb_link_t link,
                             const char      *device_nickname,
                             const pb_user_t user
                             )
@@ -173,7 +202,7 @@ unsigned short pb_push_link(char            *result,
 
 
     // Create the JSON data
-    data    = _create_link(title, body, url, pb_get_iden_from_name(user, device_nickname) );
+    data    = _create_link(link.title, link.body, link.url, pb_get_iden_from_name(user, device_nickname) );
 
     #ifdef __DEBUG__
     fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, data);

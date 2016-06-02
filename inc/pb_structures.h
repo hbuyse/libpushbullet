@@ -37,6 +37,20 @@ enum pb_device_type {
 
 
 /**
+ * \typedef pb_note_t
+ * \brief Type definition of the structure pb_note_s
+ */
+typedef struct pb_note_s pb_note_t;
+
+
+/**
+ * \typedef pb_link_t
+ * \brief Type definition of the structure pb_link_s
+ */
+typedef struct pb_link_s pb_link_t;
+
+
+/**
  * \typedef pb_push_t
  * \brief Type definition of the structure pb_push_s
  */
@@ -69,6 +83,27 @@ typedef struct pb_browser_s pb_browser_t;
  * \brief Type definition of the structure pb_user_s
  */
 typedef struct pb_user_s pb_user_t;
+
+
+/**
+ * \struct pb_note_s
+ * \brief Structure containing all the informations concerning a PushBullet note
+ */
+struct pb_note_s {
+    char *title;          ///< Push's title
+    char *body;          ///< Push's body
+};
+
+
+/**
+ * \struct pb_link_s
+ * \brief Structure containing all the informations concerning a PushBullet link
+ */
+struct pb_link_s {
+    char *title;          ///< Push's title
+    char *body;          ///< Push's body
+    char *url;          ///< Push's url
+};
 
 
 /**
