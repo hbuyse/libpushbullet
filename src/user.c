@@ -7,6 +7,10 @@
 #include <stdio.h>          // fprintf, stderr
 #include <stdlib.h>          // calloc, free, abort
 #include <string.h>          // strcmp
+#include <sys/types.h>          // struct stat, stat, S_ISREG
+#include <sys/stat.h>          // struct stat, stat, S_ISREG
+#include <unistd.h>          // struct stat, stat, S_ISREG
+
 #include <json/json.h>          // json_object, json_tokener_parse, json_object_get_string, json_object_object_foreach,
                                 // json_object_get_int
 
@@ -64,6 +68,28 @@ static void _dump_user_info(const pb_user_t user)
 
 
 
+/**
+ * \brief      Determines if path is a regular file
+ *
+ * \param[in]  path  The path to the file
+ *
+ * \return     True if regular file, False otherwise.
+ */
+static unsigned char _is_regular_file(const char *path)
+{
+    struct stat     path_stat;
+
+
+    // Get tje stats about the file
+    stat(path, &path_stat);
+
+
+    // This macro returns non-zero if the file is a regular file.
+    return (S_ISREG(path_stat.st_mode) );
+}
+
+
+
 unsigned short pb_get_user_info(pb_user_t           *user,
                                 const char          *token_key,
                                 const json_object   *config
@@ -83,7 +109,7 @@ unsigned short pb_get_user_info(pb_user_t           *user,
     res = pb_get(result, API_URL_ME, *user);
 
     #ifdef __DEBUG__
-    fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1:3%dm[%s]\e[0m %s\n", (res == HTTP_OK) ? 2 : 1, result, __func__);
+    fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1;3%dm[%s]\e[0m %s\n", (res == HTTP_OK) ? 2 : 1, __func__, result);
     #endif
 
     if ( res != HTTP_OK )
@@ -151,7 +177,7 @@ void pb_free_user(pb_user_t *user)
 
 json_object* pb_get_config_json(const char *path)
 {
-    json_object     *config_json;
+    json_object     *config_json        = NULL;
     FILE            *config_fd          = NULL; // File descriptor to the config file
     size_t          config_file_length  = 0;    // Length of the config file
     char            *config_data        = NULL; // Content of the config file
@@ -160,7 +186,18 @@ json_object* pb_get_config_json(const char *path)
 
     if ( path == NULL )
     {
+        #ifdef __DEBUG__
         fprintf(stderr, "\e[1;31m[%s]\e[0m No path given for the config file.\n", __func__);
+        #endif
+
+        return (NULL);
+    }
+
+    if ( ! _is_regular_file(path) )
+    {
+        #ifdef __DEBUG__
+        fprintf(stderr, "\e[1;31m[%s]\e[0m %s is not a file.\n", __func__, path);
+        #endif
 
         return (NULL);
     }
@@ -169,7 +206,10 @@ json_object* pb_get_config_json(const char *path)
     // Trying to open the config file
     if ( (config_fd = fopen(path, "r") ) == NULL )
     {
+        #ifdef __DEBUG__
         fprintf(stderr, "\e[1;31m[%s]\e[0m Could not open the config file at %s: %m", __func__, path);
+        fprintf(stderr, "\n");
+        #endif
 
         return (NULL);
     }
@@ -177,25 +217,36 @@ json_object* pb_get_config_json(const char *path)
 
     // We get the file of the file
     fseek(config_fd, 0, SEEK_END);
-    config_file_length  = ftell(config_fd);
+    config_file_length = ftell(config_fd);
     fseek(config_fd, 0, SEEK_SET);
+
+    if ( config_file_length == 0 )
+    {
+        #ifdef __DEBUG__
+        fprintf(stderr, "\e[1;31m[%s]\e[0m %s is an empty file.\n", __func__, path);
+        #endif
+
+        return (NULL);
+    }
 
 
     // We allocate the memory for the contents
-    config_data         = (char *) calloc(config_file_length + 1, sizeof(char) );
+    config_data = (char *) calloc(config_file_length + 1, sizeof(char) );
 
 
     // Read the file and store it in the memory
-    read = fread(config_data, sizeof(char), config_file_length, config_fd);
+    read        = fread(config_data, sizeof(char), config_file_length, config_fd);
 
     if ( read != config_file_length )
     {
+        #ifdef __DEBUG__
         fprintf(stderr,
                 "\e[1;31m[%s]\e[0m Read %ld on %ld from the config file %s.\n",
                 __func__,
                 read,
                 config_file_length,
                 path);
+        #endif
     }
 
 
@@ -205,6 +256,15 @@ json_object* pb_get_config_json(const char *path)
 
     // Use the JSON parser
     config_json = json_tokener_parse(config_data);
+
+    if ( json_object_object_length(config_json) == 0 )
+    {
+        #ifdef __DEBUG__
+        fprintf(stderr, "\e[1;31m[%s]\e[0m %s is a JSON file, but it has no fields.\n", __func__, path);
+        #endif
+
+        return (NULL);
+    }
 
     #ifdef __DEBUG__
     fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, json_object_to_json_string(config_json) );

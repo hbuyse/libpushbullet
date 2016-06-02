@@ -25,9 +25,7 @@ extern "C" {
  *
  * \return     HTTP status code
  */
-unsigned short pb_get_user_info(pb_user_t   *user_to_fill,
-                                const char  *token_key,
-                                const char  proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]);
+unsigned short pb_get_user_info(pb_user_t *user_to_fill, const char *token_key, const json_object *config);
 
 
 /**

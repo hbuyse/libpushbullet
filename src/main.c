@@ -51,7 +51,7 @@ int main(int    argc,
     int                         long_index          = 0;
     char                        *token_key          = NULL;
     char                        *config_file_path   = NULL;
-    char                        proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH];
+    json_object                 *config             = NULL;
 
     pb_user_t                   user;
     unsigned char               res                 = 0;
@@ -91,7 +91,7 @@ int main(int    argc,
 
             case 'c':
             {
-                user.config = pb_get_config_json(optarg);
+                config = pb_get_config_json(optarg);
                 break;
             }
 
@@ -125,9 +125,9 @@ int main(int    argc,
         }
     }
 
-    printf("%s\n", pb_get_https_proxy(user));
+    res = pb_get_user_info(&user, token_key, config);
+    printf("%s\n", pb_get_https_proxy(user) );
 
-    res = pb_get_user_info(&user, token_key, proxies);
     res = pb_get_devices(&user);
 
 
