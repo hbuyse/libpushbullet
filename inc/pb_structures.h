@@ -171,7 +171,7 @@ struct pb_user_s {
     const char *image_url;          ///< The URL to the user's photo
     const char *name;           ///< The user's name
     int max_upload_size;          ///< The maximum size of a file the user can upload in bytes
-    char proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH];          ///< Proxy from the config file
+    json_object *config;            ///< Configuration from the config file
     pb_device_t *devices;          ///< The list of active devices
 };
 

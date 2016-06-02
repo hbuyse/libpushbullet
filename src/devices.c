@@ -241,7 +241,7 @@ unsigned short pb_get_devices(pb_user_t *user)
     int                 json_devices_len    = 0;
 
 
-    res                 = pb_get(result, API_URL_DEVICES, user->token_key, user->proxies);
+    res                 = pb_get(result, API_URL_DEVICES, *user);
 
     #ifdef __DEBUG__
     fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1m[%s]\e[0m %s\n", __func__, result);

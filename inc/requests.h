@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-#include <pb_structures.h>          // NUMBER_PROXIES, PROXY_MAX_LENGTH
+#include <pb_structures.h>          // pb_user_t, NUMBER_PROXIES, PROXY_MAX_LENGTH
 
 
 /**
@@ -26,10 +26,7 @@ extern "C" {
  *
  * \return     HTTP status code
  */
-unsigned short pb_get(char          *result,
-                      const char    *url_request,
-                      const char    *token_key,
-                      const char    proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]);
+unsigned short pb_get(char *result, const char *url_request, const pb_user_t user);
 
 
 /**
@@ -37,16 +34,12 @@ unsigned short pb_get(char          *result,
  *
  * \param      result       The result buffer
  * \param      url_request  The url request
- * \param      token_key    The user token key
+ * \param      user         The user informations
  * \param      data         The data that we send
  *
  * \return     HTTP status code
  */
-unsigned short pb_post(char         *result,
-                       const char   *url_request,
-                       const char   *token_key,
-                       const char   *data,
-                       const char   proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]);
+unsigned short pb_post(char *result, const char *url_request, const pb_user_t user, const char *data);
 
 
 /**
@@ -58,10 +51,7 @@ unsigned short pb_post(char         *result,
  *
  * \return     HTTP status code
  */
-unsigned short pb_delete(char       *result,
-                         const char *url_request,
-                         const char *token_key,
-                         const char proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]);
+unsigned short pb_delete(char *result, const char *url_request, const pb_user_t user);
 
 
 #ifdef __cplusplus

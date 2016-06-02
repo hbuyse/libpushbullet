@@ -137,7 +137,7 @@ unsigned short pb_push_note(char            *result,
 
 
     // Send the datas
-    res     = pb_post(result, API_URL_PUSHES, user.token_key, (char *) data, user.proxies);
+    res     = pb_post(result, API_URL_PUSHES, user, (char *) data);
 
     if ( res != HTTP_OK )
     {
@@ -181,7 +181,7 @@ unsigned short pb_push_link(char            *result,
 
 
     // Send the datas
-    res     = pb_post(result, API_URL_PUSHES, user.token_key, (char *) data, user.proxies);
+    res     = pb_post(result, API_URL_PUSHES, user, (char *) data);
 
     if ( res != HTTP_OK )
     {

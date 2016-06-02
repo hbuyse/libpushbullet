@@ -12,7 +12,6 @@
 #include <devices.h>          // pb_get_devices
 #include <http_code.h>          // HTTP_OK
 #include <pushes.h>          // pb_push_note
-#include <config.h>          // pb_get_proxies_from_json_config
 
 
 /**
@@ -92,7 +91,7 @@ int main(int    argc,
 
             case 'c':
             {
-                config_file_path = optarg;
+                user.config = pb_get_config_json(optarg);
                 break;
             }
 
@@ -126,7 +125,8 @@ int main(int    argc,
         }
     }
 
-    res = pb_get_proxies_from_json_config(proxies, config_file_path);
+    printf("%s\n", pb_get_https_proxy(user));
+
     res = pb_get_user_info(&user, token_key, proxies);
     res = pb_get_devices(&user);
 

@@ -11,6 +11,7 @@
                                 // curl_easy_setopt, curl_easy_perform, curl_easy_cleanup, curl_slist_free_all
 
 #include <pb_structures.h>          // NUMBER_PROXIES, PROXY_MAX_LENGTH, HTTPS_PROXY
+#include <user.h>               // pb_get_https_proxy, pb_get_curl_timeout
 
 
 /**
@@ -72,10 +73,9 @@ static size_t write_memory_callback(void    *contents,
 
 
 
-unsigned short pb_get(char          *result,
-                      const char    *url_request,
-                      const char    *token_key,
-                      const char    proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]
+unsigned short pb_get(char              *result,
+                      const char        *url_request,
+                      const pb_user_t   user
                       )
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
@@ -108,11 +108,20 @@ unsigned short pb_get(char          *result,
          *  Send all data to the write_memory_callback method
          */
         curl_easy_setopt(s, CURLOPT_URL, url_request);
-        curl_easy_setopt(s, CURLOPT_PROXY, proxies[HTTPS_PROXY]);
-        curl_easy_setopt(s, CURLOPT_USERPWD, token_key);
+        curl_easy_setopt(s, CURLOPT_USERPWD, user.token_key);
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
         curl_easy_setopt(s, CURLOPT_WRITEDATA, (void *) &ms);
+
+        if ( pb_get_https_proxy(user) )
+        {
+            curl_easy_setopt(s, CURLOPT_PROXY, pb_get_https_proxy(user) );
+        }
+
+        if ( pb_get_curl_timeout(user) )
+        {
+            curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_get_curl_timeout(user) );
+        }
 
 
         /* Get data && http status code
@@ -126,7 +135,7 @@ unsigned short pb_get(char          *result,
         if ( r != CURLE_OK )
         {
             #ifdef __DEBUG__
-            fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_perform() failed: %s", __func__, curl_easy_strerror(r) );
+            fprintf(stderr, "\e[1;31m[%s]\e[0m curl_easy_perform() failed: %s\n", __func__, curl_easy_strerror(r) );
             #endif
 
             return (http_code);
@@ -138,7 +147,7 @@ unsigned short pb_get(char          *result,
     else
     {
         #ifdef __DEBUG__
-        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.", __func__);
+        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.\n", __func__);
         #endif
 
         return (0);
@@ -157,11 +166,10 @@ unsigned short pb_get(char          *result,
 
 
 
-unsigned short pb_post(char         *result,
-                       const char   *url_request,
-                       const char   *token_key,
-                       const char   *data,
-                       const char   proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]
+unsigned short pb_post(char             *result,
+                       const char       *url_request,
+                       const pb_user_t  user,
+                       const char       *data
                        )
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
@@ -195,15 +203,20 @@ unsigned short pb_post(char         *result,
          *  Send all data to the WriteMemoryCallback method
          */
         curl_easy_setopt(s, CURLOPT_URL, url_request);
-        curl_easy_setopt(s, CURLOPT_USERPWD, token_key);
+        curl_easy_setopt(s, CURLOPT_USERPWD, user.token_key);
         curl_easy_setopt(s, CURLOPT_POSTFIELDS, data);
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
         curl_easy_setopt(s, CURLOPT_WRITEDATA, (void *) &ms);
 
-        if ( strlen(proxies[HTTPS_PROXY]) != 0 )
+        if ( pb_get_https_proxy(user) )
         {
-            curl_easy_setopt(s, CURLOPT_PROXY, proxies[HTTPS_PROXY]);
+            curl_easy_setopt(s, CURLOPT_PROXY, pb_get_https_proxy(user) );
+        }
+
+        if ( pb_get_curl_timeout(user) )
+        {
+            curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_get_curl_timeout(user) );
         }
 
 
@@ -218,7 +231,7 @@ unsigned short pb_post(char         *result,
         if ( r != CURLE_OK )
         {
             #ifdef __DEBUG__
-            fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_perform() failed: %s", __func__, curl_easy_strerror(r) );
+            fprintf(stderr, "\e[1;31m[%s]\e[0m curl_easy_perform() failed: %s\n", __func__, curl_easy_strerror(r) );
             #endif
 
             return (http_code);
@@ -230,7 +243,7 @@ unsigned short pb_post(char         *result,
     else
     {
         #ifdef __DEBUG__
-        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.", __func__);
+        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.\n", __func__);
         #endif
 
         return (0);
@@ -249,10 +262,9 @@ unsigned short pb_post(char         *result,
 
 
 
-unsigned short pb_delete(char       *result,
-                         const char *url_request,
-                         const char *token_key,
-                         const char proxies[NUMBER_PROXIES][PROXY_MAX_LENGTH]
+unsigned short pb_delete(char               *result,
+                         const char         *url_request,
+                         const pb_user_t    user
                          )
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
@@ -283,14 +295,19 @@ unsigned short pb_delete(char       *result,
          *  Specify the HTTP header
          */
         curl_easy_setopt(s, CURLOPT_URL, url_request);
-        curl_easy_setopt(s, CURLOPT_USERPWD, token_key);
+        curl_easy_setopt(s, CURLOPT_USERPWD, user.token_key);
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
         curl_easy_setopt(s, CURLOPT_WRITEDATA, (void *) &ms);
 
-        if ( strlen(proxies[HTTPS_PROXY]) != 0 )
+        if ( pb_get_https_proxy(user) )
         {
-            curl_easy_setopt(s, CURLOPT_PROXY, proxies[HTTPS_PROXY]);
+            curl_easy_setopt(s, CURLOPT_PROXY, pb_get_https_proxy(user) );
+        }
+
+        if ( pb_get_curl_timeout(user) )
+        {
+            curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_get_curl_timeout(user) );
         }
 
 
@@ -310,7 +327,7 @@ unsigned short pb_delete(char       *result,
         if ( r != CURLE_OK )
         {
             #ifdef __DEBUG__
-            fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_perform() failed: %s", __func__, curl_easy_strerror(r) );
+            fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_perform() failed: %s\n", __func__, curl_easy_strerror(r) );
             #endif
 
             return (http_code);
@@ -322,7 +339,7 @@ unsigned short pb_delete(char       *result,
     else
     {
         #ifdef __DEBUG__
-        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.", __func__);
+        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.\n", __func__);
         #endif
 
         return (0);
