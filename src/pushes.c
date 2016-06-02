@@ -34,11 +34,11 @@ static const char* _create_note(const char  *title,
 
 
     // Create the root
-    root       = json_object_new_object();
+    root        = json_object_new_object();
 
 
     // Add type
-    jstr_type  = json_object_new_string("note");
+    jstr_type   = json_object_new_string("note");
 
 
     json_object_object_add(root, "type", jstr_type);
@@ -94,9 +94,9 @@ static const char* _create_link(const char  *title,
 
 
     // If we do not have an URL, it is simply a note, so we send one
-    if (url == NULL)
+    if ( url == NULL )
     {
-        return _create_note(title, body, device_iden);
+        return (_create_note(title, body, device_iden) );
     }
 
 
