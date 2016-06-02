@@ -18,12 +18,13 @@ extern "C" {
 
 
 /**
- * \brief      Download the user's informations from PushBullet using its API
+ * \brief       Download the user's informations from PushBullet using its API
  *
- * \param      user_to_fill  The user structure that we fill
- * \param      token_key     The user's token key
+ * \param[out]  user_to_fill  The user structure that we fill
+ * \param[in]   token_key     The user's token key
+ * \param[in]   config        The JSON configuration
  *
- * \return     HTTP status code
+ * \return      HTTP status code
  */
 unsigned short pb_get_user_info(pb_user_t *user_to_fill, const char *token_key, const json_object *config);
 
@@ -79,7 +80,7 @@ int pb_get_curl_timeout(const pb_user_t user);
 /**
  * \brief      Get the user token key from the configuration
  *
- * \param[in]  config_json  The JSON configuration
+ * \param[in]  config  The JSON configuration
  *
  * \return     User token key
  */

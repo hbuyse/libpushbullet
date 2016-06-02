@@ -22,7 +22,7 @@ extern "C" {
  *
  * \param      result       The result buffer
  * \param      url_request  The url request
- * \param      token_key    The user token key
+ * \param      user         The user informations
  *
  * \return     HTTP status code
  */
@@ -47,7 +47,7 @@ unsigned short pb_post(char *result, const char *url_request, const pb_user_t us
  *
  * \param      result       The result buffer
  * \param      url_request  The url request with the data we want to delete (url_encoded)
- * \param      token_key    The user token key
+ * \param      user         The user informations
  *
  * \return     HTTP status code
  */
