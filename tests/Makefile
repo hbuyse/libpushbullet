@@ -21,10 +21,11 @@ DIR_DEP     = $(DIR_TARGET)/dep
 
 $(shell mkdir -p $(DIR_SRC) $(DIR_OBJ) $(DIR_DEP))
 
+PB_LIB   = $(DIR_PB_LIB)/libpushbullet.a
 
 CFLAGS  += -W -Wall -Wextra -Wno-unused-function -fmessage-length=0 -D_REENTRANT -I $(DIR_INC) $(shell pkg-config --cflags json-c)
 CFLAGS  += -I $(DIR_PB_INC)
-LDFLAGS += $(DIR_PB_LIB)/libpushbullet.a -lcurl $(shell pkg-config --libs json-c)
+LDFLAGS += $(PB_LIB) -lcurl $(shell pkg-config --libs json-c)
 
 
 SRC      = $(shell find $(DIR_SRC) -name '*.c' | sort)
@@ -71,9 +72,12 @@ all: test
 
 test: $(EXEC)
 
-$(EXEC): $(OBJ)
+$(EXEC): $(PB_LIB) $(OBJ)
 	@ echo "\t\033[1;35m[LD]\t[$(OPTIM)]\t$@\033[0m"
 	$(VERBOSE) $(LD) $^ -o $@ $(LDFLAGS)
+
+$(PB_LIB):
+	$(VERBOSE) make -C .. OPTIM=NONE $(DIR_TARGET)/lib/libpushbullet.a
 
 
 # Include of the dependencies generated in %.o
