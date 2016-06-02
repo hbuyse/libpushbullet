@@ -339,14 +339,14 @@ int pb_get_curl_timeout(const pb_user_t user)
 
 
 
-const char* pb_get_token_key(const pb_user_t user)
+const char* pb_get_token_key(const json_object *config)
 {
-    if ( user.config == NULL )
+    if ( config == NULL )
     {
         return (NULL);
     }
 
-    json_object_object_foreach(user.config, key, val)
+    json_object_object_foreach( (json_object *) config, key, val)
     {
         if ( (strcmp(key, "token_key") == 0) )
         {

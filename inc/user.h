@@ -83,7 +83,7 @@ int pb_get_curl_timeout(const pb_user_t user);
  *
  * \return     User token key
  */
-const char* pb_get_token_key(const pb_user_t user);
+const char* pb_get_token_key(const json_object *config);
 
 
 
