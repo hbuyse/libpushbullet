@@ -376,6 +376,47 @@ MU_TEST(test_push_link)
 }
 
 
+MU_TEST(test_get_config_json)
+{
+    json_object     *config = NULL;
+
+
+    // No path given
+    config  = pb_get_config_json(NULL);
+    mu_check(config == NULL);
+
+
+    // Open non existing file
+    config  = pb_get_config_json("tests/config.json");
+    mu_check(config == NULL);
+
+
+    // Open directory
+    config  = pb_get_config_json("tests/conf/");
+    mu_check(config == NULL);
+
+
+    // Open non existing file
+    config  = pb_get_config_json("tests/conf/null.json");
+    mu_check(config == NULL);
+
+
+    // Open existing but empty file
+    config  = pb_get_config_json("tests/conf/empty.json");
+    mu_check(config == NULL);
+
+
+    // Open existing but empty JSON file
+    config  = pb_get_config_json("tests/conf/empty_json.json");
+    mu_check(config == NULL);
+
+
+    // Open JSON File
+    config  = pb_get_config_json("tests/conf/config.json");
+    mu_check(config != NULL);
+}
+
+
 MU_TEST_SUITE(test_user)
 {
     MU_SUITE_CONFIGURE(&setup_user, NULL);
@@ -426,6 +467,14 @@ MU_TEST_SUITE(test_pushes)
     MU_RUN_TEST(test_push_note);
     fprintf(stdout, "\n\e[1m[test_push_link]\e[0m\t");
     MU_RUN_TEST(test_push_link);
+}
+
+
+MU_TEST_SUITE(test_config)
+{
+    // Test
+    fprintf(stdout, "\n\e[1m[test_get_config_json]\e[0m\t");
+    MU_RUN_TEST(test_get_config_json);
 }
 
 
@@ -496,6 +545,9 @@ int main(int    argc,
 
 
     // MU_RUN_SUITE(test_pushes);
+    MU_RUN_SUITE(test_config);
+
+
 
 
     // Print the report
