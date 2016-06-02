@@ -16,13 +16,13 @@
 
 
 /**
- * \brief      Get a JSON note to send with \a pb_post
+ * @brief      Get a JSON note to send with \a pb_post
  *
- * \param[in]  title        The title
- * \param[in]  body         The body
- * \param[in]  device_iden  The device identification
+ * @param[in]  title        The title
+ * @param[in]  body         The body
+ * @param[in]  device_iden  The device identification
  *
- * \return     A string containing the JSON note
+ * @return     A string containing the JSON note
  */
 static const char* _create_note(const char  *title,
                                 const char  *body,
@@ -75,13 +75,13 @@ static const char* _create_note(const char  *title,
 
 
 /**
- * \brief      Get a JSON link to send with \a pb_post
+ * @brief      Get a JSON link to send with \a pb_post
  *
- * \param[in]  title        The title
- * \param[in]  body         The body
- * \param[in]  device_iden  The device identification
+ * @param[in]  title        The title
+ * @param[in]  body         The body
+ * @param[in]  device_iden  The device identification
  *
- * \return     A string containing the JSON link
+ * @return     A string containing the JSON link
  */
 static const char* _create_link(const char  *title,
                                 const char  *body,

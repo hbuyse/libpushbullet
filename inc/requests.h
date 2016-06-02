@@ -18,38 +18,38 @@ extern "C" {
 
 
 /**
- * \brief      GET request for the PushBullet API
+ * @brief      GET request for the PushBullet API
  *
- * \param      result       The result buffer
- * \param      url_request  The url request
- * \param      user         The user informations
+ * @param      result       The result buffer
+ * @param      url_request  The url request
+ * @param      user         The user informations
  *
- * \return     HTTP status code
+ * @return     HTTP status code
  */
 unsigned short pb_get(char *result, const char *url_request, const pb_user_t user);
 
 
 /**
- * \brief      POST request for the PushBullet API
+ * @brief      POST request for the PushBullet API
  *
- * \param      result       The result buffer
- * \param      url_request  The url request
- * \param      user         The user informations
- * \param      data         The data that we send
+ * @param      result       The result buffer
+ * @param      url_request  The url request
+ * @param      user         The user informations
+ * @param      data         The data that we send
  *
- * \return     HTTP status code
+ * @return     HTTP status code
  */
 unsigned short pb_post(char *result, const char *url_request, const pb_user_t user, const char *data);
 
 
 /**
- * \brief      DELETE request for the PushBullet API
+ * @brief      DELETE request for the PushBullet API
  *
- * \param      result       The result buffer
- * \param      url_request  The url request with the data we want to delete (url_encoded)
- * \param      user         The user informations
+ * @param      result       The result buffer
+ * @param      url_request  The url request with the data we want to delete (url_encoded)
+ * @param      user         The user informations
  *
- * \return     HTTP status code
+ * @return     HTTP status code
  */
 unsigned short pb_delete(char *result, const char *url_request, const pb_user_t user);
 

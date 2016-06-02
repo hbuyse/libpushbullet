@@ -17,56 +17,56 @@
 
 
 /**
- * \def MAX_SIZE_BUF
+ * @def MAX_SIZE_BUF
  * Maximum size of the buffer (4ko - 4096 - 0x1000)
  */
 #define     MAX_SIZE_BUF 0x1000
 
 
 /**
- * \def DEVICES_JSON_KEY
+ * @def DEVICES_JSON_KEY
  * String defining the "devices" key
  */
 #define DEVICES_JSON_KEY "devices"
 
 
 /**
- * \def ACTIVE_JSON_KEY
+ * @def ACTIVE_JSON_KEY
  * String defining the "active" key
  */
 #define ACTIVE_JSON_KEY "active"
 
 
 /**
- * \def KIND_JSON_KEY
+ * @def KIND_JSON_KEY
  * String defining the "kind" key
  */
 #define KIND_JSON_KEY "kind"
 
 
 /**
- * \def ANDROID_KIND
+ * @def ANDROID_KIND
  * String defining the "android" key
  */
 #define ANDROID_KIND "android"
 
 
 /**
- * \def CHROME_KIND
+ * @def CHROME_KIND
  * String defining the "chrome" key
  */
 #define CHROME_KIND "chrome"
 
 
 /**
- * \def IPHONE_KIND
+ * @def IPHONE_KIND
  * String defining the "iphone" key
  */
 #define IPHONE_KIND "iphone"
 
 
 /**
- * \def      JSON_ASSOCIATE(type, var, k)
+ * @def      JSON_ASSOCIATE(type, var, k)
  * Macro to associate a key in a structure
  */
 #define     JSON_ASSOCIATE(type, var, k)          \
@@ -74,10 +74,10 @@
 
 
 /**
- * \brief      Fill the browser structure with the informations contained in the JSON object
+ * @brief      Fill the browser structure with the informations contained in the JSON object
  *
- * \param[out]  browser  The browser structure we fill
- * \param[in]  json_obj  The JSON object
+ * @param[out]  browser  The browser structure we fill
+ * @param[in]  json_obj  The JSON object
  */
 static void _get_browser_device(pb_browser_t        *browser,
                                 const json_object   *json_obj
@@ -106,10 +106,10 @@ static void _get_browser_device(pb_browser_t        *browser,
 
 
 /**
- * \brief      Fill the phone structure with the informations contained in the JSON object
+ * @brief      Fill the phone structure with the informations contained in the JSON object
  *
- * \param[out]  phone  The phone structure we fill
- * \param[in]  json_obj  The JSON object
+ * @param[out]  phone  The phone structure we fill
+ * @param[in]  json_obj  The JSON object
  */
 static void _get_phone_device(pb_phone_t        *phone,
                               const json_object *json_obj
@@ -143,9 +143,9 @@ static void _get_phone_device(pb_phone_t        *phone,
 
 
 /**
- * \brief      Display on stdout the informations about the phone
+ * @brief      Display on stdout the informations about the phone
  *
- * \param[in]  phone  The phone
+ * @param[in]  phone  The phone
  */
 static void _dump_phone_infos(const pb_phone_t phone)
 {
@@ -171,9 +171,9 @@ static void _dump_phone_infos(const pb_phone_t phone)
 
 
 /**
- * \brief      Display on stdout the informations about the browser
+ * @brief      Display on stdout the informations about the browser
  *
- * \param[in]  browser  The browser
+ * @param[in]  browser  The browser
  */
 static void _dump_browser_infos(const pb_browser_t browser)
 {
@@ -193,9 +193,9 @@ static void _dump_browser_infos(const pb_browser_t browser)
 
 
 /**
- * \brief      Display all the devices of a given user
+ * @brief      Display all the devices of a given user
  *
- * \param      user  The user
+ * @param      user  The user
  */
 static void _dump_devices_list(pb_user_t *user)
 {

@@ -22,35 +22,35 @@
 
 
 /**
- * \brief Maximum size of the buffer (4ko - 4096 - 0x1000)
+ * @brief Maximum size of the buffer (4ko - 4096 - 0x1000)
  */
 #define     MAX_SIZE_BUF 0x1000
 
 
 /**
- * \brief      Macro to associate a key in a structure
+ * @brief      Macro to associate a key in a structure
  *
- * \param      type  The type
- * \param      var   The pointer we fill
- * \param      k     The JSON key
+ * @param      type  The type
+ * @param      var   The pointer we fill
+ * @param      k     The JSON key
  */
 #define     JSON_ASSOCIATE(type, var, k)          \
     if ( strcmp(key, # k) == 0 ) {var->k = json_object_get_ ## type(val); }
 
 
 /**
- * \brief      Free a pointer if it exists
+ * @brief      Free a pointer if it exists
  *
- * \param      ptr   The pointer
+ * @param      ptr   The pointer
  */
 #define     FREE(ptr)                             \
     if ( ptr ) {free( (void *) ptr); ptr = NULL; }
 
 
 /**
- * \brief      Dumps all user informations.
+ * @brief      Dumps all user informations.
  *
- * \param[in]  user  The user
+ * @param[in]  user  The user
  */
 static void _dump_user_info(const pb_user_t user)
 {
@@ -69,11 +69,11 @@ static void _dump_user_info(const pb_user_t user)
 
 
 /**
- * \brief      Determines if path is a regular file
+ * @brief      Determines if path is a regular file
  *
- * \param[in]  path  The path to the file
+ * @param[in]  path  The path to the file
  *
- * \return     True if regular file, False otherwise.
+ * @return     True if regular file, False otherwise.
  */
 static unsigned char _is_regular_file(const char *path)
 {

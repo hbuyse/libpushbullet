@@ -19,8 +19,8 @@ extern "C" {
 
 
 /**
- * \enum pb_device_type
- * \brief Device's type
+ * @enum pb_device_type
+ * @brief Device's type
  */
 enum pb_device_type {
     TYPE_ANDROID = 0,          ///< Android
@@ -32,57 +32,57 @@ enum pb_device_type {
 
 
 /**
- * \typedef pb_note_t
- * \brief Type definition of the structure pb_note_s
+ * @typedef pb_note_t
+ * @brief Type definition of the structure pb_note_s
  */
 typedef struct pb_note_s pb_note_t;
 
 
 /**
- * \typedef pb_link_t
- * \brief Type definition of the structure pb_link_s
+ * @typedef pb_link_t
+ * @brief Type definition of the structure pb_link_s
  */
 typedef struct pb_link_s pb_link_t;
 
 
 /**
- * \typedef pb_push_t
- * \brief Type definition of the structure pb_push_s
+ * @typedef pb_push_t
+ * @brief Type definition of the structure pb_push_s
  */
 typedef struct pb_push_s pb_push_t;
 
 
 /**
- * \typedef pb_phone_t
- * \brief Type definition of the structure pb_phone_s
+ * @typedef pb_phone_t
+ * @brief Type definition of the structure pb_phone_s
  */
 typedef struct pb_phone_s pb_phone_t;
 
 
 /**
- * \typedef pb_device_t
- * \brief Type definition of the structure pb_device_s
+ * @typedef pb_device_t
+ * @brief Type definition of the structure pb_device_s
  */
 typedef struct pb_device_s pb_device_t;
 
 
 /**
- * \typedef pb_browser_t
- * \brief Type definition of the structure pb_browser_s
+ * @typedef pb_browser_t
+ * @brief Type definition of the structure pb_browser_s
  */
 typedef struct pb_browser_s pb_browser_t;
 
 
 /**
- * \typedef pb_user_t
- * \brief Type definition of the structure pb_user_s
+ * @typedef pb_user_t
+ * @brief Type definition of the structure pb_user_s
  */
 typedef struct pb_user_s pb_user_t;
 
 
 /**
- * \struct pb_note_s
- * \brief Structure containing all the informations concerning a PushBullet note
+ * @struct pb_note_s
+ * @brief Structure containing all the informations concerning a PushBullet note
  */
 struct pb_note_s {
     char *title;          ///< Push's title
@@ -91,8 +91,8 @@ struct pb_note_s {
 
 
 /**
- * \struct pb_link_s
- * \brief Structure containing all the informations concerning a PushBullet link
+ * @struct pb_link_s
+ * @brief Structure containing all the informations concerning a PushBullet link
  */
 struct pb_link_s {
     char *title;          ///< Push's title
@@ -102,8 +102,8 @@ struct pb_link_s {
 
 
 /**
- * \struct pb_push_s
- * \brief Structure containing all the informations concerning a PushBullet push
+ * @struct pb_push_s
+ * @brief Structure containing all the informations concerning a PushBullet push
  */
 struct pb_push_s {
     unsigned char active;          ///< Push's activity
@@ -126,8 +126,8 @@ struct pb_push_s {
 
 
 /**
- * \struct pb_phone_s
- * \brief Structure containing all the informations concerning a PushBullet phone
+ * @struct pb_phone_s
+ * @brief Structure containing all the informations concerning a PushBullet phone
  */
 struct pb_phone_s {
     unsigned char active;           ///< Activity of the phone
@@ -152,8 +152,8 @@ struct pb_phone_s {
 
 
 /**
- * \struct pb_browser_s
- * \brief Structure containing all the informations concerning a PushBullet browser
+ * @struct pb_browser_s
+ * @brief Structure containing all the informations concerning a PushBullet browser
  */
 struct pb_browser_s {
     unsigned char active;          ///< Activity of the browser
@@ -172,8 +172,8 @@ struct pb_browser_s {
 
 
 /**
- * \struct pb_device_s
- * \brief Element of a linked list containing either a browser or a phone
+ * @struct pb_device_s
+ * @brief Element of a linked list containing either a browser or a phone
  */
 struct pb_device_s {
     unsigned char type_device;          ///< The type of the device
@@ -187,8 +187,8 @@ struct pb_device_s {
 
 
 /**
- * \struct pb_user_s
- * \brief Contains the user informations.
+ * @struct pb_user_s
+ * @brief Contains the user informations.
  */
 struct pb_user_s {
     const char *token_key;          ///< The user's token_key

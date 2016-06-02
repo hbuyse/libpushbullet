@@ -15,9 +15,9 @@
 
 
 /**
- * \struct Memory_struct_s
- * \brief      Chunk of memory used by write_memory_callback.
- * \details    It stores its data and its size.
+ * @struct Memory_struct_s
+ * @brief      Chunk of memory used by write_memory_callback.
+ * @details    It stores its data and its size.
  */
 struct Memory_struct_s {
     char *memory;          ///< Pointer to the memory
