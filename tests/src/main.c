@@ -235,8 +235,48 @@ MU_TEST(test_push_note)
 
 
     // Check the function pb_push_note
-    char     *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
-    mu_check(pb_push_note(result, "Test", "test", NULL, user) == HTTP_OK);
+    char            *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
+
+
+    // Send an empty note
+    pb_note_t       note0   =
+    {
+        .title  = NULL,
+        .body   = NULL
+    };
+    mu_check(pb_push_note(result, note0, NULL, user) == HTTP_OK);
+
+
+    // Send a note with no title
+    pb_note_t     note1     =
+    {
+        .title  = NULL,
+        .body   = "Empty title"
+    };
+    mu_check(pb_push_note(result, note1, NULL, user) == HTTP_OK);
+
+
+    // Send a note with an empty body
+    pb_note_t     note2     =
+    {
+        .title  = "Empty body",
+        .body   = NULL
+    };
+    mu_check(pb_push_note(result, note2, NULL, user) == HTTP_OK);
+
+
+    // Send a good note
+    pb_note_t     note3     =
+    {
+        .title  = "Test",
+        .body   = "test"
+    };
+    mu_check(pb_push_note(result, note3, NULL, user) == HTTP_OK);
+
+    if ( result )
+    {
+        free(result);
+    }
 }
 
 
@@ -247,8 +287,92 @@ MU_TEST(test_push_link)
 
 
     // Check the function pb_push_link
-    char     *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
-    mu_check(pb_push_link(result, "Test", "test", "http://www.google.fr", NULL, user) == HTTP_OK);
+    char            *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
+
+
+    // Send an empty link
+    pb_link_t       link0   =
+    {
+        .title  = NULL,
+        .body   = NULL,
+        .url    = NULL
+    };
+    mu_check(pb_push_link(result, link0, NULL, user) == HTTP_OK);
+
+
+    // Send a link with a title only
+    pb_link_t     link1     =
+    {
+        .title  = "Only title",
+        .body   = NULL,
+        .url    = NULL
+    };
+    mu_check(pb_push_link(result, link1, NULL, user) == HTTP_OK);
+
+
+    // Send a link with a body only
+    pb_link_t     link2     =
+    {
+        .title  = NULL,
+        .body   = "Only body",
+        .url    = NULL
+    };
+    mu_check(pb_push_link(result, link2, NULL, user) == HTTP_OK);
+
+
+    // Send a link with an url only
+    pb_link_t     link3     =
+    {
+        .title  = NULL,
+        .body   = NULL,
+        .url    = "https://www.google.com"
+    };
+    mu_check(pb_push_link(result, link3, NULL, user) == HTTP_OK);
+
+
+    // Send a link witout title
+    pb_link_t     link4     =
+    {
+        .title  = NULL,
+        .body   = "Body",
+        .url    = "https://www.google.com"
+    };
+    mu_check(pb_push_link(result, link4, NULL, user) == HTTP_OK);
+
+
+    // Send a link witout body
+    pb_link_t     link5     =
+    {
+        .title  = "Title",
+        .body   = NULL,
+        .url    = "https://www.google.com"
+    };
+    mu_check(pb_push_link(result, link5, NULL, user) == HTTP_OK);
+
+
+    // Send a link witout body
+    pb_link_t     link6     =
+    {
+        .title  = "Title",
+        .body   = "Body",
+        .url    = NULL
+    };
+    mu_check(pb_push_link(result, link6, NULL, user) == HTTP_OK);
+
+
+    // Send a link witout body
+    pb_link_t     link7     =
+    {
+        .title  = "Title",
+        .body   = "Body",
+        .url    = "https://www.google.com"
+    };
+    mu_check(pb_push_link(result, link7, NULL, user) == HTTP_OK);
+
+    if ( result )
+    {
+        free(result);
+    }
 }
 
 
