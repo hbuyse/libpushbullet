@@ -49,7 +49,7 @@ json_object* pb_get_config_json(const char *path);
 /**
  * \brief      Get the HTTP proxy from the configuration
  *
- * \param[in]  config_json  The JSON configuration
+ * \param[in]  user  The user having the configuration
  *
  * \return     HTTP proxy
  */
@@ -59,7 +59,7 @@ const char* pb_get_http_proxy(const pb_user_t user);
 /**
  * \brief      Get the HTTPS proxy from the configuration
  *
- * \param[in]  config_json  The JSON configuration
+ * \param[in]  user  The user having the configuration
  *
  * \return     HTTPS proxy
  */
@@ -69,7 +69,7 @@ const char* pb_get_https_proxy(const pb_user_t user);
 /**
  * \brief      Get the CURL timeout from the configuration
  *
- * \param[in]  config_json  The JSON configuration
+ * \param[in]  user  The user having the configuration
  *
  * \return     CURL timeout
  */
