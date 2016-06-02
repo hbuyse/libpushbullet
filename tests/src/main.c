@@ -444,56 +444,56 @@ MU_TEST(test_get_http_proxy)
 
 
     // No path given
-    pb_get_user_info(&user, NULL, NULL);
+    user.config = config;
     http_proxy  = pb_get_http_proxy(user);
     mu_check(http_proxy == NULL);
 
 
     // Open directory
-    config  = pb_get_config_json("tests/conf/");
-    pb_get_user_info(&user, NULL, config);
+    config      = pb_get_config_json("tests/conf/");
+    user.config = config;
     http_proxy  = pb_get_http_proxy(user);
     mu_check(http_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/null.json");
-    pb_get_user_info(&user, NULL, config);
+    user.config = config;
     http_proxy  = pb_get_http_proxy(user);
     mu_check(http_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/empty.json");
-    pb_get_user_info(&user, NULL, config);
+    user.config = config;
     http_proxy  = pb_get_http_proxy(user);
     mu_check(http_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/empty_json.json");
-    pb_get_user_info(&user, NULL, config);
+    user.config = config;
     http_proxy  = pb_get_http_proxy(user);
     mu_check(http_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/curl_timeout.json");
-    pb_get_user_info(&user, NULL, config);
+    user.config = config;
     http_proxy  = pb_get_http_proxy(user);
     mu_check(http_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/token_key.json");
-    pb_get_user_info(&user, NULL, config);
+    user.config = config;
     http_proxy  = pb_get_http_proxy(user);
     mu_check(http_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/proxies.json");
-    pb_get_user_info(&user, NULL, config);
+    user.config = config;
     http_proxy  = pb_get_http_proxy(user);
     mu_check(http_proxy != NULL);
     mu_check(strcmp(http_proxy, HTTP_PROXY) == 0);
@@ -501,7 +501,7 @@ MU_TEST(test_get_http_proxy)
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/config.json");
-    pb_get_user_info(&user, NULL, config);
+    user.config = config;
     http_proxy  = pb_get_http_proxy(user);
     mu_check(http_proxy != NULL);
     mu_check(strcmp(http_proxy, HTTP_PROXY) == 0);
@@ -510,70 +510,70 @@ MU_TEST(test_get_http_proxy)
 
 MU_TEST(test_get_https_proxy)
 {
-    json_object     *config     = NULL;
-    const char      *https_proxy = NULL;
+    json_object     *config         = NULL;
+    const char      *https_proxy    = NULL;
 
 
     // No path given
-    pb_get_user_info(&user, NULL, NULL);
-    https_proxy  = pb_get_https_proxy(user);
+    user.config = config;
+    https_proxy = pb_get_https_proxy(user);
     mu_check(https_proxy == NULL);
 
 
     // Open directory
-    config  = pb_get_config_json("tests/conf/");
-    pb_get_user_info(&user, NULL, config);
-    https_proxy  = pb_get_https_proxy(user);
+    config      = pb_get_config_json("tests/conf/");
+    user.config = config;
+    https_proxy = pb_get_https_proxy(user);
     mu_check(https_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/null.json");
-    pb_get_user_info(&user, NULL, config);
-    https_proxy  = pb_get_https_proxy(user);
+    user.config = config;
+    https_proxy = pb_get_https_proxy(user);
     mu_check(https_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/empty.json");
-    pb_get_user_info(&user, NULL, config);
-    https_proxy  = pb_get_https_proxy(user);
+    user.config = config;
+    https_proxy = pb_get_https_proxy(user);
     mu_check(https_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/empty_json.json");
-    pb_get_user_info(&user, NULL, config);
-    https_proxy  = pb_get_https_proxy(user);
+    user.config = config;
+    https_proxy = pb_get_https_proxy(user);
     mu_check(https_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/curl_timeout.json");
-    pb_get_user_info(&user, NULL, config);
-    https_proxy  = pb_get_https_proxy(user);
+    user.config = config;
+    https_proxy = pb_get_https_proxy(user);
     mu_check(https_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/token_key.json");
-    pb_get_user_info(&user, NULL, config);
-    https_proxy  = pb_get_https_proxy(user);
+    user.config = config;
+    https_proxy = pb_get_https_proxy(user);
     mu_check(https_proxy == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/proxies.json");
-    pb_get_user_info(&user, NULL, config);
-    https_proxy  = pb_get_https_proxy(user);
+    user.config = config;
+    https_proxy = pb_get_https_proxy(user);
     mu_check(https_proxy != NULL);
     mu_check(strcmp(https_proxy, HTTPS_PROXY) == 0);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/config.json");
-    pb_get_user_info(&user, NULL, config);
-    https_proxy  = pb_get_https_proxy(user);
+    user.config = config;
+    https_proxy = pb_get_https_proxy(user);
     mu_check(https_proxy != NULL);
     mu_check(strcmp(https_proxy, HTTPS_PROXY) == 0);
 }
@@ -581,69 +581,69 @@ MU_TEST(test_get_https_proxy)
 
 MU_TEST(test_get_curl_timeout)
 {
-    json_object     *config     = NULL;
-    int      curl_timeout = 0;
+    json_object     *config         = NULL;
+    int             curl_timeout    = 0;
 
 
     // No path given
-    pb_get_user_info(&user, NULL, NULL);
-    curl_timeout  = pb_get_curl_timeout(user);
+    user.config     = config;
+    curl_timeout    = pb_get_curl_timeout(user);
     mu_check(curl_timeout == 0);
 
 
     // Open directory
-    config  = pb_get_config_json("tests/conf/");
-    pb_get_user_info(&user, NULL, config);
-    curl_timeout  = pb_get_curl_timeout(user);
+    config          = pb_get_config_json("tests/conf/");
+    user.config     = config;
+    curl_timeout    = pb_get_curl_timeout(user);
     mu_check(curl_timeout == 0);
 
 
     // Open JSON File
-    config      = pb_get_config_json("tests/conf/null.json");
-    pb_get_user_info(&user, NULL, config);
-    curl_timeout  = pb_get_curl_timeout(user);
+    config          = pb_get_config_json("tests/conf/null.json");
+    user.config     = config;
+    curl_timeout    = pb_get_curl_timeout(user);
     mu_check(curl_timeout == 0);
 
 
     // Open JSON File
-    config      = pb_get_config_json("tests/conf/empty.json");
-    pb_get_user_info(&user, NULL, config);
-    curl_timeout  = pb_get_curl_timeout(user);
+    config          = pb_get_config_json("tests/conf/empty.json");
+    user.config     = config;
+    curl_timeout    = pb_get_curl_timeout(user);
     mu_check(curl_timeout == 0);
 
 
     // Open JSON File
-    config      = pb_get_config_json("tests/conf/empty_json.json");
-    pb_get_user_info(&user, NULL, config);
-    curl_timeout  = pb_get_curl_timeout(user);
+    config          = pb_get_config_json("tests/conf/empty_json.json");
+    user.config     = config;
+    curl_timeout    = pb_get_curl_timeout(user);
     mu_check(curl_timeout == 0);
 
 
     // Open JSON File
-    config      = pb_get_config_json("tests/conf/proxies.json");
-    pb_get_user_info(&user, NULL, config);
-    curl_timeout  = pb_get_curl_timeout(user);
+    config          = pb_get_config_json("tests/conf/proxies.json");
+    user.config     = config;
+    curl_timeout    = pb_get_curl_timeout(user);
     mu_check(curl_timeout == 0);
 
 
     // Open JSON File
-    config      = pb_get_config_json("tests/conf/token_key.json");
-    pb_get_user_info(&user, NULL, config);
-    curl_timeout  = pb_get_curl_timeout(user);
+    config          = pb_get_config_json("tests/conf/token_key.json");
+    user.config     = config;
+    curl_timeout    = pb_get_curl_timeout(user);
     mu_check(curl_timeout == 0);
 
 
     // Open JSON File
-    config      = pb_get_config_json("tests/conf/curl_timeout.json");
-    pb_get_user_info(&user, NULL, config);
-    curl_timeout  = pb_get_curl_timeout(user);
+    config          = pb_get_config_json("tests/conf/curl_timeout.json");
+    user.config     = config;
+    curl_timeout    = pb_get_curl_timeout(user);
     mu_check(curl_timeout == CURL_TIMEOUT);
 
 
     // Open JSON File
-    config      = pb_get_config_json("tests/conf/config.json");
-    pb_get_user_info(&user, NULL, config);
-    curl_timeout  = pb_get_curl_timeout(user);
+    config          = pb_get_config_json("tests/conf/config.json");
+    user.config     = config;
+    curl_timeout    = pb_get_curl_timeout(user);
     mu_check(curl_timeout == CURL_TIMEOUT);
 }
 
@@ -651,60 +651,60 @@ MU_TEST(test_get_curl_timeout)
 MU_TEST(test_get_token_key)
 {
     json_object     *config     = NULL;
-    const char      *token_key = NULL;
+    const char      *token_key  = NULL;
 
 
     // No path given
-    token_key  = pb_get_token_key(NULL);
+    token_key   = pb_get_token_key(NULL);
     mu_check(token_key == NULL);
 
 
     // Open directory
-    config  = pb_get_config_json("tests/conf/");
-    token_key  = pb_get_token_key(config);
+    config      = pb_get_config_json("tests/conf/");
+    token_key   = pb_get_token_key(config);
     mu_check(token_key == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/null.json");
-    token_key  = pb_get_token_key(config);
+    token_key   = pb_get_token_key(config);
     mu_check(token_key == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/empty.json");
-    token_key  = pb_get_token_key(config);
+    token_key   = pb_get_token_key(config);
     mu_check(token_key == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/empty_json.json");
-    token_key  = pb_get_token_key(config);
+    token_key   = pb_get_token_key(config);
     mu_check(token_key == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/curl_timeout.json");
-    token_key  = pb_get_token_key(config);
+    token_key   = pb_get_token_key(config);
     mu_check(token_key == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/proxies.json");
-    token_key  = pb_get_token_key(config);
+    token_key   = pb_get_token_key(config);
     mu_check(token_key == NULL);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/token_key.json");
-    token_key  = pb_get_token_key(config);
+    token_key   = pb_get_token_key(config);
     mu_check(token_key != NULL);
     mu_check(strcmp(token_key, TOKEN_KEY) == 0);
 
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/config.json");
-    token_key  = pb_get_token_key(config);
+    token_key   = pb_get_token_key(config);
     mu_check(token_key != NULL);
     mu_check(strcmp(token_key, TOKEN_KEY) == 0);
 }
