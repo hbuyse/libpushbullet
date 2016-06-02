@@ -50,7 +50,7 @@ void setup_devices(void)
 {
     memset(&user, 0, sizeof(pb_user_t) );
 
-    res = pb_get_user_info(&user, token_key);
+    res = pb_get_user_info(&user, token_key, NULL);
     mu_check(res == HTTP_OK);
 }
 
@@ -63,7 +63,7 @@ void setup(void)
 {
     memset(&user, 0, sizeof(pb_user_t) );
 
-    res = pb_get_user_info(&user, token_key);
+    res = pb_get_user_info(&user, token_key, NULL);
     mu_check(res == HTTP_OK);
 
     res = pb_get_devices(&user);
@@ -84,7 +84,7 @@ void teardown(void)
 
 MU_TEST(test_get_user_info)
 {
-    res = pb_get_user_info(&user, token_key);
+    res = pb_get_user_info(&user, token_key, NULL);
 
     mu_check(res == HTTP_OK);
 
@@ -110,7 +110,7 @@ MU_TEST(test_free_user)
     // All datas to zero
     memset(&user, 0, sizeof(pb_user_t) );
 
-    res = pb_get_user_info(&user, token_key);
+    res = pb_get_user_info(&user, token_key, NULL);
 
     mu_check(res == HTTP_OK);
 
@@ -182,7 +182,7 @@ MU_TEST(test_free_devices)
 
 
     // Get the user
-    res = pb_get_user_info(&user, token_key);
+    res = pb_get_user_info(&user, token_key, NULL);
 
 
     // Check the results after downloading the user informations
