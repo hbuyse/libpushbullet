@@ -244,7 +244,7 @@ unsigned short pb_get_devices(pb_user_t *user)
     res                 = pb_get(result, API_URL_DEVICES, *user);
 
     #ifdef __DEBUG__
-    fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1m[%s]\e[0m %s\n", __func__, result);
+    fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1;3%dm[%s]\e[0m %s\n", (res == HTTP_OK) ? 2 : 1, __func__, result);
     #endif
 
 
@@ -257,7 +257,7 @@ unsigned short pb_get_devices(pb_user_t *user)
     json_devices_len    = json_object_array_length(json_devices);
 
     #ifdef __DEBUG__
-    fprintf(stdout, "\e[1m[%s]\e[0m json_devices_len : %d\n", __func__, json_devices_len);
+    fprintf(stdout, "\e[1;32m[%s]\e[0m json_devices_len : %d\n", __func__, json_devices_len);
     #endif
 
 

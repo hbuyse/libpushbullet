@@ -267,7 +267,7 @@ json_object* pb_get_config_json(const char *path)
     }
 
     #ifdef __DEBUG__
-    fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, json_object_to_json_string(config_json) );
+    fprintf(stdout, "\e[1;32m[%s]\e[0m %s\n", __func__, json_object_to_json_string(config_json) );
     #endif
 
 
