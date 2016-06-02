@@ -492,6 +492,13 @@ MU_TEST(test_get_http_proxy)
 
 
     // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty_values.json");
+    user.config = config;
+    http_proxy  = pb_get_http_proxy(user);
+    mu_check(http_proxy == NULL);
+
+
+    // Open JSON File
     config      = pb_get_config_json("tests/conf/proxies.json");
     user.config = config;
     http_proxy  = pb_get_http_proxy(user);
@@ -557,6 +564,13 @@ MU_TEST(test_get_https_proxy)
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/token_key.json");
+    user.config = config;
+    https_proxy = pb_get_https_proxy(user);
+    mu_check(https_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty_values.json");
     user.config = config;
     https_proxy = pb_get_https_proxy(user);
     mu_check(https_proxy == NULL);
@@ -634,6 +648,13 @@ MU_TEST(test_get_curl_timeout)
 
 
     // Open JSON File
+    config          = pb_get_config_json("tests/conf/empty_values.json");
+    user.config     = config;
+    curl_timeout    = pb_get_curl_timeout(user);
+    mu_check(curl_timeout == 0);
+
+
+    // Open JSON File
     config          = pb_get_config_json("tests/conf/curl_timeout.json");
     user.config     = config;
     curl_timeout    = pb_get_curl_timeout(user);
@@ -691,6 +712,12 @@ MU_TEST(test_get_token_key)
 
     // Open JSON File
     config      = pb_get_config_json("tests/conf/proxies.json");
+    token_key   = pb_get_token_key(config);
+    mu_check(token_key == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty_values.json");
     token_key   = pb_get_token_key(config);
     mu_check(token_key == NULL);
 
