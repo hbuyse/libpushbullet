@@ -13,6 +13,9 @@
 
 DOXYFILE = doxygen/Doxyfile
 
+INPUT = ./inc
+FILE_PATTERNS = *.h
+
 # Specify external repository to link documentation with.
 # This is similar to Doxygen's TAGFILES option, but will automatically link to
 # tags of other repositories already using CodeDocs. List each repository to
