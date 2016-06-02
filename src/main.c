@@ -5,6 +5,7 @@
 
 #include <stdio.h>          // fprintf, stdout, stderr
 #include <stdlib.h>          // exit, EXIT_FAILURE, EXIT_SUCCESS
+#include <string.h>             // memset
 #include <unistd.h>          // getopt, opterr, optarg, optopt, optind
 #include <getopt.h>          // struct option
 
@@ -47,19 +48,21 @@ int main(int    argc,
          char   **argv
          )
 {
-    int                         opt                 = 0;
-    int                         long_index          = 0;
-    char                        *token_key          = NULL;
-    char                        *config_file_path   = NULL;
-    json_object                 *config             = NULL;
+    int                 opt                 = 0;
+    int                 long_index          = 0;
+    char                *token_key          = NULL;
+    json_object         *config             = NULL;
 
-    pb_user_t                   user;
-    unsigned char               res                 = 0;
+    pb_user_t           user;
+    char                *result             = NULL;
+    unsigned char       res                 = 0;
 
+
+    memset(&user, 0, sizeof(pb_user_t) );
 
     opterr = 0;
 
-    static struct option        long_options[]      =
+    static struct option     long_options[] =
     {
         {"help", no_argument, 0, 'h'},
         {"token", required_argument, 0, 't'},
@@ -126,18 +129,20 @@ int main(int    argc,
     }
 
     res = pb_get_user_info(&user, token_key, config);
-    printf("%s\n", pb_get_https_proxy(user) );
-
     res = pb_get_devices(&user);
 
 
-    // char     *result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
+    // result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
     // pb_push_note(result, "Hello", "Hello World", "LGE Nexus 5X", user);
-
-
     // pb_push_link("Google", "Hello World", "http://www.google.fr", pb_get_iden_from_name(user, "LGE Nexus 5X"), user);
 
     pb_free_user(&user);
+
+    if ( result )
+    {
+        free(result);
+        result = NULL;
+    }
 
     return (0);
 }
