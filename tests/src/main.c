@@ -26,6 +26,31 @@
 
 
 /**
+ * \brief HTTP proxy in config file
+ */
+#define     HTTP_PROXY "172.25.0.3:8080"
+
+
+/**
+ * \brief HTTPS proxy in config file
+ */
+#define     HTTPS_PROXY "172.25.0.3:8080"
+
+
+/**
+ * \brief CURL timeout in config file
+ */
+#define     CURL_TIMEOUT 2
+
+
+/**
+ * \brief Token key in config file
+ */
+#define     TOKEN_KEY "toto_is_in_da_place!"
+
+
+
+/**
  * \brief Stores the token key given as option
  */
 static char                 *token_key  = NULL;
@@ -386,11 +411,6 @@ MU_TEST(test_get_config_json)
     mu_check(config == NULL);
 
 
-    // Open non existing file
-    config  = pb_get_config_json("tests/config.json");
-    mu_check(config == NULL);
-
-
     // Open directory
     config  = pb_get_config_json("tests/conf/");
     mu_check(config == NULL);
@@ -414,6 +434,279 @@ MU_TEST(test_get_config_json)
     // Open JSON File
     config  = pb_get_config_json("tests/conf/config.json");
     mu_check(config != NULL);
+}
+
+
+MU_TEST(test_get_http_proxy)
+{
+    json_object     *config     = NULL;
+    const char      *http_proxy = NULL;
+
+
+    // No path given
+    pb_get_user_info(&user, NULL, NULL);
+    http_proxy  = pb_get_http_proxy(user);
+    mu_check(http_proxy == NULL);
+
+
+    // Open directory
+    config  = pb_get_config_json("tests/conf/");
+    pb_get_user_info(&user, NULL, config);
+    http_proxy  = pb_get_http_proxy(user);
+    mu_check(http_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/null.json");
+    pb_get_user_info(&user, NULL, config);
+    http_proxy  = pb_get_http_proxy(user);
+    mu_check(http_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty.json");
+    pb_get_user_info(&user, NULL, config);
+    http_proxy  = pb_get_http_proxy(user);
+    mu_check(http_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty_json.json");
+    pb_get_user_info(&user, NULL, config);
+    http_proxy  = pb_get_http_proxy(user);
+    mu_check(http_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/curl_timeout.json");
+    pb_get_user_info(&user, NULL, config);
+    http_proxy  = pb_get_http_proxy(user);
+    mu_check(http_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/token_key.json");
+    pb_get_user_info(&user, NULL, config);
+    http_proxy  = pb_get_http_proxy(user);
+    mu_check(http_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/proxies.json");
+    pb_get_user_info(&user, NULL, config);
+    http_proxy  = pb_get_http_proxy(user);
+    mu_check(http_proxy != NULL);
+    mu_check(strcmp(http_proxy, HTTP_PROXY) == 0);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/config.json");
+    pb_get_user_info(&user, NULL, config);
+    http_proxy  = pb_get_http_proxy(user);
+    mu_check(http_proxy != NULL);
+    mu_check(strcmp(http_proxy, HTTP_PROXY) == 0);
+}
+
+
+MU_TEST(test_get_https_proxy)
+{
+    json_object     *config     = NULL;
+    const char      *https_proxy = NULL;
+
+
+    // No path given
+    pb_get_user_info(&user, NULL, NULL);
+    https_proxy  = pb_get_https_proxy(user);
+    mu_check(https_proxy == NULL);
+
+
+    // Open directory
+    config  = pb_get_config_json("tests/conf/");
+    pb_get_user_info(&user, NULL, config);
+    https_proxy  = pb_get_https_proxy(user);
+    mu_check(https_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/null.json");
+    pb_get_user_info(&user, NULL, config);
+    https_proxy  = pb_get_https_proxy(user);
+    mu_check(https_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty.json");
+    pb_get_user_info(&user, NULL, config);
+    https_proxy  = pb_get_https_proxy(user);
+    mu_check(https_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty_json.json");
+    pb_get_user_info(&user, NULL, config);
+    https_proxy  = pb_get_https_proxy(user);
+    mu_check(https_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/curl_timeout.json");
+    pb_get_user_info(&user, NULL, config);
+    https_proxy  = pb_get_https_proxy(user);
+    mu_check(https_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/token_key.json");
+    pb_get_user_info(&user, NULL, config);
+    https_proxy  = pb_get_https_proxy(user);
+    mu_check(https_proxy == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/proxies.json");
+    pb_get_user_info(&user, NULL, config);
+    https_proxy  = pb_get_https_proxy(user);
+    mu_check(https_proxy != NULL);
+    mu_check(strcmp(https_proxy, HTTPS_PROXY) == 0);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/config.json");
+    pb_get_user_info(&user, NULL, config);
+    https_proxy  = pb_get_https_proxy(user);
+    mu_check(https_proxy != NULL);
+    mu_check(strcmp(https_proxy, HTTPS_PROXY) == 0);
+}
+
+
+MU_TEST(test_get_curl_timeout)
+{
+    json_object     *config     = NULL;
+    int      curl_timeout = 0;
+
+
+    // No path given
+    pb_get_user_info(&user, NULL, NULL);
+    curl_timeout  = pb_get_curl_timeout(user);
+    mu_check(curl_timeout == 0);
+
+
+    // Open directory
+    config  = pb_get_config_json("tests/conf/");
+    pb_get_user_info(&user, NULL, config);
+    curl_timeout  = pb_get_curl_timeout(user);
+    mu_check(curl_timeout == 0);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/null.json");
+    pb_get_user_info(&user, NULL, config);
+    curl_timeout  = pb_get_curl_timeout(user);
+    mu_check(curl_timeout == 0);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty.json");
+    pb_get_user_info(&user, NULL, config);
+    curl_timeout  = pb_get_curl_timeout(user);
+    mu_check(curl_timeout == 0);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty_json.json");
+    pb_get_user_info(&user, NULL, config);
+    curl_timeout  = pb_get_curl_timeout(user);
+    mu_check(curl_timeout == 0);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/proxies.json");
+    pb_get_user_info(&user, NULL, config);
+    curl_timeout  = pb_get_curl_timeout(user);
+    mu_check(curl_timeout == 0);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/token_key.json");
+    pb_get_user_info(&user, NULL, config);
+    curl_timeout  = pb_get_curl_timeout(user);
+    mu_check(curl_timeout == 0);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/curl_timeout.json");
+    pb_get_user_info(&user, NULL, config);
+    curl_timeout  = pb_get_curl_timeout(user);
+    mu_check(curl_timeout == CURL_TIMEOUT);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/config.json");
+    pb_get_user_info(&user, NULL, config);
+    curl_timeout  = pb_get_curl_timeout(user);
+    mu_check(curl_timeout == CURL_TIMEOUT);
+}
+
+
+MU_TEST(test_get_token_key)
+{
+    json_object     *config     = NULL;
+    const char      *token_key = NULL;
+
+
+    // No path given
+    token_key  = pb_get_token_key(NULL);
+    mu_check(token_key == NULL);
+
+
+    // Open directory
+    config  = pb_get_config_json("tests/conf/");
+    token_key  = pb_get_token_key(config);
+    mu_check(token_key == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/null.json");
+    token_key  = pb_get_token_key(config);
+    mu_check(token_key == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty.json");
+    token_key  = pb_get_token_key(config);
+    mu_check(token_key == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/empty_json.json");
+    token_key  = pb_get_token_key(config);
+    mu_check(token_key == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/curl_timeout.json");
+    token_key  = pb_get_token_key(config);
+    mu_check(token_key == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/proxies.json");
+    token_key  = pb_get_token_key(config);
+    mu_check(token_key == NULL);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/token_key.json");
+    token_key  = pb_get_token_key(config);
+    mu_check(token_key != NULL);
+    mu_check(strcmp(token_key, TOKEN_KEY) == 0);
+
+
+    // Open JSON File
+    config      = pb_get_config_json("tests/conf/config.json");
+    token_key  = pb_get_token_key(config);
+    mu_check(token_key != NULL);
+    mu_check(strcmp(token_key, TOKEN_KEY) == 0);
 }
 
 
@@ -475,6 +768,14 @@ MU_TEST_SUITE(test_config)
     // Test
     fprintf(stdout, "\n\e[1m[test_get_config_json]\e[0m\t");
     MU_RUN_TEST(test_get_config_json);
+    fprintf(stdout, "\n\e[1m[test_get_http_proxy]\e[0m\t");
+    MU_RUN_TEST(test_get_http_proxy);
+    fprintf(stdout, "\n\e[1m[test_get_https_proxy]\e[0m\t");
+    MU_RUN_TEST(test_get_https_proxy);
+    fprintf(stdout, "\n\e[1m[test_get_curl_timeout]\e[0m\t");
+    MU_RUN_TEST(test_get_curl_timeout);
+    fprintf(stdout, "\n\e[1m[test_get_token_key]\e[0m\t");
+    MU_RUN_TEST(test_get_token_key);
 }
 
 
