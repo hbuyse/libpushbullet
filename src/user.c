@@ -290,7 +290,8 @@ const char* pb_get_http_proxy(const pb_user_t user)
     {
         if ( (strcmp(key, "http_proxy") == 0) )
         {
-            return (json_object_get_string(val) );
+            const char * http_proxy = json_object_get_string(val);
+            return ( (strlen(http_proxy) != 0) ? http_proxy : NULL);
         }
     }
 
@@ -310,7 +311,8 @@ const char* pb_get_https_proxy(const pb_user_t user)
     {
         if ( (strcmp(key, "https_proxy") == 0) )
         {
-            return (json_object_get_string(val) );
+            const char * https_proxy = json_object_get_string(val);
+            return ( (strlen(https_proxy) != 0) ? https_proxy : NULL);
         }
     }
 
@@ -350,7 +352,8 @@ const char* pb_get_token_key(const json_object *config)
     {
         if ( (strcmp(key, "token_key") == 0) )
         {
-            return (json_object_get_string(val) );
+            const char * token_key = json_object_get_string(val);
+            return ( (strlen(token_key) != 0) ? token_key : NULL);
         }
     }
 
