@@ -23,14 +23,14 @@ extern "C" {
  * @brief Device's icon
  */
 enum pb_device_icon {
-    ICON_DESKTOP,      ///< Desktop
-    ICON_BROWSER,      ///< Browser
-    ICON_WEBSITE,      ///< Website
-    ICON_LAPTOP,      ///< Laptop
-    ICON_TABLET,      ///< Tablet
-    ICON_PHONE,      ///< Phone
-    ICON_WATCH,      ///< Watch
-    ICON_SYSTEM,      ///< System
+    ICON_DESKTOP,          ///< Desktop
+    ICON_BROWSER,          ///< Browser
+    ICON_WEBSITE,          ///< Website
+    ICON_LAPTOP,          ///< Laptop
+    ICON_TABLET,          ///< Tablet
+    ICON_PHONE,          ///< Phone
+    ICON_WATCH,          ///< Watch
+    ICON_SYSTEM,          ///< System
     ICON_DEVICE          ///< Device
 };
 

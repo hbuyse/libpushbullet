@@ -262,10 +262,15 @@ unsigned short pb_get_devices(pb_user_t *user)
     int                 json_devices_len    = 0;
 
 
-    res                 = pb_get(result, API_URL_DEVICES, *user);
+    res = pb_get(result, API_URL_DEVICES, *user);
 
     #ifdef __DEBUG__
-    fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1;3%dm[%s]\e[37m %u\e[0m %s\n", (res == HTTP_OK) ? 2 : 1, __func__, res, result);
+    fprintf( (res == HTTP_OK) ? stdout : stderr,
+             "\e[1;3%dm[%s]\e[37m %u\e[0m %s\n",
+             (res == HTTP_OK) ? 2 : 1,
+             __func__,
+             res,
+             result);
     #endif
 
 
@@ -431,6 +436,7 @@ const char* pb_get_iden_from_name(const pb_user_t   user,
                 break;
 
             case ICON_BROWSER:
+
                 if ( strcmp(tmp->browser.nickname, name) == 0 )
                 {
                     return (tmp->browser.iden);
