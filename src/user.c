@@ -55,15 +55,15 @@
 static void _dump_user_info(const pb_user_t user)
 {
     // fprintf(stdout, "\e[1mtoken_key =\e[0m %s\n", user.token_key);
-    fprintf(stdout, "\e[1m[%s]\e[0m %s - %s\n", __func__, user.name, user.email);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, user.active);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__, user.created);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__, user.modified);
-    fprintf(stdout, "\e[1m[%s]\e[0m\temail_normalized : %s\n", __func__, user.email_normalized);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tiden : %s\n", __func__, user.iden);
-    fprintf(stdout, "\e[1m[%s]\e[0m\timage_url : %s\n", __func__, user.image_url);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmax_upload_size : %d\n", __func__, user.max_upload_size);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tconfig: %s\n", __func__, json_object_to_json_string(user.config) );
+    fprintf(stdout, "\e[1m[%s]\e[0m %s - %s\n", __func__ + 1, user.name, user.email);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__ + 1, user.active);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__ + 1, user.created);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__ + 1, user.modified);
+    fprintf(stdout, "\e[1m[%s]\e[0m\temail_normalized : %s\n", __func__ + 1, user.email_normalized);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tiden : %s\n", __func__ + 1, user.iden);
+    fprintf(stdout, "\e[1m[%s]\e[0m\timage_url : %s\n", __func__ + 1, user.image_url);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tmax_upload_size : %d\n", __func__ + 1, user.max_upload_size);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tconfig: %s\n", __func__ + 1, json_object_to_json_string(user.config) );
 }
 
 

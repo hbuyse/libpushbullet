@@ -179,20 +179,20 @@ static void _get_phone_device(pb_phone_t        *phone,
  */
 static void _dump_phone_infos(const pb_phone_t phone)
 {
-    fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__, phone.icon[0] - 32, phone.icon + 1, phone.iden);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, phone.active);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__, phone.created);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__, phone.modified);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tnickname : %s\n", __func__, phone.nickname);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tgenerated_nickname : %u\n", __func__, phone.generated_nickname);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmanufacturer : %s\n", __func__, phone.manufacturer);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmodel : %s\n", __func__, phone.model);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tapp_version : %hd\n", __func__, phone.app_version);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tfingerprint : %p\n", __func__, phone.fingerprint);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tpush_token : %s\n", __func__, phone.push_token);
-    fprintf(stdout, "\e[1m[%s]\e[0m\thas_sms : %u\n", __func__, phone.has_sms);
-    fprintf(stdout, "\e[1m[%s]\e[0m\thas_mms : %u\n", __func__, phone.has_mms);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tremote_files : %s\n", __func__, phone.remote_files);
+    fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__ + 1, phone.icon[0] - 32, phone.icon + 1, phone.iden);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__ + 1, phone.active);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__ + 1, phone.created);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__ + 1, phone.modified);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tnickname : %s\n", __func__ + 1, phone.nickname);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tgenerated_nickname : %u\n", __func__ + 1, phone.generated_nickname);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tmanufacturer : %s\n", __func__ + 1, phone.manufacturer);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tmodel : %s\n", __func__ + 1, phone.model);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tapp_version : %hd\n", __func__ + 1, phone.app_version);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tfingerprint : %p\n", __func__ + 1, phone.fingerprint);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tpush_token : %s\n", __func__ + 1, phone.push_token);
+    fprintf(stdout, "\e[1m[%s]\e[0m\thas_sms : %u\n", __func__ + 1, phone.has_sms);
+    fprintf(stdout, "\e[1m[%s]\e[0m\thas_mms : %u\n", __func__ + 1, phone.has_mms);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tremote_files : %s\n", __func__ + 1, phone.remote_files);
 }
 
 
@@ -204,15 +204,15 @@ static void _dump_phone_infos(const pb_phone_t phone)
  */
 static void _dump_browser_infos(const pb_browser_t browser)
 {
-    fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__, browser.icon[0] - 32, browser.icon + 1, browser.iden);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, browser.active);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__, browser.created);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__, browser.modified);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tnickname : %s\n", __func__, browser.nickname);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmanufacturer : %s\n", __func__, browser.manufacturer);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmodel : %s\n", __func__, browser.model);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tapp_version : %hd\n", __func__, browser.app_version);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tpushable : %u\n", __func__, browser.pushable);
+    fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__ + 1, browser.icon[0] - 32, browser.icon + 1, browser.iden);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__ + 1, browser.active);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__ + 1, browser.created);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__ + 1, browser.modified);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tnickname : %s\n", __func__ + 1, browser.nickname);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tmanufacturer : %s\n", __func__ + 1, browser.manufacturer);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tmodel : %s\n", __func__ + 1, browser.model);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tapp_version : %hd\n", __func__ + 1, browser.app_version);
+    fprintf(stdout, "\e[1m[%s]\e[0m\tpushable : %u\n", __func__ + 1, browser.pushable);
 }
 
 
