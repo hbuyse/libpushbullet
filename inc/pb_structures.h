@@ -19,15 +19,19 @@ extern "C" {
 
 
 /**
- * @enum pb_device_type
- * @brief Device's type
+ * @enum pb_device_icon
+ * @brief Device's icon
  */
-enum pb_device_type {
-    TYPE_ANDROID = 0,          ///< Android
-    TYPE_IPHONE,          ///< Iphone
-    TYPE_CHROME,          ///< Chrome
-    TYPE_FIREFOX,          ///< Firefox
-    TYPE_DEVICE          ///< Device
+enum pb_device_icon {
+    ICON_DESKTOP,      ///< Desktop
+    ICON_BROWSER,      ///< Browser
+    ICON_WEBSITE,      ///< Website
+    ICON_LAPTOP,      ///< Laptop
+    ICON_TABLET,      ///< Tablet
+    ICON_PHONE,      ///< Phone
+    ICON_WATCH,      ///< Watch
+    ICON_SYSTEM,      ///< System
+    ICON_DEVICE          ///< Device
 };
 
 
@@ -134,8 +138,6 @@ struct pb_phone_s {
     const char *iden;           ///< Phone's indentification
     double created;           ///< Phone's creation
     double modified;           ///< Phone's modification
-    const char *type;           ///< Phone's type
-    const char *kind;           ///< Phone's kind
     const char *nickname;           ///< Phone's nickname
     unsigned char generated_nickname;          ///< Has the nickname been generated automatically?
     const char *manufacturer;          ///< Phone's manufacturer
@@ -143,7 +145,6 @@ struct pb_phone_s {
     short app_version;          ///< Phone's application version
     json_object *fingerprint;          ///< Phone's fingerprint
     const char *push_token;          ///< Phone's push token
-    unsigned char pushable;          ///< Is the phone pushable?
     unsigned char has_sms;          ///< Can we send SMS?
     unsigned char has_mms;          ///< Can we send MMS?
     const char *icon;          ///< Phone's icon
@@ -159,9 +160,7 @@ struct pb_browser_s {
     unsigned char active;          ///< Activity of the browser
     const char *iden;          ///< Browser's indentification
     double created;          ///< Browser's creation
-    double modified;          ///< Browser's modification
-    const char *type;          ///< Browser's type
-    const char *kind;          ///< Browser's kind
+    double modified;          ///< Browser's modifications
     const char *nickname;          ///< Browser's nickname
     const char *manufacturer;          ///< Browser's manufacturer
     const char *model;          ///< Browser's model

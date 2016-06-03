@@ -11,7 +11,8 @@
 #include <string.h>          // strcmp
 #include <stdio.h>          // fprintf
 
-#include <user.h>          // pb_user_t, pb_get_user_info, pb_free_user
+#include <pb_structures.h>      // pb_user_t, pb_device_t, pb_browser_t, pb_phone_t, ICON_PHONE, ICON_BROWSER
+#include <user.h>          // pb_get_user_info, pb_free_user
 #include <devices.h>          // pb_get_devices
 #include <http_code.h>          // HTTP_OK
 #include <pushes.h>          // pb_push_note, pb_push_link
@@ -174,14 +175,12 @@ MU_TEST(test_get_devices)
     {
         switch ( tmp->type_device )
         {
-            case TYPE_ANDROID:
-            case TYPE_IPHONE:
+            case ICON_PHONE:
                 mu_check(tmp->phone.active == 1);
                 mu_check(strcmp(tmp->phone.icon, "phone") == 0);
                 break;
 
-            case TYPE_CHROME:
-            case TYPE_FIREFOX:
+            case ICON_BROWSER:
                 mu_check(tmp->browser.active == 1);
                 mu_check(strcmp(tmp->browser.icon, "browser") == 0);
                 break;

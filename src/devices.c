@@ -12,7 +12,7 @@
 #include <urls.h>          // API_URL_DEVICES
 #include <requests.h>          // pb_get
 #include <user.h>          // pb_user_t
-#include <pb_structures.h>          // pb_browser_t, pb_phone_t, pb_device_t
+#include <pb_structures.h>          // pb_browser_t, pb_phone_t, pb_device_t, ICON_PHONE, ICON_BROWSER
 #include <http_code.h>          // HTTP_OK
 
 
@@ -38,31 +38,66 @@
 
 
 /**
- * @def KIND_JSON_KEY
- * String defining the "kind" key
+ * @def JSON_KEY_ICON
+ * String defining the "icon" key
  */
-#define KIND_JSON_KEY "kind"
+#define JSON_KEY_ICON "icon"
 
 
 /**
- * @def ANDROID_KIND
- * String defining the "android" key
+ * @def DESKTOP_ICON
+ * String defining the "desktop" key
  */
-#define ANDROID_KIND "android"
+#define DESKTOP_ICON "desktop"
 
 
 /**
- * @def CHROME_KIND
- * String defining the "chrome" key
+ * @def BROWSER_ICON
+ * String defining the "browser" key
  */
-#define CHROME_KIND "chrome"
+#define BROWSER_ICON "browser"
 
 
 /**
- * @def IPHONE_KIND
- * String defining the "iphone" key
+ * @def WEBSITE_ICON
+ * String defining the "website" key
  */
-#define IPHONE_KIND "iphone"
+#define WEBSITE_ICON "website"
+
+
+/**
+ * @def LAPTOP_ICON
+ * String defining the "laptop" key
+ */
+#define LAPTOP_ICON "laptop"
+
+
+/**
+ * @def TABLET_ICON
+ * String defining the "tablet" key
+ */
+#define TABLET_ICON "tablet"
+
+
+/**
+ * @def PHONE_ICON
+ * String defining the "phone" key
+ */
+#define PHONE_ICON "phone"
+
+
+/**
+ * @def WATCH_ICON
+ * String defining the "watch" key
+ */
+#define WATCH_ICON "watch"
+
+
+/**
+ * @def SYSTEM_ICON
+ * String defining the "system" key
+ */
+#define SYSTEM_ICON "system"
 
 
 /**
@@ -89,8 +124,6 @@ static void _get_browser_device(pb_browser_t        *browser,
         JSON_ASSOCIATE(string, browser, iden)
         JSON_ASSOCIATE(double, browser, created)
         JSON_ASSOCIATE(double, browser, modified)
-        JSON_ASSOCIATE(string, browser, type)
-        JSON_ASSOCIATE(string, browser, kind)
         JSON_ASSOCIATE(string, browser, nickname)
         JSON_ASSOCIATE(string, browser, manufacturer)
         JSON_ASSOCIATE(string, browser, model)
@@ -121,8 +154,6 @@ static void _get_phone_device(pb_phone_t        *phone,
         JSON_ASSOCIATE(string, phone, iden)
         JSON_ASSOCIATE(double, phone, created)
         JSON_ASSOCIATE(double, phone, modified)
-        JSON_ASSOCIATE(string, phone, type)
-        JSON_ASSOCIATE(string, phone, kind)
         JSON_ASSOCIATE(string, phone, nickname)
         JSON_ASSOCIATE(boolean, phone, generated_nickname)
         JSON_ASSOCIATE(string, phone, manufacturer)
@@ -131,7 +162,6 @@ static void _get_phone_device(pb_phone_t        *phone,
         JSON_ASSOCIATE(string, phone, push_token)
         JSON_ASSOCIATE(boolean, phone, has_sms)
         JSON_ASSOCIATE(boolean, phone, has_mms)
-        JSON_ASSOCIATE(boolean, phone, pushable)
         JSON_ASSOCIATE(string, phone, icon)
         JSON_ASSOCIATE(string, phone, remote_files)
 
@@ -149,11 +179,10 @@ static void _get_phone_device(pb_phone_t        *phone,
  */
 static void _dump_phone_infos(const pb_phone_t phone)
 {
-    fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__, phone.kind[0] - 32, phone.kind + 1, phone.iden);
+    fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__, phone.icon[0] - 32, phone.icon + 1, phone.iden);
     fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, phone.active);
     fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__, phone.created);
     fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__, phone.modified);
-    fprintf(stdout, "\e[1m[%s]\e[0m\ttype : %s\n", __func__, phone.type);
     fprintf(stdout, "\e[1m[%s]\e[0m\tnickname : %s\n", __func__, phone.nickname);
     fprintf(stdout, "\e[1m[%s]\e[0m\tgenerated_nickname : %u\n", __func__, phone.generated_nickname);
     fprintf(stdout, "\e[1m[%s]\e[0m\tmanufacturer : %s\n", __func__, phone.manufacturer);
@@ -161,10 +190,8 @@ static void _dump_phone_infos(const pb_phone_t phone)
     fprintf(stdout, "\e[1m[%s]\e[0m\tapp_version : %hd\n", __func__, phone.app_version);
     fprintf(stdout, "\e[1m[%s]\e[0m\tfingerprint : %p\n", __func__, phone.fingerprint);
     fprintf(stdout, "\e[1m[%s]\e[0m\tpush_token : %s\n", __func__, phone.push_token);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tpushable : %u\n", __func__, phone.pushable);
     fprintf(stdout, "\e[1m[%s]\e[0m\thas_sms : %u\n", __func__, phone.has_sms);
     fprintf(stdout, "\e[1m[%s]\e[0m\thas_mms : %u\n", __func__, phone.has_mms);
-    fprintf(stdout, "\e[1m[%s]\e[0m\ticon : %s\n", __func__, phone.icon);
     fprintf(stdout, "\e[1m[%s]\e[0m\tremote_files : %s\n", __func__, phone.remote_files);
 }
 
@@ -177,17 +204,15 @@ static void _dump_phone_infos(const pb_phone_t phone)
  */
 static void _dump_browser_infos(const pb_browser_t browser)
 {
-    fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__, browser.kind[0] - 32, browser.kind + 1, browser.iden);
+    fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__, browser.icon[0] - 32, browser.icon + 1, browser.iden);
     fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, browser.active);
     fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__, browser.created);
     fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__, browser.modified);
-    fprintf(stdout, "\e[1m[%s]\e[0m\ttype : %s\n", __func__, browser.type);
     fprintf(stdout, "\e[1m[%s]\e[0m\tnickname : %s\n", __func__, browser.nickname);
     fprintf(stdout, "\e[1m[%s]\e[0m\tmanufacturer : %s\n", __func__, browser.manufacturer);
     fprintf(stdout, "\e[1m[%s]\e[0m\tmodel : %s\n", __func__, browser.model);
     fprintf(stdout, "\e[1m[%s]\e[0m\tapp_version : %hd\n", __func__, browser.app_version);
     fprintf(stdout, "\e[1m[%s]\e[0m\tpushable : %u\n", __func__, browser.pushable);
-    fprintf(stdout, "\e[1m[%s]\e[0m\ticon : %s\n", __func__, browser.icon);
 }
 
 
@@ -206,13 +231,11 @@ static void _dump_devices_list(pb_user_t *user)
     {
         switch ( tmp->type_device )
         {
-            case TYPE_ANDROID:
-            case TYPE_IPHONE:
+            case ICON_PHONE:
                 _dump_phone_infos(tmp->phone);
                 break;
 
-            case TYPE_FIREFOX:
-            case TYPE_CHROME:
+            case ICON_BROWSER:
                 _dump_browser_infos(tmp->browser);
                 break;
 
@@ -288,16 +311,16 @@ unsigned short pb_get_devices(pb_user_t *user)
 
 
         // Get the kind of PushBullet device
-        json_object_object_get_ex(json_value, KIND_JSON_KEY, &json_kind);
+        json_object_object_get_ex(json_value, JSON_KEY_ICON, &json_kind);
 
-        if ( strcmp(json_object_get_string(json_kind), ANDROID_KIND) == 0 )
+        if ( strcmp(json_object_get_string(json_kind), PHONE_ICON) == 0 )
         {
-            device->type_device = TYPE_ANDROID;
+            device->type_device = ICON_PHONE;
             _get_phone_device(&(device->phone), json_value);
         }
-        else if ( strcmp(json_object_get_string(json_kind), CHROME_KIND) == 0 )
+        else if ( strcmp(json_object_get_string(json_kind), BROWSER_ICON) == 0 )
         {
-            device->type_device = TYPE_CHROME;
+            device->type_device = ICON_BROWSER;
             _get_browser_device(&(device->browser), json_value);
         }
 
@@ -393,8 +416,7 @@ const char* pb_get_iden_from_name(const pb_user_t   user,
     {
         switch ( tmp->type_device )
         {
-            case TYPE_ANDROID:
-            case TYPE_IPHONE:
+            case ICON_PHONE:
 
                 if ( strcmp(tmp->phone.nickname, name) == 0 )
                 {
@@ -403,9 +425,7 @@ const char* pb_get_iden_from_name(const pb_user_t   user,
 
                 break;
 
-            case TYPE_FIREFOX:
-            case TYPE_CHROME:
-
+            case ICON_BROWSER:
                 if ( strcmp(tmp->browser.nickname, name) == 0 )
                 {
                     return (tmp->browser.iden);
