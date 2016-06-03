@@ -33,9 +33,6 @@ DEP      = $(shell find $(DIR_DEP) -name '*.d')
 EXECS    = $(filter-out $(DIR_OUT)/$(EXEC), $(foreach var,$(notdir $(SRC:.c=.out)),$(DIR_OUT)/$(var)))
 
 
-$(warning $(EXECS))
-
-
 # Which optimisation?
 OPTIM   ?= DEBUG
 ifeq ($(OPTIM),SIZE)
