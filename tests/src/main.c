@@ -78,25 +78,33 @@ int main(int    argc,
 
     memset(cmd, 0, 256);
     sprintf(cmd, "./tests/out/user.out -t %s", token_key);
-    fprintf(stdout, "\e[7mUSER.OUT\e[0m\n");
+    fprintf(stdout, "\e[1m############################################################\e[0m\n");
+    fprintf(stdout, "\e[1m#                         USER.OUT                         #\e[0m\n");
+    fprintf(stdout, "\e[1m############################################################\e[0m\n");
     res += system(cmd);
 
 
     memset(cmd, 0, 256);
     sprintf(cmd, "./tests/out/devices.out -t %s", token_key);
-    fprintf(stdout, "\e[7mDEVICES.OUT\e[0m\n");
+    fprintf(stdout, "\e[1m############################################################\e[0m\n");
+    fprintf(stdout, "\e[1m#                       DEVICES.OUT                        #\e[0m\n");
+    fprintf(stdout, "\e[1m############################################################\e[0m\n");
     res += system(cmd);
 
 
     memset(cmd, 0, 256);
     sprintf(cmd, "./tests/out/config.out -t %s", token_key);
-    fprintf(stdout, "\e[7mCONFIG.OUT\e[0m\n");
+    fprintf(stdout, "\e[1m############################################################\e[0m\n");
+    fprintf(stdout, "\e[1m#                        CONFIG.OUT                        #\e[0m\n");
+    fprintf(stdout, "\e[1m############################################################\e[0m\n");
     res += system(cmd);
 
 
     memset(cmd, 0, 256);
     sprintf(cmd, "./tests/out/pushes.out -t %s", token_key);
-    fprintf(stdout, "\e[7mPUSHES.OUT\e[0m\n");
+    fprintf(stdout, "\e[1m############################################################\e[0m\n");
+    fprintf(stdout, "\e[1m#                        PUSHES.OUT                        #\e[0m\n");
+    fprintf(stdout, "\e[1m############################################################\e[0m\n");
 
 
     // res += system(cmd);
