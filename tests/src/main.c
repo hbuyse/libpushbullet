@@ -81,7 +81,8 @@ int main(int    argc,
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     fprintf(stdout, "\e[1m#                         USER.OUT                         #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
-    res += system(cmd);
+    res = system(cmd);
+    printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
 
 
     memset(cmd, 0, 256);
@@ -89,7 +90,8 @@ int main(int    argc,
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     fprintf(stdout, "\e[1m#                       DEVICES.OUT                        #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
-    res += system(cmd);
+    res = system(cmd);
+    printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
 
 
     memset(cmd, 0, 256);
@@ -97,7 +99,8 @@ int main(int    argc,
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     fprintf(stdout, "\e[1m#                        CONFIG.OUT                        #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
-    res += system(cmd);
+    res = system(cmd);
+    printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
 
 
     memset(cmd, 0, 256);
@@ -107,7 +110,10 @@ int main(int    argc,
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
 
 
-    // res += system(cmd);
+    // res = system(cmd);
+
+    printf("res = %d\n", res);
+    printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
 
 
     return (res);

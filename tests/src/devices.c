@@ -153,6 +153,14 @@ MU_TEST(test_free_devices)
 
 MU_TEST(test_get_number_active_devices)
 {
+    pb_user_t tmp;
+
+    memset(&tmp, 0, sizeof(pb_user_t));
+
+    mu_check(tmp.devices == NULL);
+    mu_check(pb_get_number_active_devices(tmp) == 0);
+
+
     // Check the results after downloading the devices informations
     mu_check(res == HTTP_OK);
     mu_check(user.devices != NULL);
@@ -161,7 +169,17 @@ MU_TEST(test_get_number_active_devices)
 
 
 MU_TEST(test_get_iden_from_name)
-{
+{    pb_user_t tmp;
+
+    memset(&tmp, 0, sizeof(pb_user_t));
+
+    mu_check(tmp.devices == NULL);
+
+    mu_check(pb_get_iden_from_name(tmp, NULL) == NULL);
+    mu_check(pb_get_iden_from_name(tmp, "null") == NULL);
+    mu_check(pb_get_iden_from_name(tmp, "Chrome") != NULL);
+
+
     // Check the results after downloading the devices informations
     mu_check(res == HTTP_OK);
     mu_check(user.devices != NULL);
