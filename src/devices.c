@@ -128,7 +128,6 @@ static void _get_browser_device(pb_browser_t        *browser,
         JSON_ASSOCIATE(string, browser, manufacturer)
         JSON_ASSOCIATE(string, browser, model)
         JSON_ASSOCIATE(int, browser, app_version)
-        JSON_ASSOCIATE(boolean, browser, pushable)
         JSON_ASSOCIATE(string, browser, icon)
 
 
@@ -212,7 +211,6 @@ static void _dump_browser_infos(const pb_browser_t browser)
     fprintf(stdout, "\e[1m[%s]\e[0m\tmanufacturer : %s\n", __func__ + 1, browser.manufacturer);
     fprintf(stdout, "\e[1m[%s]\e[0m\tmodel : %s\n", __func__ + 1, browser.model);
     fprintf(stdout, "\e[1m[%s]\e[0m\tapp_version : %hd\n", __func__ + 1, browser.app_version);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tpushable : %u\n", __func__ + 1, browser.pushable);
 }
 
 

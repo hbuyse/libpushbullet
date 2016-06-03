@@ -165,7 +165,6 @@ struct pb_browser_s {
     const char *manufacturer;          ///< Browser's manufacturer
     const char *model;          ///< Browser's model
     short app_version;          ///< Browser's application version
-    unsigned char pushable;          ///< Is the browser pushable?
     const char *icon;          ///< Browser's icon
 };
 
