@@ -55,7 +55,7 @@ int main(int    argc,
 
     pb_user_t           user;
     char                *result             = NULL;
-    unsigned char       res                 = 0;
+    unsigned short       res                 = 0;
 
 
     memset(&user, 0, sizeof(pb_user_t) );
