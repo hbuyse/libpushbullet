@@ -113,6 +113,8 @@ unsigned short pb_get_user_info(pb_user_t           *user,
     fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1;3%dm[%s]\e[37m %u\e[0m %s\n", (res == HTTP_OK) ? 2 : 1, __func__, res, result);
     #endif
 
+
+    // If we do not have a 200 OK, we stop the function and we return the HTTP Status code
     if ( res != HTTP_OK )
     {
         return (res);

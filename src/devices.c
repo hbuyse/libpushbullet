@@ -269,6 +269,13 @@ unsigned short pb_get_devices(pb_user_t *user)
     #endif
 
 
+    // If we do not have a 200 OK, we stop the function and we return the HTTP Status code
+    if ( res != HTTP_OK )
+    {
+        return (res);
+    }
+
+
     // Parse the result
     json_obj            = json_tokener_parse(result);
 
