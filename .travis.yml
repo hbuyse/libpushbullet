@@ -22,4 +22,4 @@ before_script:
 
 script:
   - make CC=${CC} LD=${CC} OPTIM=NONE test
-  - ./tests/test.out -t ${PB_TOKEN_KEY}
+  - ./tests/main.out -t ${PB_TOKEN_KEY}

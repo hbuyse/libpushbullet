@@ -1,8 +1,7 @@
 CC          = clang
 LD          = clang
 
-EXEC        = test.out
-
+EXEC        = main.out
 
 TARGET      = $(shell uname -m)
 TARGET_DEF  = __$(shell uname -m | tr [:lower:] [:upper:])__
@@ -18,7 +17,6 @@ DIR_TARGET  = $(DIR_OUT)/$(TARGET)
 DIR_OBJ     = $(DIR_TARGET)/obj
 DIR_DEP     = $(DIR_TARGET)/dep
 
-
 $(shell mkdir -p $(DIR_SRC) $(DIR_OBJ) $(DIR_DEP))
 
 PB_LIB   = $(DIR_PB_LIB)/libpushbullet.a
@@ -32,6 +30,10 @@ SRC      = $(shell find $(DIR_SRC) -name '*.c' | sort)
 OBJ      = $(foreach var,$(notdir $(SRC:.c=.o)),$(DIR_OBJ)/$(var))
 OBJ_LIB  = $(filter-out $(DIR_OBJ)/main.o, $(OBJ))
 DEP      = $(shell find $(DIR_DEP) -name '*.d')
+EXECS    = $(filter-out $(DIR_OUT)/$(EXEC), $(foreach var,$(notdir $(SRC:.c=.out)),$(DIR_OUT)/$(var)))
+
+
+$(warning $(EXECS))
 
 
 # Which optimisation?
@@ -70,9 +72,13 @@ vpath %.c $(DIR_SRC)
 all: test
 
 
-test: $(EXEC)
+test: $(EXECS) $(EXEC)
 
-$(EXEC): $(PB_LIB) $(OBJ)
+%.out: $(PB_LIB) $(DIR_OBJ)/%.o
+	@ echo "\t\033[1;35m[LD]\t[$(OPTIM)]\t$@\033[0m"
+	$(VERBOSE) $(LD) $^ -o $@ $(LDFLAGS)
+
+$(DIR_OUT)/%.out: $(PB_LIB) $(DIR_OBJ)/%.o
 	@ echo "\t\033[1;35m[LD]\t[$(OPTIM)]\t$@\033[0m"
 	$(VERBOSE) $(LD) $^ -o $@ $(LDFLAGS)
 
@@ -105,7 +111,7 @@ d: distclean
 distclean: clean
 	$(VERBOSE) [ ! -d "$(DIR_DEP)" ] || find $(DIR_DEP) -type f -name '*.d' -delete
 	$(VERBOSE) rm -rf $(DIR_OBJ) $(DIR_DEP) $(DIR_OUT)
-	$(VERBOSE) rm -f $(EXEC)
+	$(VERBOSE) rm -f $(EXECS)
 
 
 mrproper: distclean
