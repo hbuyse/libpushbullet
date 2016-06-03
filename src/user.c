@@ -108,8 +108,9 @@ unsigned short pb_get_user_info(pb_user_t           *user,
     // Access the API using the token
     res = pb_get(result, API_URL_ME, *user);
 
+
     #ifdef __DEBUG__
-    fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1;3%dm[%s]\e[0m %s\n", (res == HTTP_OK) ? 2 : 1, __func__, result);
+    fprintf( (res == HTTP_OK) ? stdout : stderr, "\e[1;3%dm[%s]\e[37m %u\e[0m %s\n", (res == HTTP_OK) ? 2 : 1, __func__, res, result);
     #endif
 
     if ( res != HTTP_OK )
