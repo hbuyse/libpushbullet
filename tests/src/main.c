@@ -4,6 +4,7 @@
  *
  * @brief Testing program
  */
+#define _XOPEN_SOURCE
 #include <unistd.h>          // getopt, opterr, optarg, optopt, optind
 #include <getopt.h>          // struct option
 #include <stdlib.h>             // system, exit, EXIT_FAILURE
@@ -82,6 +83,7 @@ int main(int    argc,
     fprintf(stdout, "\e[1m#                         USER.OUT                         #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     res = system(cmd);
+    printf("res = %d\n", res);
     printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
 
 
@@ -91,6 +93,7 @@ int main(int    argc,
     fprintf(stdout, "\e[1m#                       DEVICES.OUT                        #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     res = system(cmd);
+    printf("res = %d\n", res);
     printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
 
 
@@ -100,6 +103,7 @@ int main(int    argc,
     fprintf(stdout, "\e[1m#                        CONFIG.OUT                        #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     res = system(cmd);
+    printf("res = %d\n", res);
     printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
 
 

@@ -14,11 +14,11 @@
 #include <json/json.h>          // json_object, json_tokener_parse, json_object_get_string, json_object_object_foreach,
                                 // json_object_get_int
 
-#include <urls.h>           // API_URL_ME
-#include <requests.h>          // pb_get
-#include <pb_structures.h>          // pb_user_t
-#include <http_code.h>          // HTTP_OK
-#include <devices.h>          // pb_free_devices
+#include <pushbullet/urls.h>           // API_URL_ME
+#include <pushbullet/requests.h>          // pb_get
+#include <pushbullet/structures.h>          // pb_user_t
+#include <pushbullet/http_code.h>          // HTTP_OK
+#include <pushbullet/devices.h>          // pb_free_devices
 
 
 /**

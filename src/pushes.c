@@ -8,11 +8,11 @@
 #include <json/json.h>          // json_object, json_object_new_object, json_object_new_string, json_object_object_add,
                                 // json_object_to_json_string
 
-#include <urls.h>          // API_URL_PUSHES
-#include <user.h>          // pb_user_t
-#include <requests.h>          // pb_port
-#include <http_code.h>          // HTTP_OK
-#include <devices.h>            // pb_get_iden_from_name
+#include <pushbullet/urls.h>          // API_URL_PUSHES
+#include <pushbullet/user.h>          // pb_user_t
+#include <pushbullet/requests.h>          // pb_port
+#include <pushbullet/http_code.h>          // HTTP_OK
+#include <pushbullet/devices.h>            // pb_get_iden_from_name
 
 
 /**

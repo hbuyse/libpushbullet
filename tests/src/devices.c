@@ -169,7 +169,8 @@ MU_TEST(test_get_number_active_devices)
 
 
 MU_TEST(test_get_iden_from_name)
-{    pb_user_t tmp;
+{
+    pb_user_t tmp;
 
     memset(&tmp, 0, sizeof(pb_user_t));
 

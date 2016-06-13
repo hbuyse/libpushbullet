@@ -9,10 +9,10 @@
 #include <unistd.h>          // getopt, opterr, optarg, optopt, optind
 #include <getopt.h>          // struct option
 
-#include <user.h>          // pb_get_user_info
-#include <devices.h>          // pb_get_devices
-#include <http_code.h>          // HTTP_OK
-#include <pushes.h>          // pb_push_note
+#include <pushbullet/user.h>          // pb_get_user_info
+#include <pushbullet/devices.h>          // pb_get_devices
+#include <pushbullet/http_code.h>          // HTTP_OK
+#include <pushbullet/pushes.h>          // pb_push_note
 
 
 /**
