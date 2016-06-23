@@ -11,6 +11,10 @@
 #include <string.h>          // memset
 #include <stdio.h>          // fprintf
 
+#include <test_config.h>     // main_config
+#include <test_user.h>       // main_user
+#include <test_devices.h>     // main_devices
+#include <test_pushes.h>     // main_pushes
 
 int main(int    argc,
          char   *argv[]
@@ -19,7 +23,7 @@ int main(int    argc,
     int                         opt             = 0;
     int                         long_index      = 0;
 
-    char                        cmd[256]; // Buffer for the commands
+    // char                        cmd[256]; // Buffer for the commands
     unsigned char               res             = 0; // Results of the system calls
 
     // Token key
@@ -77,47 +81,29 @@ int main(int    argc,
         }
     }
 
-    memset(cmd, 0, 256);
-    sprintf(cmd, "./tests/out/user.out -t %s", token_key);
+
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     fprintf(stdout, "\e[1m#                         USER.OUT                         #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
-    res = system(cmd);
-    printf("res = %d\n", res);
-    printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
+    res |= main_user(token_key);
 
 
-    memset(cmd, 0, 256);
-    sprintf(cmd, "./tests/out/devices.out -t %s", token_key);
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     fprintf(stdout, "\e[1m#                       DEVICES.OUT                        #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
-    res = system(cmd);
-    printf("res = %d\n", res);
-    printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
+    res |= main_devices(token_key);
 
 
-    memset(cmd, 0, 256);
-    sprintf(cmd, "./tests/out/config.out -t %s", token_key);
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     fprintf(stdout, "\e[1m#                        CONFIG.OUT                        #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
-    res = system(cmd);
-    printf("res = %d\n", res);
-    printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
+    res |= main_config(token_key);
 
 
-    memset(cmd, 0, 256);
-    sprintf(cmd, "./tests/out/pushes.out -t %s", token_key);
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     fprintf(stdout, "\e[1m#                        PUSHES.OUT                        #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
-
-
-    // res = system(cmd);
-
-    printf("res = %d\n", res);
-    printf("WEXITSTATUS(res) : %d\n", WEXITSTATUS(res));
+    // res = main_pushes(token_key);
 
 
     return (res);

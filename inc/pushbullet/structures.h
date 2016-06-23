@@ -1,5 +1,5 @@
 /**
- * @file pb_structures.h
+ * @file structures.h
  * @author hbuyse
  * @date 11/05/2016
  *
@@ -7,8 +7,8 @@
  */
 
 
-#ifndef __PB_STRUCTURES_H__
-#define __PB_STRUCTURES_H__
+#ifndef __STRUCTURES_H__
+#define __STRUCTURES_H__
 
 
 #include <json/json.h>          // json_object

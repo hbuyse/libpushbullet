@@ -66,18 +66,11 @@ endif
 vpath %.c $(DIR_SRC)
 
 
-all: test
+all: $(EXEC)
 
-
-test: $(EXECS) $(EXEC)
-
-%.out: $(PB_LIB) $(DIR_OBJ)/%.o
+$(EXEC): $(OBJ) $(PB_LIB)
 	@ echo "\t\033[1;35m[LD]\t[$(OPTIM)]\t$@\033[0m"
-	$(VERBOSE) $(LD) $^ -o $@ $(LDFLAGS)
-
-$(DIR_OUT)/%.out: $(PB_LIB) $(DIR_OBJ)/%.o
-	@ echo "\t\033[1;35m[LD]\t[$(OPTIM)]\t$@\033[0m"
-	$(VERBOSE) $(LD) $^ -o $@ $(LDFLAGS)
+	$(VERBOSE) $(LD) $(OBJ) -o $@ $(LDFLAGS)	
 
 $(PB_LIB):
 	$(VERBOSE) make -C .. OPTIM=NONE $(DIR_TARGET)/lib/libpushbullet.a
