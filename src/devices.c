@@ -4,7 +4,6 @@
  * @date 08/05/2016
  */
 
-#include <stdio.h>          // fprintf, stdout
 #include <string.h>          // strcmpt
 #include <json/json.h>          // json_object, json_tokener_parse, json_object_object_foreach, json_object_get_array,
                                 // array_list
@@ -14,6 +13,7 @@
 #include <pushbullet/user.h>          // pb_user_t
 #include <pushbullet/structures.h>          // pb_browser_t, pb_phone_t, pb_device_t, ICON_PHONE, ICON_BROWSER
 #include <pushbullet/http_code.h>          // HTTP_OK
+#include <pushbullet/logging.h>             // iprintf, eprintf, cprintf, gprintf
 
 
 /**
@@ -178,20 +178,20 @@ static void _get_phone_device(pb_phone_t        *phone,
  */
 static void _dump_phone_infos(const pb_phone_t phone)
 {
-    fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__ + 1, phone.icon[0] - 32, phone.icon + 1, phone.iden);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__ + 1, phone.active);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__ + 1, phone.created);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__ + 1, phone.modified);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tnickname : %s\n", __func__ + 1, phone.nickname);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tgenerated_nickname : %u\n", __func__ + 1, phone.generated_nickname);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmanufacturer : %s\n", __func__ + 1, phone.manufacturer);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmodel : %s\n", __func__ + 1, phone.model);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tapp_version : %hd\n", __func__ + 1, phone.app_version);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tfingerprint : %p\n", __func__ + 1, phone.fingerprint);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tpush_token : %s\n", __func__ + 1, phone.push_token);
-    fprintf(stdout, "\e[1m[%s]\e[0m\thas_sms : %u\n", __func__ + 1, phone.has_sms);
-    fprintf(stdout, "\e[1m[%s]\e[0m\thas_mms : %u\n", __func__ + 1, phone.has_mms);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tremote_files : %s\n", __func__ + 1, phone.remote_files);
+    iprintf("%c%s - %s\n", phone.icon[0] - 32, phone.icon + 1, phone.iden);
+    iprintf("\tactive : %u\n", phone.active);
+    iprintf("\tcreated : %f\n", phone.created);
+    iprintf("\tmodified : %f\n", phone.modified);
+    iprintf("\tnickname : %s\n", phone.nickname);
+    iprintf("\tgenerated_nickname : %u\n", phone.generated_nickname);
+    iprintf("\tmanufacturer : %s\n", phone.manufacturer);
+    iprintf("\tmodel : %s\n", phone.model);
+    iprintf("\tapp_version : %hd\n", phone.app_version);
+    iprintf("\tfingerprint : %p\n", phone.fingerprint);
+    iprintf("\tpush_token : %s\n", phone.push_token);
+    iprintf("\thas_sms : %u\n", phone.has_sms);
+    iprintf("\thas_mms : %u\n", phone.has_mms);
+    iprintf("\tremote_files : %s\n", phone.remote_files);
 }
 
 
@@ -203,14 +203,14 @@ static void _dump_phone_infos(const pb_phone_t phone)
  */
 static void _dump_browser_infos(const pb_browser_t browser)
 {
-    fprintf(stdout, "\e[1m[%s]\e[0m %c%s - %s\n", __func__ + 1, browser.icon[0] - 32, browser.icon + 1, browser.iden);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__ + 1, browser.active);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__ + 1, browser.created);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__ + 1, browser.modified);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tnickname : %s\n", __func__ + 1, browser.nickname);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmanufacturer : %s\n", __func__ + 1, browser.manufacturer);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmodel : %s\n", __func__ + 1, browser.model);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tapp_version : %hd\n", __func__ + 1, browser.app_version);
+    iprintf("%c%s - %s\n", browser.icon[0] - 32, browser.icon + 1, browser.iden);
+    iprintf("\tactive : %u\n", browser.active);
+    iprintf("\tcreated : %f\n", browser.created);
+    iprintf("\tmodified : %f\n", browser.modified);
+    iprintf("\tnickname : %s\n", browser.nickname);
+    iprintf("\tmanufacturer : %s\n", browser.manufacturer);
+    iprintf("\tmodel : %s\n", browser.model);
+    iprintf("\tapp_version : %hd\n", browser.app_version);
 }
 
 
@@ -238,7 +238,7 @@ static void _dump_devices_list(pb_user_t *user)
                 break;
 
             default:
-                printf("Unknown type...\n");
+                eprintf("Unknown type...\n");
         }
     }
 }
@@ -265,12 +265,14 @@ unsigned short pb_get_devices(pb_user_t *user)
     res = pb_get(result, API_URL_DEVICES, *user);
 
     #ifdef __DEBUG__
-    fprintf( (res == HTTP_OK) ? stdout : stderr,
-             "\e[1;3%dm[%s]\e[37m %u\e[0m %s\n",
-             (res == HTTP_OK) ? 2 : 1,
-             __func__,
-             res,
-             result);
+    if ( res == HTTP_OK )
+    {
+        gprintf("\e[37m %u\e[0m %s\n", res, result);
+    }
+    else
+    {
+        eprintf("\e[37m %u\e[0m %s\n", res, result);
+    }
     #endif
 
 
@@ -290,7 +292,7 @@ unsigned short pb_get_devices(pb_user_t *user)
     json_devices_len    = json_object_array_length(json_devices);
 
     #ifdef __DEBUG__
-    fprintf(stdout, "\e[1;32m[%s]\e[0m json_devices_len : %d\n", __func__, json_devices_len);
+    iprintf("json_devices_len : %d\n", json_devices_len);
     #endif
 
 
@@ -445,7 +447,7 @@ const char* pb_get_iden_from_name(const pb_user_t   user,
                 break;
 
             default:
-                printf("Unknown type...\n");
+                eprintf("Unknown type...\n");
         }
     }
 

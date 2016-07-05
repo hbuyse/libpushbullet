@@ -4,7 +4,6 @@
  * @date 08/05/2016
  */
 
-#include <stdio.h>          // fprintf, stderr
 #include <stdlib.h>          // realloc, free
 #include <string.h>          // memcpy
 #include <curl/curl.h>          // CURL, CURLcode, struct curl_slist, curl_slist_append, curl_easy_init,
@@ -12,6 +11,7 @@
 
 #include <pushbullet/structures.h>          // NUMBER_PROXIES, PROXY_MAX_LENGTH, HTTPS_PROXY
 #include <pushbullet/user.h>               // pb_get_https_proxy, pb_get_curl_timeout
+#include <pushbullet/logging.h>             // iprintf, eprintf, cprintf, gprintf
 
 
 /**
@@ -51,7 +51,7 @@ static size_t write_memory_callback(void    *contents,
     if ( mem->memory == NULL )
     {
         // Out of memory!
-        fprintf(stderr, "Not enough memory (realloc returned NULL)\n");
+        eprintf("Not enough memory (realloc returned NULL)\n");
 
         return (0);
     }
@@ -135,7 +135,7 @@ unsigned short pb_get(char              *result,
         if ( r != CURLE_OK )
         {
             #ifdef __DEBUG__
-            fprintf(stderr, "\e[1;31m[%s]\e[0m curl_easy_perform() failed: %s\n", __func__, curl_easy_strerror(r) );
+            eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
             #endif
 
             return (http_code);
@@ -147,7 +147,7 @@ unsigned short pb_get(char              *result,
     else
     {
         #ifdef __DEBUG__
-        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.\n", __func__);
+        eprintf("curl_easy_init() could not be initiated.\n"); 
         #endif
 
         return (0);
@@ -231,7 +231,7 @@ unsigned short pb_post(char             *result,
         if ( r != CURLE_OK )
         {
             #ifdef __DEBUG__
-            fprintf(stderr, "\e[1;31m[%s]\e[0m curl_easy_perform() failed: %s\n", __func__, curl_easy_strerror(r) );
+            eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
             #endif
 
             return (http_code);
@@ -243,7 +243,7 @@ unsigned short pb_post(char             *result,
     else
     {
         #ifdef __DEBUG__
-        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.\n", __func__);
+        eprintf("curl_easy_init() could not be initiated.\n");
         #endif
 
         return (0);
@@ -327,7 +327,7 @@ unsigned short pb_delete(char               *result,
         if ( r != CURLE_OK )
         {
             #ifdef __DEBUG__
-            fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_perform() failed: %s\n", __func__, curl_easy_strerror(r) );
+            eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
             #endif
 
             return (http_code);
@@ -339,7 +339,7 @@ unsigned short pb_delete(char               *result,
     else
     {
         #ifdef __DEBUG__
-        fprintf(stderr, "\e[1;32m[%s]\e[0m curl_easy_init() could not be initiated.\n", __func__);
+        eprintf("curl_easy_init() could not be initiated.\n");
         #endif
 
         return (0);

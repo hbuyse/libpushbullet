@@ -4,7 +4,6 @@
  * @date 12/05/2016
  */
 
-#include <stdio.h>          // fprintf, stderr
 #include <json/json.h>          // json_object, json_object_new_object, json_object_new_string, json_object_object_add,
                                 // json_object_to_json_string
 
@@ -13,6 +12,7 @@
 #include <pushbullet/requests.h>          // pb_port
 #include <pushbullet/http_code.h>          // HTTP_OK
 #include <pushbullet/devices.h>            // pb_get_iden_from_name
+#include <pushbullet/logging.h>             // iprintf, eprintf, cprintf, gprintf
 
 
 /**
@@ -163,7 +163,7 @@ unsigned short pb_push_note(char            *result,
     data    = _create_note(note.title, note.body, pb_get_iden_from_name(user, device_nickname) );
 
     #ifdef __DEBUG__
-    fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, data);
+    iprintf("%s\n", data);
     #endif
 
 
@@ -172,17 +172,14 @@ unsigned short pb_push_note(char            *result,
 
     if ( res != HTTP_OK )
     {
-        fprintf(stderr,
-                "\e[1;31m[%s]\e[0m An error occured when sending the note (HTTP status code : %d)\n",
-                __func__,
-                res);
-        fprintf(stderr, "\e[1;31m[%s]\e[0m %s\n", __func__, result);
+        eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
+        eprintf("%s\n", result);
     }
 
     #ifdef __DEBUG__
     else
     {
-        fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, result);
+        iprintf("%s\n", result);
     }
     #endif
 
@@ -205,7 +202,7 @@ unsigned short pb_push_link(char            *result,
     data    = _create_link(link.title, link.body, link.url, pb_get_iden_from_name(user, device_nickname) );
 
     #ifdef __DEBUG__
-    fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, data);
+    iprintf("%s\n", data);
     #endif
 
 
@@ -214,16 +211,13 @@ unsigned short pb_push_link(char            *result,
 
     if ( res != HTTP_OK )
     {
-        fprintf(stderr,
-                "\e[1;31m[%s]\e[0m An error occured when sending the note (HTTP status code : %d)\n",
-                __func__,
-                res);
-        fprintf(stderr, "\e[1;31m[%s]\e[0m %s\n", __func__, result);
+        eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
+        eprintf("%s\n", result);
     }
     else
     {
         #ifdef __DEBUG__
-        fprintf(stdout, "\e[1m[%s]\e[0m %s\n", __func__, result);
+        iprintf("%s\n", result);
         #endif
     }
 
