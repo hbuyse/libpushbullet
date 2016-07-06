@@ -35,42 +35,7 @@ struct Memory_struct_s {
  *
  * @return Return the size of the downloaded element
  */
-static size_t write_memory_callback(void    *contents,
-                                    size_t  size,
-                                    size_t  nmemb,
-                                    void    *userp
-                                    )
-{
-    size_t     realsize = size * nmemb;
-    struct Memory_struct_s     *mem = (struct Memory_struct_s *) userp;
-
-
-    // Resize the buffer to hold the old data + the new data.
-    mem->memory = realloc(mem->memory, mem->size + realsize + 1);
-
-    if ( mem->memory == NULL )
-    {
-        // Out of memory!
-        eprintf("Not enough memory (realloc returned NULL)\n");
-
-        return (0);
-    }
-
-
-    // Copy the new data into the buffer.
-    memcpy(&(mem->memory[mem->size]), contents, realsize);
-
-
-    // Update the size of the buffer.
-    mem->size += realsize;
-
-
-    // Null terminate the buffer/string.
-    mem->memory[mem->size] = 0;
-
-    return (realsize);
-}
-
+static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, void *userp);
 
 
 unsigned short pb_get(char              *result,
@@ -354,4 +319,52 @@ unsigned short pb_delete(char               *result,
     }
 
     return (http_code);
+}
+
+
+
+/**
+ * @brief Write a downloaded element in the memory
+ *
+ * @param contents Downloaded content
+ * @param size Size of the buffer
+ * @param nmemb Size of each element of that buffer
+ * @param userp The pointer to the memory
+ *
+ * @return Return the size of the downloaded element
+ */
+static size_t write_memory_callback(void    *contents,
+                                    size_t  size,
+                                    size_t  nmemb,
+                                    void    *userp
+                                    )
+{
+    size_t     realsize = size * nmemb;
+    struct Memory_struct_s     *mem = (struct Memory_struct_s *) userp;
+
+
+    // Resize the buffer to hold the old data + the new data.
+    mem->memory = realloc(mem->memory, mem->size + realsize + 1);
+
+    if ( mem->memory == NULL )
+    {
+        // Out of memory!
+        eprintf("Not enough memory (realloc returned NULL)\n");
+
+        return (0);
+    }
+
+
+    // Copy the new data into the buffer.
+    memcpy(&(mem->memory[mem->size]), contents, realsize);
+
+
+    // Update the size of the buffer.
+    mem->size += realsize;
+
+
+    // Null terminate the buffer/string.
+    mem->memory[mem->size] = 0;
+
+    return (realsize);
 }
