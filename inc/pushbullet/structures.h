@@ -19,6 +19,15 @@ extern "C" {
 
 
 /**
+ * @brief Maximum length of a MIME type
+ * @details According to RFC 4288 "Media Type Specifications and Registration Procedures", type (eg. "application") and
+ *subtype (eg "vnd...") both can
+ *          be max 127 characters. (256 - 0x100)
+ */
+#define     MIME_TYPE_MAX_LENGTH 0x100
+
+
+/**
  * @enum pb_device_icon
  * @brief Device's icon
  */
@@ -47,6 +56,13 @@ typedef struct pb_note_s pb_note_t;
  * @brief Type definition of the structure pb_link_s
  */
 typedef struct pb_link_s pb_link_t;
+
+
+/**
+ * @typedef pb_upload_request_t
+ * @brief Type definition of the structure pb_upload_request_s
+ */
+typedef struct pb_upload_request_s pb_upload_request_t;
 
 
 /**
@@ -102,6 +118,17 @@ struct pb_link_s {
     char *title;          ///< Push's title
     char *body;          ///< Push's body
     char *url;          ///< Push's url
+};
+
+
+/**
+ * @struct pb_upload_request_s
+ * @brief Structure containing all the informations concerning a PushBullet Upload request
+ */
+struct pb_upload_request_s {
+    char *file_path;          ///< File path
+    char *file_name;          ///< File name
+    char file_type[MIME_TYPE_MAX_LENGTH];          ///< File's MIME type
 };
 
 

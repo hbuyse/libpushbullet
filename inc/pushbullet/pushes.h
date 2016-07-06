@@ -41,6 +41,28 @@ unsigned short pb_push_note(char *result, const pb_note_t note, const char *devi
 unsigned short pb_push_link(char *result, const pb_link_t link, const char *device_nickname, const pb_user_t user);
 
 
+/**
+ * \brief      Prepare an upload request structure
+ *
+ * \param      ur    The upload request structure
+ *
+ * \return     0 if went well, otherwise there is an error
+ */
+unsigned short pb_prepare_upload_request(pb_upload_request_t *ur);
+
+
+/**
+ * \brief      Send an upload request for a file
+ *
+ * \param      result  The result
+ * \param[in]  ur      the upload request structure
+ * \param[in]  user    The user
+ *
+ * \return     The HTTP status code to the \a pb_post
+ */
+unsigned short pb_upload_request(char *result, const pb_upload_request_t ur, const pb_user_t user);
+
+
 #ifdef __cplusplus
 }
 #endif

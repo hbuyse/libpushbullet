@@ -4,15 +4,58 @@
  * @date 12/05/2016
  */
 
+#include <string.h>             // strlen, strdup
 #include <json/json.h>          // json_object, json_object_new_object, json_object_new_string, json_object_object_add,
                                 // json_object_to_json_string
+#include <libgen.h>          // basename
 
+#include <pushbullet/structures.h>          // pb_device_t, pb_user_t, pb_browser_t, pb_phone_t, pb_upload_request_t
 #include <pushbullet/urls.h>          // API_URL_PUSHES
 #include <pushbullet/user.h>          // pb_user_t
 #include <pushbullet/requests.h>          // pb_port
 #include <pushbullet/http_code.h>          // HTTP_OK
 #include <pushbullet/devices.h>            // pb_get_iden_from_name
 #include <pushbullet/logging.h>             // iprintf, eprintf, cprintf, gprintf
+
+
+/**
+ * @brief Maximum length of the buffer (4ko - 4096 - 0x1000)
+ */
+#define     BUF_MAX_LENGTH 0x1000
+
+
+/**
+ * @brief Command format to get the MIME type of a file
+ */
+#define MIME_TYPE_CMD_FORMAT "file -i %s"
+
+
+/**
+ * \brief      Macro to get the MIME_TYPE_CMD_FORMAT length
+ *
+ * \param      file_path  The file path
+ *
+ * \return     MIME_TYPE_CMD_FORMAT length
+ */
+#define MIME_TYPE_CMD_LENGTH(file_path) strlen(file_path) + 8
+
+
+/**
+ * @brief Maximum iteration to get the file's MIME type using the system command "file"
+ */
+#define     MIME_TYPE_MAX_ITER 2
+
+
+/**
+ * @brief Default MIME type
+ */
+#define     MIME_TYPE_DEFAULT "text/plain"
+
+
+/**
+ * @brief Default MIME type length
+ */
+#define     MIME_TYPE_DEFAULT_LENGTH 10
 
 
 /**
@@ -179,7 +222,7 @@ unsigned short pb_push_note(char            *result,
     #ifdef __DEBUG__
     else
     {
-        iprintf("%s\n", result);
+        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
     }
     #endif
 
@@ -217,9 +260,100 @@ unsigned short pb_push_link(char            *result,
     else
     {
         #ifdef __DEBUG__
-        iprintf("%s\n", result);
+        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
         #endif
     }
+
+    return (res);
+}
+
+
+
+unsigned short pb_prepare_upload_request(pb_upload_request_t *ur)
+{
+    char        buff[BUF_MAX_LENGTH];     // Buffer for the result
+    FILE        *fp = NULL;     // Pointer to the file
+    char        cmd[MIME_TYPE_CMD_LENGTH(ur->file_path) + 1];      // Buffer for the system command
+
+
+    // Get the name of the file
+    // Why strdup? Because basename() may modify the contents of path, so it may be desirable to pass a copy when
+    // calling one of these functions.
+    ur->file_name = basename(strdup(ur->file_path) );
+
+
+    // Get the MIME type of the file using the system command `file`
+    snprintf(cmd, MIME_TYPE_CMD_LENGTH(ur->file_path) + 1, MIME_TYPE_CMD_FORMAT, ur->file_path);
+
+    fp = popen(cmd, "r");
+
+    if ( ! fp )
+    {
+        #ifdef __DEBUG__
+        eprintf("Failed to run command \"%s\".\n", cmd);
+        #endif
+
+        return (1);
+    }
+
+
+    // MAke a system call
+    if ( fgets(buff, sizeof(buff), fp) )
+    {
+        char                *ptr    = NULL;
+        unsigned char       i       = 0;
+
+        for ( i = 0; i < MIME_TYPE_MAX_ITER; ++i )
+        {
+            ptr = strtok( (i == 0) ? buff : NULL, ":;");
+        }
+
+        snprintf(ur->file_type, strlen(ptr) + 1, "%s", ptr);
+    }
+    else
+    {
+        snprintf(ur->file_type, MIME_TYPE_DEFAULT_LENGTH + 1, "%s", MIME_TYPE_DEFAULT);
+    }
+
+    return (0);
+}
+
+
+
+unsigned short pb_upload_request(char                       *result,
+                                 const pb_upload_request_t  ur,
+                                 const pb_user_t            user
+                                 )
+{
+    short           res         = 0;
+
+
+    // JSON objects
+    json_object     *jobj       = json_object_new_object();
+    json_object     *jfile_name = NULL;
+    json_object     *jfile_type = NULL;
+
+
+    // Creating the JSON
+    jfile_name  = json_object_new_string(ur.file_name);
+    jfile_type  = json_object_new_string(ur.file_type);
+    json_object_object_add(jobj, "file_name", jfile_name);
+    json_object_object_add(jobj, "file_type", jfile_type);
+
+    res         = pb_post(result, API_URL_FILE_REQUEST, user, json_object_to_json_string(jobj) );
+
+    if ( res != HTTP_OK )
+    {
+        eprintf("An error occured when sending the upload-request (HTTP status code : %d)\n", res);
+        eprintf("%s\n", result);
+    }
+
+    #ifdef __DEBUG__
+    else
+    {
+        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
+    }
+    #endif
 
     return (res);
 }
