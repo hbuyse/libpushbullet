@@ -21,7 +21,7 @@ extern "C" {
 /**
  * @brief Maximum length of a MIME type
  * @details According to RFC 4288 "Media Type Specifications and Registration Procedures", type (eg. "application") and
- *subtype (eg "vnd...") both can
+ * subtype (eg "vnd...") both can
  *          be max 127 characters. (256 - 0x100)
  */
 #define     MIME_TYPE_MAX_LENGTH 0x100

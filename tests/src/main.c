@@ -56,32 +56,31 @@ int main(int    argc,
         switch ( opt )
         {
             case 't':
-            {
-                token_key = optarg;
-                break;
-            }
+                {
+                    token_key = optarg;
+                    break;
+                }
 
             case '?':
-            {
-                if ( optopt == 't' )
                 {
-                    fprintf(stderr, "Option -%c requires an argument.\n", optopt);
-                }
-                else
-                {
-                    fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
-                }
+                    if ( optopt == 't' )
+                    {
+                        fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+                    }
+                    else
+                    {
+                        fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+                    }
 
-                exit(EXIT_FAILURE);
-            }
+                    exit(EXIT_FAILURE);
+                }
 
             default:
-            {
-                exit(EXIT_FAILURE);
-            }
+                {
+                    exit(EXIT_FAILURE);
+                }
         }
     }
-
 
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     fprintf(stdout, "\e[1m#                         USER.OUT                         #\e[0m\n");
@@ -104,6 +103,8 @@ int main(int    argc,
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
     fprintf(stdout, "\e[1m#                        PUSHES.OUT                        #\e[0m\n");
     fprintf(stdout, "\e[1m############################################################\e[0m\n");
+
+
     // res = main_pushes(token_key);
 
 

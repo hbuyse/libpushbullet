@@ -24,25 +24,25 @@
 /**
  * \brief HTTP proxy in config file
  */
-#define     HTTP_PROXY "172.25.0.3:8080"
+#define     HTTP_PROXY      "172.25.0.3:8080"
 
 
 /**
  * \brief HTTPS proxy in config file
  */
-#define     HTTPS_PROXY "172.25.0.3:8080"
+#define     HTTPS_PROXY     "172.25.0.3:8080"
 
 
 /**
  * \brief CURL timeout in config file
  */
-#define     CURL_TIMEOUT 2
+#define     CURL_TIMEOUT    2
 
 
 /**
  * \brief Token key in config file
  */
-#define     TOKEN_KEY "toto_is_in_da_place!"
+#define     TOKEN_KEY       "toto_is_in_da_place!"
 
 
 

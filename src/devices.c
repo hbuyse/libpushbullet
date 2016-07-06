@@ -20,84 +20,84 @@
  * @def MAX_SIZE_BUF
  * Maximum size of the buffer (4ko - 4096 - 0x1000)
  */
-#define     MAX_SIZE_BUF 0x1000
+#define     MAX_SIZE_BUF    0x1000
 
 
 /**
  * @def DEVICES_JSON_KEY
  * String defining the "devices" key
  */
-#define DEVICES_JSON_KEY "devices"
+#define DEVICES_JSON_KEY    "devices"
 
 
 /**
  * @def ACTIVE_JSON_KEY
  * String defining the "active" key
  */
-#define ACTIVE_JSON_KEY "active"
+#define ACTIVE_JSON_KEY     "active"
 
 
 /**
  * @def JSON_KEY_ICON
  * String defining the "icon" key
  */
-#define JSON_KEY_ICON "icon"
+#define JSON_KEY_ICON       "icon"
 
 
 /**
  * @def DESKTOP_ICON
  * String defining the "desktop" key
  */
-#define DESKTOP_ICON "desktop"
+#define DESKTOP_ICON        "desktop"
 
 
 /**
  * @def BROWSER_ICON
  * String defining the "browser" key
  */
-#define BROWSER_ICON "browser"
+#define BROWSER_ICON        "browser"
 
 
 /**
  * @def WEBSITE_ICON
  * String defining the "website" key
  */
-#define WEBSITE_ICON "website"
+#define WEBSITE_ICON        "website"
 
 
 /**
  * @def LAPTOP_ICON
  * String defining the "laptop" key
  */
-#define LAPTOP_ICON "laptop"
+#define LAPTOP_ICON         "laptop"
 
 
 /**
  * @def TABLET_ICON
  * String defining the "tablet" key
  */
-#define TABLET_ICON "tablet"
+#define TABLET_ICON         "tablet"
 
 
 /**
  * @def PHONE_ICON
  * String defining the "phone" key
  */
-#define PHONE_ICON "phone"
+#define PHONE_ICON          "phone"
 
 
 /**
  * @def WATCH_ICON
  * String defining the "watch" key
  */
-#define WATCH_ICON "watch"
+#define WATCH_ICON          "watch"
 
 
 /**
  * @def SYSTEM_ICON
  * String defining the "system" key
  */
-#define SYSTEM_ICON "system"
+#define SYSTEM_ICON         "system"
 
 
 /**
@@ -264,7 +264,7 @@ unsigned short pb_get_devices(pb_user_t *user)
 
     res = pb_get(result, API_URL_DEVICES, *user);
 
-    #ifdef __DEBUG__
+#ifdef __DEBUG__
     if ( res == HTTP_OK )
     {
         gprintf("\e[37m %u\e[0m %s\n", res, result);
@@ -273,7 +273,7 @@ unsigned short pb_get_devices(pb_user_t *user)
     {
         eprintf("\e[37m %u\e[0m %s\n", res, result);
     }
-    #endif
+#endif
 
 
     // If we do not have a 200 OK, we stop the function and we return the HTTP Status code
@@ -291,9 +291,9 @@ unsigned short pb_get_devices(pb_user_t *user)
     json_object_object_get_ex(json_obj, DEVICES_JSON_KEY, &json_devices);
     json_devices_len    = json_object_array_length(json_devices);
 
-    #ifdef __DEBUG__
+#ifdef __DEBUG__
     iprintf("json_devices_len : %d\n", json_devices_len);
-    #endif
+#endif
 
 
     // Parse all the devices in the list
@@ -355,9 +355,9 @@ unsigned short pb_get_devices(pb_user_t *user)
         }
     }
 
-    #ifdef __DEBUG__
+#ifdef __DEBUG__
     _dump_devices_list(user);
-    #endif
+#endif
 
     if ( result )
     {
@@ -389,9 +389,9 @@ void pb_free_devices(pb_user_t *user)
         free(tmp);
     }
 
-    #ifdef __DEBUG__
+#ifdef __DEBUG__
     _dump_devices_list(user);
-    #endif
+#endif
 }
 
 

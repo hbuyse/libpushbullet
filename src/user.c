@@ -109,14 +109,14 @@ unsigned short pb_get_user_info(pb_user_t           *user,
     res = pb_get(result, API_URL_ME, *user);
 
 
-    #ifdef __DEBUG__
+#ifdef __DEBUG__
     fprintf( (res == HTTP_OK) ? stdout : stderr,
              "\e[1;3%dm[%s]\e[37m %u\e[0m %s\n",
              (res == HTTP_OK) ? 2 : 1,
              __func__,
              res,
              result);
-    #endif
+#endif
 
 
     // If we do not have a 200 OK, we stop the function and we return the HTTP Status code
@@ -139,9 +139,9 @@ unsigned short pb_get_user_info(pb_user_t           *user,
         JSON_ASSOCIATE(int, user, max_upload_size)
     }
 
-    #ifdef __DEBUG__
+#ifdef __DEBUG__
     _dump_user_info(*user);
-    #endif
+#endif
 
     if ( result )
     {
@@ -194,18 +194,18 @@ json_object* pb_get_config_json(const char *path)
 
     if ( path == NULL )
     {
-        #ifdef __DEBUG__
+#ifdef __DEBUG__
         fprintf(stderr, "\e[1;31m[%s]\e[0m No path given for the config file.\n", __func__);
-        #endif
+#endif
 
         return (NULL);
     }
 
     if ( ! _is_regular_file(path) )
     {
-        #ifdef __DEBUG__
+#ifdef __DEBUG__
         fprintf(stderr, "\e[1;31m[%s]\e[0m %s is not a file.\n", __func__, path);
-        #endif
+#endif
 
         return (NULL);
     }
@@ -214,10 +214,10 @@ json_object* pb_get_config_json(const char *path)
     // Trying to open the config file
     if ( (config_fd = fopen(path, "r") ) == NULL )
     {
-        #ifdef __DEBUG__
+#ifdef __DEBUG__
         fprintf(stderr, "\e[1;31m[%s]\e[0m Could not open the config file at %s: %m", __func__, path);
         fprintf(stderr, "\n");
-        #endif
+#endif
 
         return (NULL);
     }
@@ -230,9 +230,9 @@ json_object* pb_get_config_json(const char *path)
 
     if ( config_file_length == 0 )
     {
-        #ifdef __DEBUG__
+#ifdef __DEBUG__
         fprintf(stderr, "\e[1;31m[%s]\e[0m %s is an empty file.\n", __func__, path);
-        #endif
+#endif
 
         return (NULL);
     }
@@ -247,14 +247,14 @@ json_object* pb_get_config_json(const char *path)
 
     if ( read != config_file_length )
     {
-        #ifdef __DEBUG__
+#ifdef __DEBUG__
         fprintf(stderr,
                 "\e[1;31m[%s]\e[0m Read %ld on %ld from the config file %s.\n",
                 __func__,
                 read,
                 config_file_length,
                 path);
-        #endif
+#endif
     }
 
 
@@ -267,16 +267,16 @@ json_object* pb_get_config_json(const char *path)
 
     if ( json_object_object_length(config_json) == 0 )
     {
-        #ifdef __DEBUG__
+#ifdef __DEBUG__
         fprintf(stderr, "\e[1;31m[%s]\e[0m %s is a JSON file, but it has no fields.\n", __func__, path);
-        #endif
+#endif
 
         return (NULL);
     }
 
-    #ifdef __DEBUG__
+#ifdef __DEBUG__
     fprintf(stdout, "\e[1;32m[%s]\e[0m %s\n", __func__, json_object_to_json_string(config_json) );
-    #endif
+#endif
 
 
     // Free the memory allocated for the

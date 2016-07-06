@@ -18,37 +18,37 @@ extern "C" {
 /**
  * @brief Basic URL for PushBullet API
  */
-#define API_URL "https://api.pushbullet.com/v2/"
+#define API_URL                 "https://api.pushbullet.com/v2/"
 
 
 /**
  * @brief PushBullet API URL for the pushes
  */
-#define API_URL_PUSHES API_URL "pushes"
+#define API_URL_PUSHES          API_URL "pushes"
 
 
 /**
  * @brief PushBullet API URL for the devices
  */
-#define API_URL_DEVICES API_URL "devices"
+#define API_URL_DEVICES         API_URL "devices"
 
 
 /**
  * @brief PushBullet API URL for the user informations
  */
-#define API_URL_ME API_URL "users/me"
+#define API_URL_ME              API_URL "users/me"
 
 
 /**
  * @brief PushBullet API URL to get contacts from the user account
  */
-#define API_URL_CONTACTS API_URL "contacts"
+#define API_URL_CONTACTS        API_URL "contacts"
 
 
 /**
  * @brief PushBullet API URL to do upload requests
  */
-#define API_URL_FILE_REQUEST API_URL "upload-request"
+#define API_URL_FILE_REQUEST    API_URL "upload-request"
 
 
 #ifdef __cplusplus

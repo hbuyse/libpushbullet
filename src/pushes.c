@@ -21,13 +21,13 @@
 /**
  * @brief Maximum length of the buffer (4ko - 4096 - 0x1000)
  */
-#define     BUF_MAX_LENGTH 0x1000
+#define     BUF_MAX_LENGTH              0x1000
 
 
 /**
  * @brief Command format to get the MIME type of a file
  */
-#define MIME_TYPE_CMD_FORMAT "file -i %s"
+#define MIME_TYPE_CMD_FORMAT            "file -i %s"
 
 
 /**
@@ -43,19 +43,19 @@
 /**
  * @brief Maximum iteration to get the file's MIME type using the system command "file"
  */
-#define     MIME_TYPE_MAX_ITER 2
+#define     MIME_TYPE_MAX_ITER          2
 
 
 /**
  * @brief Default MIME type
  */
-#define     MIME_TYPE_DEFAULT "text/plain"
+#define     MIME_TYPE_DEFAULT           "text/plain"
 
 
 /**
  * @brief Default MIME type length
  */
-#define     MIME_TYPE_DEFAULT_LENGTH 10
+#define     MIME_TYPE_DEFAULT_LENGTH    10
 
 
 /**
@@ -67,6 +67,195 @@
  *
  * @return     A string containing the JSON note
  */
+static const char* _create_note(const char *title, const char *body, const char *device_iden);
+
+
+
+/**
+ * @brief      Get a JSON link to send with \a pb_post
+ *
+ * @param[in]  title        The title
+ * @param[in]  body         The body
+ * @param[in]  device_iden  The device identification
+ *
+ * @return     A string containing the JSON link
+ */
+static const char* _create_link(const char *title, const char *body, const char *url, const char *device_iden);
+
+
+
+/**
+ * \brief      Creates a JSON upload request to send with \a pb_post
+ *
+ * \param[in]  file_name  The file name
+ * \param[in]  file_type  The file type
+ *
+ * \return     A string containing the JSON upload request
+ */
+static const char* _create_upload_request(const char *file_name, const char *file_type);
+
+
+
+unsigned short pb_push_note(char            *result,
+                            const pb_note_t note,
+                            const char      *device_nickname,
+                            const pb_user_t user
+                            )
+{
+    const char          *data   = NULL;
+    unsigned short      res     = 0;
+
+
+    // Create the JSON data
+    data    = _create_note(note.title, note.body, pb_get_iden_from_name(user, device_nickname) );
+
+#ifdef __DEBUG__
+    iprintf("%s\n", data);
+#endif
+
+
+    // Send the datas
+    res     = pb_post(result, API_URL_PUSHES, user, (char *) data);
+
+    if ( res != HTTP_OK )
+    {
+        eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
+        eprintf("%s\n", result);
+    }
+
+#ifdef __DEBUG__
+    else
+    {
+        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
+    }
+#endif
+
+    return (res);
+}
+
+
+
+unsigned short pb_push_link(char            *result,
+                            const pb_link_t link,
+                            const char      *device_nickname,
+                            const pb_user_t user
+                            )
+{
+    const char          *data   = NULL;
+    unsigned short      res     = 0;
+
+
+    // Create the JSON data
+    data    = _create_link(link.title, link.body, link.url, pb_get_iden_from_name(user, device_nickname) );
+
+#ifdef __DEBUG__
+    iprintf("%s\n", data);
+#endif
+
+
+    // Send the datas
+    res     = pb_post(result, API_URL_PUSHES, user, (char *) data);
+
+    if ( res != HTTP_OK )
+    {
+        eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
+        eprintf("%s\n", result);
+    }
+    else
+    {
+#ifdef __DEBUG__
+        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
+#endif
+    }
+
+    return (res);
+}
+
+
+
+unsigned short pb_prepare_upload_request(pb_upload_request_t *ur)
+{
+    char        buff[BUF_MAX_LENGTH];     // Buffer for the result
+    FILE        *fp = NULL;     // Pointer to the file
+    char        cmd[MIME_TYPE_CMD_LENGTH(ur->file_path) + 1];      // Buffer for the system command
+
+
+    // Get the name of the file
+    // Why strdup? Because basename() may modify the contents of path, so it may be desirable to pass a copy when
+    // calling one of these functions.
+    ur->file_name = basename(strdup(ur->file_path) );
+
+
+    // Get the MIME type of the file using the system command `file`
+    snprintf(cmd, MIME_TYPE_CMD_LENGTH(ur->file_path) + 1, MIME_TYPE_CMD_FORMAT, ur->file_path);
+
+    fp = popen(cmd, "r");
+
+    if ( ! fp )
+    {
+#ifdef __DEBUG__
+        eprintf("Failed to run command \"%s\".\n", cmd);
+#endif
+
+        return (1);
+    }
+
+
+    // Make a system call
+    if ( fgets(buff, sizeof(buff), fp) )
+    {
+        char                *ptr    = NULL;
+        unsigned char       i       = 0;
+
+        for ( i = 0; i < MIME_TYPE_MAX_ITER; ++i )
+        {
+            ptr = strtok( (i == 0) ? buff : NULL, ":;");
+        }
+
+        snprintf(ur->file_type, strlen(ptr) + 1, "%s", ptr);
+    }
+    else
+    {
+        snprintf(ur->file_type, MIME_TYPE_DEFAULT_LENGTH + 1, "%s", MIME_TYPE_DEFAULT);
+    }
+
+    return (0);
+}
+
+
+
+unsigned short pb_upload_request(char                       *result,
+                                 const pb_upload_request_t  ur,
+                                 const pb_user_t            user
+                                 )
+{
+    const char      *data   = NULL;
+    short           res     = 0;
+
+
+    // JSON objects
+    data    = _create_upload_request(ur.file_name, ur.file_type);
+
+    res     = pb_post(result, API_URL_FILE_REQUEST, user, data);
+
+    if ( res != HTTP_OK )
+    {
+        eprintf("An error occured when sending the upload-request (HTTP status code : %d)\n", res);
+        eprintf("%s\n", result);
+    }
+
+#ifdef __DEBUG__
+    else
+    {
+        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
+    }
+#endif
+
+    return (res);
+}
+
+
+
 static const char* _create_note(const char  *title,
                                 const char  *body,
                                 const char  *device_iden
@@ -117,15 +306,6 @@ static const char* _create_note(const char  *title,
 
 
 
-/**
- * @brief      Get a JSON link to send with \a pb_post
- *
- * @param[in]  title        The title
- * @param[in]  body         The body
- * @param[in]  device_iden  The device identification
- *
- * @return     A string containing the JSON link
- */
 static const char* _create_link(const char  *title,
                                 const char  *body,
                                 const char  *url,
@@ -192,168 +372,27 @@ static const char* _create_link(const char  *title,
 
 
 
-unsigned short pb_push_note(char            *result,
-                            const pb_note_t note,
-                            const char      *device_nickname,
-                            const pb_user_t user
-                            )
+static const char* _create_upload_request(const char    *file_name,
+                                          const char    *file_type
+                                          )
 {
-    const char          *data   = NULL;
-    unsigned short      res     = 0;
+    json_object     *root = NULL;
 
 
-    // Create the JSON data
-    data    = _create_note(note.title, note.body, pb_get_iden_from_name(user, device_nickname) );
-
-    #ifdef __DEBUG__
-    iprintf("%s\n", data);
-    #endif
+    // Create the root
+    root = json_object_new_object();
 
 
-    // Send the datas
-    res     = pb_post(result, API_URL_PUSHES, user, (char *) data);
-
-    if ( res != HTTP_OK )
+    // Add title
+    if ( file_name && file_type )
     {
-        eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
-        eprintf("%s\n", result);
-    }
-
-    #ifdef __DEBUG__
-    else
-    {
-        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
-    }
-    #endif
-
-    return (res);
-}
-
-
-
-unsigned short pb_push_link(char            *result,
-                            const pb_link_t link,
-                            const char      *device_nickname,
-                            const pb_user_t user
-                            )
-{
-    const char          *data   = NULL;
-    unsigned short      res     = 0;
-
-
-    // Create the JSON data
-    data    = _create_link(link.title, link.body, link.url, pb_get_iden_from_name(user, device_nickname) );
-
-    #ifdef __DEBUG__
-    iprintf("%s\n", data);
-    #endif
-
-
-    // Send the datas
-    res     = pb_post(result, API_URL_PUSHES, user, (char *) data);
-
-    if ( res != HTTP_OK )
-    {
-        eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
-        eprintf("%s\n", result);
-    }
-    else
-    {
-        #ifdef __DEBUG__
-        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
-        #endif
-    }
-
-    return (res);
-}
-
-
-
-unsigned short pb_prepare_upload_request(pb_upload_request_t *ur)
-{
-    char        buff[BUF_MAX_LENGTH];     // Buffer for the result
-    FILE        *fp = NULL;     // Pointer to the file
-    char        cmd[MIME_TYPE_CMD_LENGTH(ur->file_path) + 1];      // Buffer for the system command
-
-
-    // Get the name of the file
-    // Why strdup? Because basename() may modify the contents of path, so it may be desirable to pass a copy when
-    // calling one of these functions.
-    ur->file_name = basename(strdup(ur->file_path) );
-
-
-    // Get the MIME type of the file using the system command `file`
-    snprintf(cmd, MIME_TYPE_CMD_LENGTH(ur->file_path) + 1, MIME_TYPE_CMD_FORMAT, ur->file_path);
-
-    fp = popen(cmd, "r");
-
-    if ( ! fp )
-    {
-        #ifdef __DEBUG__
-        eprintf("Failed to run command \"%s\".\n", cmd);
-        #endif
-
-        return (1);
+        json_object     *jstr_file_name = json_object_new_string(file_name);
+        json_object     *jstr_file_type = json_object_new_string(file_type);
+        json_object_object_add(root, "file_name", jstr_file_name);
+        json_object_object_add(root, "file_type", jstr_file_type);
     }
 
 
-    // MAke a system call
-    if ( fgets(buff, sizeof(buff), fp) )
-    {
-        char                *ptr    = NULL;
-        unsigned char       i       = 0;
-
-        for ( i = 0; i < MIME_TYPE_MAX_ITER; ++i )
-        {
-            ptr = strtok( (i == 0) ? buff : NULL, ":;");
-        }
-
-        snprintf(ur->file_type, strlen(ptr) + 1, "%s", ptr);
-    }
-    else
-    {
-        snprintf(ur->file_type, MIME_TYPE_DEFAULT_LENGTH + 1, "%s", MIME_TYPE_DEFAULT);
-    }
-
-    return (0);
-}
-
-
-
-unsigned short pb_upload_request(char                       *result,
-                                 const pb_upload_request_t  ur,
-                                 const pb_user_t            user
-                                 )
-{
-    short           res         = 0;
-
-
-    // JSON objects
-    json_object     *jobj       = json_object_new_object();
-    json_object     *jfile_name = NULL;
-    json_object     *jfile_type = NULL;
-
-
-    // Creating the JSON
-    jfile_name  = json_object_new_string(ur.file_name);
-    jfile_type  = json_object_new_string(ur.file_type);
-    json_object_object_add(jobj, "file_name", jfile_name);
-    json_object_object_add(jobj, "file_type", jfile_type);
-
-    res         = pb_post(result, API_URL_FILE_REQUEST, user, json_object_to_json_string(jobj) );
-
-    if ( res != HTTP_OK )
-    {
-        eprintf("An error occured when sending the upload-request (HTTP status code : %d)\n", res);
-        eprintf("%s\n", result);
-    }
-
-    #ifdef __DEBUG__
-    else
-    {
-        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
-    }
-    #endif
-
-    return (res);
+    // Return the JSON as a string
+    return (json_object_to_json_string(root) );
 }

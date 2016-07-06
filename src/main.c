@@ -87,54 +87,68 @@ int main(int    argc,
         switch ( opt )
         {
             case 't':
-            {
-                token_key = optarg;
-                break;
-            }
+                {
+                    token_key = optarg;
+                    break;
+                }
 
             case 'c':
-            {
-                config = pb_get_config_json(optarg);
-                break;
-            }
+                {
+                    config = pb_get_config_json(optarg);
+                    break;
+                }
 
 
             case 'h':
-            {
-                usage(argv[0]);
-                exit(EXIT_SUCCESS);
-            }
+                {
+                    usage(argv[0]);
+                    exit(EXIT_SUCCESS);
+                }
 
             case '?':
-            {
-                if ( (optopt == 't') || (optopt == 'c') )
                 {
-                    fprintf(stderr, "Option -%c requires an argument.\n", optopt);
-                }
-                else
-                {
-                    fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
-                }
+                    if ( (optopt == 't') || (optopt == 'c') )
+                    {
+                        fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+                    }
+                    else
+                    {
+                        fprintf(stderr, "Unknown option character `\\x%x'.\n", optopt);
+                    }
 
-                usage(argv[0]);
-                exit(EXIT_FAILURE);
-            }
+                    usage(argv[0]);
+                    exit(EXIT_FAILURE);
+                }
 
             default:
-            {
-                usage(argv[0]);
-                exit(EXIT_FAILURE);
-            }
+                {
+                    usage(argv[0]);
+                    exit(EXIT_FAILURE);
+                }
         }
     }
 
-    res = pb_get_user_info(&user, token_key, config);
-    res = pb_get_devices(&user);
+    res     = pb_get_user_info(&user, token_key, config);
 
 
-    // result = (char *) calloc(MAX_SIZE_BUF, sizeof(char) );
+    // res = pb_get_devices(&user);
+
+
+    result  = (char *) calloc(BUF_MAX_LENGTH, sizeof(char) );
+
+
     // pb_push_note(result, "Hello", "Hello World", "LGE Nexus 5X", user);
     // pb_push_link("Google", "Hello World", "http://www.google.fr", pb_get_iden_from_name(user, "LGE Nexus 5X"), user);
+
+    pb_upload_request_t     ur =
+    {
+        .file_path = "conf/config.json"
+    };
+
+    if ( pb_prepare_upload_request(&ur) == 0 )
+    {
+        res = pb_upload_request(result, ur, user);
+    }
 
     pb_free_user(&user);
 

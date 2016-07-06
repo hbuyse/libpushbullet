@@ -99,9 +99,9 @@ unsigned short pb_get(char              *result,
          */
         if ( r != CURLE_OK )
         {
-            #ifdef __DEBUG__
+#ifdef __DEBUG__
             eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
-            #endif
+#endif
 
             return (http_code);
         }
@@ -111,9 +111,9 @@ unsigned short pb_get(char              *result,
     }
     else
     {
-        #ifdef __DEBUG__
+#ifdef __DEBUG__
         eprintf("curl_easy_init() could not be initiated.\n");
-        #endif
+#endif
 
         return (0);
     }
@@ -195,9 +195,9 @@ unsigned short pb_post(char             *result,
          */
         if ( r != CURLE_OK )
         {
-            #ifdef __DEBUG__
+#ifdef __DEBUG__
             eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
-            #endif
+#endif
 
             return (http_code);
         }
@@ -207,9 +207,9 @@ unsigned short pb_post(char             *result,
     }
     else
     {
-        #ifdef __DEBUG__
+#ifdef __DEBUG__
         eprintf("curl_easy_init() could not be initiated.\n");
-        #endif
+#endif
 
         return (0);
     }
@@ -291,9 +291,9 @@ unsigned short pb_delete(char               *result,
          */
         if ( r != CURLE_OK )
         {
-            #ifdef __DEBUG__
+#ifdef __DEBUG__
             eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
-            #endif
+#endif
 
             return (http_code);
         }
@@ -303,9 +303,9 @@ unsigned short pb_delete(char               *result,
     }
     else
     {
-        #ifdef __DEBUG__
+#ifdef __DEBUG__
         eprintf("curl_easy_init() could not be initiated.\n");
-        #endif
+#endif
 
         return (0);
     }
