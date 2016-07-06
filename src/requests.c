@@ -147,7 +147,7 @@ unsigned short pb_get(char              *result,
     else
     {
         #ifdef __DEBUG__
-        eprintf("curl_easy_init() could not be initiated.\n"); 
+        eprintf("curl_easy_init() could not be initiated.\n");
         #endif
 
         return (0);

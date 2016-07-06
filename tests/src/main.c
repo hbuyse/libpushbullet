@@ -11,17 +11,18 @@
 #include <string.h>          // memset
 #include <stdio.h>          // fprintf
 
-#include <test_config.h>     // main_config
-#include <test_user.h>       // main_user
-#include <test_devices.h>     // main_devices
-#include <test_pushes.h>     // main_pushes
+#include <test_config.h>          // main_config
+#include <test_user.h>          // main_user
+#include <test_devices.h>          // main_devices
+#include <test_pushes.h>          // main_pushes
 
 int main(int    argc,
          char   *argv[]
          )
 {
-    int                         opt             = 0;
-    int                         long_index      = 0;
+    int     opt         = 0;
+    int     long_index  = 0;
+
 
     // char                        cmd[256]; // Buffer for the commands
     unsigned char               res             = 0; // Results of the system calls

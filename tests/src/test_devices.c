@@ -11,7 +11,8 @@
 #include <string.h>          // strcmp
 #include <stdio.h>          // fprintf
 
-#include <pushbullet/structures.h>          // pb_user_t, pb_device_t, pb_browser_t, pb_phone_t, ICON_PHONE, ICON_BROWSER
+#include <pushbullet/structures.h>          // pb_user_t, pb_device_t, pb_browser_t, pb_phone_t, ICON_PHONE,
+                                            // ICON_BROWSER
 #include <pushbullet/user.h>          // pb_get_user_info, pb_free_user
 #include <pushbullet/devices.h>          // pb_get_devices
 #include <pushbullet/http_code.h>          // HTTP_OK
@@ -153,9 +154,10 @@ MU_TEST(test_free_devices)
 
 MU_TEST(test_get_number_active_devices)
 {
-    pb_user_t tmp;
+    pb_user_t     tmp;
 
-    memset(&tmp, 0, sizeof(pb_user_t));
+
+    memset(&tmp, 0, sizeof(pb_user_t) );
 
     mu_check(tmp.devices == NULL);
     mu_check(pb_get_number_active_devices(tmp) == 0);
@@ -170,9 +172,10 @@ MU_TEST(test_get_number_active_devices)
 
 MU_TEST(test_get_iden_from_name)
 {
-    pb_user_t tmp;
+    pb_user_t     tmp;
 
-    memset(&tmp, 0, sizeof(pb_user_t));
+
+    memset(&tmp, 0, sizeof(pb_user_t) );
 
     mu_check(tmp.devices == NULL);
 
@@ -221,7 +224,7 @@ MU_TEST_SUITE(test_on_devices_info)
 
 unsigned char main_devices(const char *tk)
 {
-    token_key = (char*) tk;
+    token_key = (char *) tk;
 
 
     // Launch the test suites

@@ -11,7 +11,8 @@
 #include <string.h>          // strcmp
 #include <stdio.h>          // fprintf
 
-#include <pushbullet/structures.h>          // pb_user_t, pb_device_t, pb_browser_t, pb_phone_t, ICON_PHONE, ICON_BROWSER
+#include <pushbullet/structures.h>          // pb_user_t, pb_device_t, pb_browser_t, pb_phone_t, ICON_PHONE,
+                                            // ICON_BROWSER
 #include <pushbullet/user.h>          // pb_get_user_info, pb_free_user
 #include <pushbullet/devices.h>          // pb_get_devices
 #include <pushbullet/http_code.h>          // HTTP_OK
@@ -223,7 +224,7 @@ MU_TEST_SUITE(test_pushes)
 
 unsigned char main_pushes(const char *tk)
 {
-    token_key = (char*) tk;
+    token_key = (char *) tk;
 
 
     // Launch the test suites
