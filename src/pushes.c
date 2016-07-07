@@ -652,7 +652,7 @@ static unsigned short _send_request(char            *result,
 #ifdef __DEBUG__
     else
     {
-        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
+        gprintf("\e[1;37m%u\e[0m\n", res);
     }
 #endif
 
