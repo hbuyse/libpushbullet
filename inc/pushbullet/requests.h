@@ -42,6 +42,12 @@ unsigned short pb_get(char *result, const char *url_request, const pb_user_t use
 unsigned short pb_post(char *result, const char *url_request, const pb_user_t user, const char *data);
 
 
+unsigned short pb_post_multipart(char               *result,
+                                 const char         *url_request,
+                                 const pb_file_t    ur,
+                                 const pb_user_t    user __attribute__( (unused) ) );
+
+
 /**
  * @brief      DELETE request for the PushBullet API
  *

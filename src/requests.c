@@ -13,6 +13,9 @@
 #include <pushbullet/user.h>               // pb_get_https_proxy, pb_get_curl_timeout
 #include <pushbullet/logging.h>             // iprintf, eprintf, cprintf, gprintf
 
+#define CONTENT_TYPE_JSON       "Content-Type: application/json"
+#define CONTENT_TYPE_MULTIPART  "Content-Type: multipart/form-data"
+
 
 /**
  * @struct Memory_struct_s
@@ -63,7 +66,7 @@ unsigned short pb_get(char              *result,
         CURLcode     r = CURLE_OK;
         struct curl_slist     *http_headers = NULL;
 
-        http_headers = curl_slist_append(http_headers, "Content-Type: application/json");
+        http_headers = curl_slist_append(http_headers, CONTENT_TYPE_JSON);
 
 
         /*  Specify URL to get
@@ -157,7 +160,7 @@ unsigned short pb_post(char             *result,
         CURLcode     r = CURLE_OK;
         struct curl_slist     *http_headers = NULL;
 
-        http_headers = curl_slist_append(http_headers, "Content-Type: application/json");
+        http_headers = curl_slist_append(http_headers, CONTENT_TYPE_JSON);
 
 
         /*  Specify URL to get
@@ -227,6 +230,116 @@ unsigned short pb_post(char             *result,
 
 
 
+short pb_post_multipart(char            *result,
+                        const char      *url_request,
+                        const pb_file_t ur,
+                        const pb_user_t user __attribute__( (unused) )
+                        )
+{
+    /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
+     */
+
+
+    unsigned short              http_code   = 0;
+    struct Memory_struct_s      ms          =
+    {
+        .memory = (char *) calloc(1, sizeof(char) ),
+        .size   = 0
+    };
+
+
+    /*  Start a libcurl easy session
+     */
+    CURL            *s;
+    CURLcode        r = CURLE_OK;
+
+    struct curl_httppost        *formpost       = NULL;
+    struct curl_httppost        *lastptr        = NULL;
+    struct curl_slist           *http_headers   = NULL;
+
+
+    curl_global_init(CURL_GLOBAL_ALL);
+
+#if 0
+
+
+    /* Fill in all form datas
+     */
+    for ( Json::ValueIterator itr = data.begin(); itr != data.end(); itr++ )
+    {
+        std::stringstream     tmp;
+
+        tmp << itr.key().asString();
+        curl_formadd(&formpost,
+                     &lastptr,
+                     CURLFORM_COPYNAME, tmp.str().c_str(),
+                     CURLFORM_COPYCONTENTS, std::string(itr->asString() ).c_str(),
+                     CURLFORM_END);
+    }
+#endif
+
+
+    /* Fill in the file upload field
+     */
+    curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "file", CURLFORM_FILE, ur.file_path, CURLFORM_END);
+
+
+    /* Initialize the session
+     */
+    s = curl_easy_init();
+
+    if ( s )
+    {
+        http_headers = curl_slist_append(http_headers, CONTENT_TYPE_MULTIPART);
+        curl_easy_setopt(s, CURLOPT_URL, url_request);
+        curl_easy_setopt(s, CURLOPT_HTTPPOST, formpost);
+        curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
+        curl_easy_setopt(s, CURLOPT_WRITEDATA, (void *) &ms);
+
+
+        /* Get data
+         */
+        r = curl_easy_perform(s);
+        curl_easy_getinfo(s, CURLINFO_RESPONSE_CODE, &http_code);
+
+
+        /* Checking errors
+         */
+        if ( r != CURLE_OK )
+        {
+#ifdef __DEBUG__
+            eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
+#endif
+
+            return (http_code);
+        }
+
+        curl_easy_cleanup(s);
+        curl_formfree(formpost);
+        curl_slist_free_all(http_headers);
+    }
+    else
+    {
+#ifdef __DEBUG__
+        eprintf("curl_easy_init() could not be initiated.\n");
+#endif
+
+        return (0);
+    }
+
+
+    // Copy the data before removing them.
+    if ( ms.memory )
+    {
+        memcpy(result, ms.memory, ms.size);
+        free(ms.memory);
+    }
+
+    return (http_code);
+}
+
+
+
 unsigned short pb_delete(char               *result,
                          const char         *url_request,
                          const pb_user_t    user
@@ -252,7 +365,7 @@ unsigned short pb_delete(char               *result,
         CURLcode     r = CURLE_OK;
         struct curl_slist     *http_headers = NULL;
 
-        http_headers = curl_slist_append(http_headers, "Content-Type: application/json");
+        http_headers = curl_slist_append(http_headers, CONTENT_TYPE_JSON);
 
 
         /*  Specify URL to get

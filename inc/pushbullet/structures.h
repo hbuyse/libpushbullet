@@ -59,10 +59,10 @@ typedef struct pb_link_s pb_link_t;
 
 
 /**
- * @typedef pb_upload_request_t
- * @brief Type definition of the structure pb_upload_request_s
+ * @typedef pb_file_t
+ * @brief Type definition of the structure pb_file_s
  */
-typedef struct pb_upload_request_s pb_upload_request_t;
+typedef struct pb_file_s pb_file_t;
 
 
 /**
@@ -122,13 +122,17 @@ struct pb_link_s {
 
 
 /**
- * @struct pb_upload_request_s
- * @brief Structure containing all the informations concerning a PushBullet Upload request
+ * @struct pb_file_s
+ * @brief Structure containing all the informations concerning a PushBullet Upload request for a file
  */
-struct pb_upload_request_s {
+struct pb_file_s {
+    char *title;          ///< Push's title
+    char *body;          ///< Push's body
     char *file_path;          ///< File path
     char *file_name;          ///< File name
     char file_type[MIME_TYPE_MAX_LENGTH];          ///< File's MIME type
+    char *file_url;          ///< File url
+    char *upload_url;          ///< File upload url
 };
 
 

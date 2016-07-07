@@ -136,19 +136,14 @@ int main(int    argc,
 
     result  = (char *) calloc(BUF_MAX_LENGTH, sizeof(char) );
 
-
-    // pb_push_note(result, "Hello", "Hello World", "LGE Nexus 5X", user);
-    // pb_push_link("Google", "Hello World", "http://www.google.fr", pb_get_iden_from_name(user, "LGE Nexus 5X"), user);
-
-    pb_upload_request_t     ur =
+    pb_file_t     file =
     {
-        .file_path = "conf/config.json"
+        .file_path  = "tests/volley.png",
+        .title      = "Volleyball",
+        .body       = "Volleyball N&B"
     };
 
-    if ( pb_prepare_upload_request(&ur) == 0 )
-    {
-        res = pb_upload_request(result, ur, user);
-    }
+    pb_push_file(result, &file, NULL, user);
 
     pb_free_user(&user);
 
