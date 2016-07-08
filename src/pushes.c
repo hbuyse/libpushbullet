@@ -250,12 +250,12 @@ unsigned short pb_push_link(char            *result,
         eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
         eprintf("%s\n", result);
     }
+#ifdef __DEBUG__
     else
     {
-#ifdef __DEBUG__
         gprintf("\e[1;37m%u\e[0m %s\n", res, result);
-#endif
     }
+#endif
 
     return (res);
 }
@@ -307,12 +307,12 @@ unsigned short pb_push_file(char            *result,
         eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
         eprintf("%s\n", result);
     }
+#ifdef __DEBUG__
     else
     {
-#ifdef __DEBUG__
         gprintf("\e[1;37m%u\e[0m %s\n", res, result);
-#endif
     }
+#endif
 
     return (res);
 }
