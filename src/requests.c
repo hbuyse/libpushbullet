@@ -260,24 +260,6 @@ short pb_post_multipart(char            *result,
 
     curl_global_init(CURL_GLOBAL_ALL);
 
-#if 0
-
-
-    /* Fill in all form datas
-     */
-    for ( Json::ValueIterator itr = data.begin(); itr != data.end(); itr++ )
-    {
-        std::stringstream     tmp;
-
-        tmp << itr.key().asString();
-        curl_formadd(&formpost,
-                     &lastptr,
-                     CURLFORM_COPYNAME, tmp.str().c_str(),
-                     CURLFORM_COPYCONTENTS, std::string(itr->asString() ).c_str(),
-                     CURLFORM_END);
-    }
-#endif
-
 
     /* Fill in the file upload field
      */
