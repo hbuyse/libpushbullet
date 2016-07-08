@@ -232,8 +232,8 @@ unsigned short pb_post(char             *result,
 
 short pb_post_multipart(char            *result,
                         const char      *url_request,
-                        const pb_file_t ur,
-                        const pb_user_t user __attribute__( (unused) )
+                        const pb_user_t user __attribute__( (unused) ),
+                        const pb_file_t file
                         )
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
@@ -281,7 +281,7 @@ short pb_post_multipart(char            *result,
 
     /* Fill in the file upload field
      */
-    curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "file", CURLFORM_FILE, ur.file_path, CURLFORM_END);
+    curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "file", CURLFORM_FILE, file.file_path, CURLFORM_END);
 
 
     /* Initialize the session

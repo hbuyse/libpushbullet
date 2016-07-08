@@ -42,10 +42,17 @@ unsigned short pb_get(char *result, const char *url_request, const pb_user_t use
 unsigned short pb_post(char *result, const char *url_request, const pb_user_t user, const char *data);
 
 
-unsigned short pb_post_multipart(char               *result,
-                                 const char         *url_request,
-                                 const pb_file_t    ur,
-                                 const pb_user_t    user __attribute__( (unused) ) );
+/**
+ * @brief      POST request for the PushBullet API
+ *
+ * @param      result       The result buffer
+ * @param      url_request  The url request
+ * @param      user         The user informations
+ * @param      file         The file informations
+ *
+ * @return     HTTP status code
+ */
+unsigned short pb_post_multipart(char *result, const char *url_request, const pb_user_t user, const pb_file_t file);
 
 
 /**

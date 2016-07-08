@@ -98,6 +98,19 @@ static const char* _create_note(const char *title, const char *body, const char 
 static const char* _create_link(const char *title, const char *body, const char *url, const char *device_iden);
 
 
+
+/**
+ * @brief      Get a JSON file to send with \a pb_post
+ *
+ * @param[in]  title        The title
+ * @param[in]  body         The body
+ * @param[in]  file_name    The file name
+ * @param[in]  file_type    The file type
+ * @param[in]  file_url     The file url
+ * @param[in]  device_iden  The device identification
+ *
+ * @return     A string containing the JSON link
+ */
 static const char* _create_file(const char  *title,
                                 const char  *body,
                                 const char  *file_name,
@@ -164,7 +177,12 @@ static unsigned short _upload_request(char *result, pb_file_t *ur, const pb_user
 static unsigned short _send_request(char *result, const pb_file_t ur, const pb_user_t user);
 
 
-static void _free_pb_file_t(pb_file_t *ur);
+/**
+ * \brief      Free a file structure
+ *
+ * \param      file  The file structure to free
+ */
+static void _free_pb_file_t(pb_file_t *file);
 
 
 unsigned short pb_push_note(char            *result,
@@ -208,8 +226,8 @@ unsigned short pb_push_note(char            *result,
 
 unsigned short pb_push_link(char            *result,
                             const pb_link_t link,
-                            const char      *device_nickname,
-                            const pb_user_t user
+                            const pb_user_t user,
+                            const char      *device_nickname
                             )
 {
     const char          *data   = NULL;
@@ -639,7 +657,7 @@ static unsigned short _send_request(char            *result,
     unsigned short     res = 0;
 
 
-    res = pb_post_multipart(result, file.upload_url, file, user);
+    res = pb_post_multipart(result, file.upload_url, user, file);
 
     if ( res != HTTP_NO_CONTENT )
     {
