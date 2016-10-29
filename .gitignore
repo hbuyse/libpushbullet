@@ -1,11 +1,41 @@
-# Created by https://www.gitignore.io/api/c
+
+# Created by https://www.gitignore.io/api/autotools,c,python
+
+### Autotools ###
+# http://www.gnu.org/software/automake
+
+Makefile.in
+
+# http://www.gnu.org/software/autoconf
+
+/autom4te.cache
+/autoscan.log
+/autoscan-*.log
+/aclocal.m4
+/compile
+/config.h.in
+/configure
+/configure.scan
+/depcomp
+/install-sh
+/missing
+/stamp-h1
+
 
 ### C ###
+# Prerequisites
+*.d
+
 # Object files
 *.o
 *.ko
 *.obj
 *.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
 
 # Precompiled Headers
 *.gch
@@ -33,15 +63,18 @@
 
 # Debug files
 *.dSYM/
+*.su
+*.idb
+*.pdb
 
-# Dependency files
-*.d
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
 
-# Listing files
-*.lst
-
-# Preprocessor files
-*.i
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -50,7 +83,6 @@ __pycache__/
 *$py.class
 
 # C extensions
-*.so
 
 # Distribution / packaging
 .Python
@@ -89,6 +121,7 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
+.hypothesis/
 
 # Translations
 *.mo
@@ -96,12 +129,47 @@ coverage.xml
 
 # Django stuff:
 *.log
+local_settings.py
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
 
 # Sphinx documentation
 docs/_build/
 
 # PyBuilder
 target/
+
+# IPython Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# dotenv
+.env
+
+# virtualenv
+.venv/
+venv/
+ENV/
+
+# Spyder project settings
+.spyderproject
+
+# Rope project settings
+.ropeproject
+
+0
+Trackers
+
 
 ### Personnal stuff ###
 doxygen/html
