@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-#include <pushbullet/structures.h>          // pb_user_t, NUMBER_PROXIES, PROXY_MAX_LENGTH
+#include <structures.h>          // pb_user_t, NUMBER_PROXIES, PROXY_MAX_LENGTH
 
 
 /**

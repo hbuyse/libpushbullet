@@ -9,13 +9,13 @@
                                 // json_object_to_json_string
 #include <libgen.h>          // basename
 
-#include <pushbullet/structures.h>          // pb_device_t, pb_user_t, pb_browser_t, pb_phone_t, pb_file_t
-#include <pushbullet/urls.h>          // API_URL_PUSHES
-#include <pushbullet/user.h>          // pb_user_t
-#include <pushbullet/requests.h>          // pb_port
-#include <pushbullet/http_code.h>          // HTTP_OK
-#include <pushbullet/devices.h>            // pb_get_iden_from_name
-#include <pushbullet/logging.h>             // iprintf, eprintf, cprintf, gprintf
+#include <structures.h>          // pb_device_t, pb_user_t, pb_browser_t, pb_phone_t, pb_file_t
+#include <urls.h>          // API_URL_PUSHES
+#include <user.h>          // pb_user_t
+#include <requests.h>          // pb_port
+#include <http_code.h>          // HTTP_OK
+#include <devices.h>            // pb_get_iden_from_name
+#include <logging.h>             // iprintf, eprintf, cprintf, gprintf
 
 
 /**

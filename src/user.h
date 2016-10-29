@@ -10,7 +10,7 @@
 #ifndef __USER_H__
 #define __USER_H__
 
-#include <pushbullet/structures.h>          // pb_user_t
+#include <structures.h>          // pb_user_t
 
 #ifdef __cplusplus
 extern "C" {

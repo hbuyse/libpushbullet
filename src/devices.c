@@ -8,12 +8,12 @@
 #include <json/json.h>          // json_object, json_tokener_parse, json_object_object_foreach, json_object_get_array,
                                 // array_list
 
-#include <pushbullet/urls.h>          // API_URL_DEVICES
-#include <pushbullet/requests.h>          // pb_get
-#include <pushbullet/user.h>          // pb_user_t
-#include <pushbullet/structures.h>          // pb_browser_t, pb_phone_t, pb_device_t, ICON_PHONE, ICON_BROWSER
-#include <pushbullet/http_code.h>          // HTTP_OK
-#include <pushbullet/logging.h>             // iprintf, eprintf, cprintf, gprintf
+#include <urls.h>          // API_URL_DEVICES
+#include <requests.h>          // pb_get
+#include <user.h>          // pb_user_t
+#include <structures.h>          // pb_browser_t, pb_phone_t, pb_device_t, ICON_PHONE, ICON_BROWSER
+#include <http_code.h>          // HTTP_OK
+#include <logging.h>             // iprintf, eprintf, cprintf, gprintf
 
 
 /**
