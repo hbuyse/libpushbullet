@@ -9,9 +9,9 @@
 #include <curl/curl.h>          // CURL, CURLcode, struct curl_slist, curl_slist_append, curl_easy_init,
                                 // curl_easy_setopt, curl_easy_perform, curl_easy_cleanup, curl_slist_free_all
 
-#include <pushbullet/structures.h>          // NUMBER_PROXIES, PROXY_MAX_LENGTH, HTTPS_PROXY
-#include <pushbullet/user.h>               // pb_get_https_proxy, pb_get_curl_timeout
-#include <pushbullet/logging.h>             // iprintf, eprintf, cprintf, gprintf
+#include <structures.h>          // NUMBER_PROXIES, PROXY_MAX_LENGTH, HTTPS_PROXY
+#include <user.h>               // pb_get_https_proxy, pb_get_curl_timeout
+#include <logging.h>             // iprintf, eprintf, cprintf, gprintf
 
 #define CONTENT_TYPE_JSON       "Content-Type: application/json"
 #define CONTENT_TYPE_MULTIPART  "Content-Type: multipart/form-data"
