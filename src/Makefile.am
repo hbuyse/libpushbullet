@@ -5,5 +5,5 @@ libpushbullet_la_LDFLAGS = -version-info 0:1:0
 
 
 bin_PROGRAMS =  pushbullet
-pushbullet_SOURCES = main.c
-pushbullet_LDADD = libpushbullet.la -lcurl -ljson-c
+pushbullet_SOURCES = main.c devices.c pushes.c requests.c user.c
+pushbullet_LDADD = -lcurl -ljson-c
