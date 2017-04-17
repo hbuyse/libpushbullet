@@ -51,7 +51,7 @@ unsigned short pb_get(char              *result,
     unsigned short              http_code   = 0;
     struct Memory_struct_s      ms          =
     {
-        .memory = (char *) calloc(1, sizeof(char) ),
+        .memory = NULL,
         .size   = 0
     };
 
@@ -102,9 +102,7 @@ unsigned short pb_get(char              *result,
          */
         if ( r != CURLE_OK )
         {
-#ifdef __DEBUG__
             eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
-#endif
 
             return (http_code);
         }
@@ -114,9 +112,7 @@ unsigned short pb_get(char              *result,
     }
     else
     {
-#ifdef __DEBUG__
         eprintf("curl_easy_init() could not be initiated.\n");
-#endif
 
         return (0);
     }
@@ -145,7 +141,7 @@ unsigned short pb_post(char             *result,
     unsigned short              http_code   = 0;
     struct Memory_struct_s      ms          =
     {
-        .memory = (char *) calloc(1, sizeof(char) ),
+        .memory = NULL,
         .size   = 0
     };
 
@@ -198,9 +194,7 @@ unsigned short pb_post(char             *result,
          */
         if ( r != CURLE_OK )
         {
-#ifdef __DEBUG__
             eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
-#endif
 
             return (http_code);
         }
@@ -210,9 +204,7 @@ unsigned short pb_post(char             *result,
     }
     else
     {
-#ifdef __DEBUG__
         eprintf("curl_easy_init() could not be initiated.\n");
-#endif
 
         return (0);
     }
@@ -243,7 +235,7 @@ short pb_post_multipart(char            *result,
     unsigned short              http_code   = 0;
     struct Memory_struct_s      ms          =
     {
-        .memory = (char *) calloc(1, sizeof(char) ),
+        .memory = NULL,
         .size   = 0
     };
 
@@ -289,9 +281,7 @@ short pb_post_multipart(char            *result,
          */
         if ( r != CURLE_OK )
         {
-#ifdef __DEBUG__
             eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
-#endif
 
             return (http_code);
         }
@@ -302,9 +292,7 @@ short pb_post_multipart(char            *result,
     }
     else
     {
-#ifdef __DEBUG__
         eprintf("curl_easy_init() could not be initiated.\n");
-#endif
 
         return (0);
     }
@@ -332,7 +320,7 @@ unsigned short pb_delete(char               *result,
     unsigned short              http_code   = 0;
     struct Memory_struct_s      ms          =
     {
-        .memory = (char *) calloc(1, sizeof(char) ),
+        .memory = NULL,
         .size   = 0
     };
 
@@ -386,9 +374,7 @@ unsigned short pb_delete(char               *result,
          */
         if ( r != CURLE_OK )
         {
-#ifdef __DEBUG__
             eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
-#endif
 
             return (http_code);
         }
@@ -398,9 +384,7 @@ unsigned short pb_delete(char               *result,
     }
     else
     {
-#ifdef __DEBUG__
         eprintf("curl_easy_init() could not be initiated.\n");
-#endif
 
         return (0);
     }
@@ -446,20 +430,21 @@ static size_t write_memory_callback(void    *contents,
         // Out of memory!
         eprintf("Not enough memory (realloc returned NULL)\n");
 
-        return (0);
+        realsize = 0;
     }
+    else
+    {
+        // Copy the new data into the buffer.
+        memcpy(mem->memory +mem->size, contents, realsize);
 
 
-    // Copy the new data into the buffer.
-    memcpy(&(mem->memory[mem->size]), contents, realsize);
+        // Update the size of the buffer.
+        mem->size += realsize;
 
 
-    // Update the size of the buffer.
-    mem->size += realsize;
-
-
-    // Null terminate the buffer/string.
-    mem->memory[mem->size] = 0;
+        // Null terminate the buffer/string.
+        mem->memory[mem->size] = 0;
+    }
 
     return (realsize);
 }
