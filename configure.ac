@@ -20,9 +20,13 @@ AM_SILENT_RULES(no)
 # Checks for programs.
 AC_PROG_CC
 
+# Check pkg-config
+PKG_CHECK_MODULES(GLIB, glib-2.0)
+PKG_CHECK_MODULES(JSON_GLIB, json-glib-1.0)
+
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(curl/curl.h getopt.h json/json.h libgen.h stdio.h stdlib.h string.h sys/stat.h sys/types.h unistd.h)
+AC_CHECK_HEADERS(curl/curl.h getopt.h libgen.h stdio.h stdlib.h string.h sys/stat.h sys/types.h unistd.h)
 AC_CONFIG_HEADERS(config.h)
 
 # Checks for libraries.
