@@ -37,6 +37,9 @@ AC_FUNC_VPRINTF
 AC_FUNC_MEMCMP
 AC_CHECK_FUNCS(realloc strcasecmp strdup strerror snprintf vsnprintf vasprintf open vsyslog strncasecmp setlocale uselocale)
 
+PKG_CHECK_MODULES([jsonc], [json-c])
+PKG_CHECK_MODULES([curl], [libcurl])
+
 LT_INIT
 
 # AX_COMPILE_CHECK_SIZEOF(int)
