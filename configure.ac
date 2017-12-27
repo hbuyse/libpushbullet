@@ -2,7 +2,7 @@
 AC_PREREQ(2.52)
 
 AC_INIT(pushbullet, 1.0.0, henri.buyse@gmail.com, pushbullet, https://github.com/hbuyse/libpushbullet)
-AM_INIT_AUTOMAKE()
+AM_INIT_AUTOMAKE([foreign])
 
 AC_PROG_MAKE_SET
 
