@@ -8,4 +8,4 @@ bin_PROGRAMS =  pushbullet
 pushbullet_SOURCES = main.c
 pushbullet_CFLAGS = -W -Wall -Wextra -Wno-unused-function -fmessage-length=0 -D_REENTRANT $(curl_CFLAGS) $(jsonc_CFLAGS)
 pushbullet_LDFLAGS = $(curl_LIBS) $(jsonc_LIBS)
-pushbullet_LDADD = $(top_builddir)/src/.libs/libpushbullet.la
+pushbullet_LDADD = libpushbullet.la
