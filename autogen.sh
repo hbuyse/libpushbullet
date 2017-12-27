@@ -5,11 +5,11 @@ set -e
 chmod +x $0
 chmod +x ./get-version
 
-[ ! -f .gitmodules ] || [ ! -e .git ]] || {
+if [ ! -f .gitmodules ] || [ ! -e .git ]; then
     echo "autogen.sh: updating git submodules"
     git submodule init
     git submodule update
-}
+fi
 
 case "$(uname)" in
     Darwin)
