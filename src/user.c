@@ -11,7 +11,7 @@
 #include <sys/stat.h>          // struct stat, stat, S_ISREG
 #include <unistd.h>          // struct stat, stat, S_ISREG
 
-#include <json/json.h>          // json_object, json_tokener_parse, json_object_get_string, json_object_object_foreach,
+#include <json.h>          // json_object, json_tokener_parse, json_object_get_string, json_object_object_foreach,
                                 // json_object_get_int
 
 #include <urls.h>           // API_URL_ME

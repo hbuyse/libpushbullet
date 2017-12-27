@@ -5,7 +5,7 @@
  */
 
 #include <string.h>          // strcmpt
-#include <json/json.h>          // json_object, json_tokener_parse, json_object_object_foreach, json_object_get_array,
+#include <json.h>          // json_object, json_tokener_parse, json_object_object_foreach, json_object_get_array,
                                 // array_list
 
 #include <urls.h>          // API_URL_DEVICES

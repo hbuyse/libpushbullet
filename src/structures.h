@@ -11,7 +11,7 @@
 #define __STRUCTURES_H__
 
 
-#include <json/json.h>          // json_object
+#include <json.h>          // json_object
 
 #ifdef __cplusplus
 extern "C" {

@@ -5,7 +5,7 @@
  */
 
 #include <string.h>             // strlen, strdup
-#include <json/json.h>          // json_object, json_object_new_object, json_object_new_string, json_object_object_add,
+#include <json.h>          // json_object, json_object_new_object, json_object_new_string, json_object_object_add,
                                 // json_object_to_json_string
 #include <libgen.h>          // basename
 
