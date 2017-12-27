@@ -14,7 +14,7 @@ AC_PROG_MAKE_SET
 # * Makefile.am: error: required file './ChangeLog' not found
 
 # enable silent build by default
-AM_SILENT_RULES(no)
+AM_SILENT_RULES(yes)
 
 
 # Checks for programs.
