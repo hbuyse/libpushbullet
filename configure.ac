@@ -43,11 +43,18 @@ AC_CHECK_FUNCS(realloc strcasecmp strdup strerror snprintf vsnprintf vasprintf o
 
 LT_INIT
 
-# AX_COMPILE_CHECK_SIZEOF(int)
-# AX_COMPILE_CHECK_SIZEOF(long)
-# AX_COMPILE_CHECK_SIZEOF(size_t, [#include <stdint.h>])
+AC_CONFIG_FILES([Makefile src/Makefile libpushbullet.pc])
 
-AC_CONFIG_FILES(Makefile src/Makefile)
+# --enable-doc
+AC_ARG_ENABLE([doc],
+  AS_HELP_STRING([--enable-doc], [Build documentation (needs doxygen)]),
+  [enable_doc=$enableval],[enable_doc=no])
+AM_CONDITIONAL([ENABLE_DOC], [test "x$enable_doc" = "xyes"])
+AM_COND_IF([ENABLE_DOC], [AC_CONFIG_FILES([Doxyfile])])
+if test "${enable_doc}" = "yes"; then
+  AC_CHECK_PROG([DOXYGEN], [doxygen], [yes], [no])
+  AC_CHECK_PROG([DOT], [dot], [yes], [no])
+fi
 
 # Output files.
 AC_OUTPUT
