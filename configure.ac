@@ -1,33 +1,32 @@
 # Prelude
 AC_PREREQ(2.52)
 
-AC_INIT(pushbullet, 1.0.0, henri.buyse@gmail.com, pushbullet, https://github.com/hbuyse/libpushbullet)
-AM_INIT_AUTOMAKE()
+AC_INIT([pushbullet], [1.0.0], [henri.buyse@gmail.com], [pushbullet], [https://github.com/hbuyse/libpushbullet])
+AM_INIT_AUTOMAKE([foreign])
 
 AC_PROG_MAKE_SET
 
-# foreign ignores some GNU Coding Standards like
-# * Makefile.am: installing './INSTALL'
-# * Makefile.am: error: required file './NEWS' not found
-# * Makefile.am: error: required file './README' not found
-# * Makefile.am: error: required file './AUTHORS' not found
-# * Makefile.am: error: required file './ChangeLog' not found
-
 # enable silent build by default
-AM_SILENT_RULES(no)
-
+AM_SILENT_RULES([yes])
 
 # Checks for programs.
-AC_PROG_CC
+AC_USE_SYSTEM_EXTENSIONS
+# AC_PROG_CC
+AC_PROG_CC_STDC
+AM_PROG_AR
+AC_PROG_LN_S
+AC_PROG_MKDIR_P
+AC_SYS_LARGEFILE
+PKG_PROG_PKG_CONFIG
 
 # Check pkg-config
-PKG_CHECK_MODULES(GLIB, glib-2.0)
-PKG_CHECK_MODULES(JSON_GLIB, json-glib-1.0)
+PKG_CHECK_MODULES([JSON_GLIB], [json-glib-1.0 >= 0.16.2])
+PKG_CHECK_MODULES([LIBCURL], [libcurl >= 7.35.0])
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(curl/curl.h getopt.h libgen.h stdio.h stdlib.h string.h sys/stat.h sys/types.h unistd.h)
-AC_CONFIG_HEADERS(config.h)
+AC_CHECK_HEADERS([getopt.h libgen.h stdio.h stdlib.h string.h sys/stat.h sys/types.h unistd.h])
+AC_CONFIG_HEADERS([config.h])
 
 # Checks for libraries.
 
@@ -39,7 +38,7 @@ AC_CHECK_TYPE(ssize_t, int)
 # Checks for library functions.
 AC_FUNC_VPRINTF
 AC_FUNC_MEMCMP
-AC_CHECK_FUNCS(realloc strcasecmp strdup strerror snprintf vsnprintf vasprintf open vsyslog strncasecmp setlocale uselocale)
+AC_CHECK_FUNCS([realloc strcasecmp strdup strerror snprintf vsnprintf vasprintf open vsyslog strncasecmp setlocale uselocale])
 
 LT_INIT
 
@@ -58,3 +57,24 @@ fi
 
 # Output files.
 AC_OUTPUT
+
+# Display infos
+AC_MSG_RESULT([
+    $PACKAGE $VERSION
+
+        CC:                     ${CC}
+        CFLAGS:                 ${CFLAGS}
+        CPPFLAGS:               ${CPPFLAGS}
+        LDFLAGS:                ${LDFLAGS}
+        LIBS:                   ${LIBS}
+
+        prefix:                 ${prefix}
+        sysconfdir:             ${sysconfdir}
+        libdir:                 ${libdir}
+        includedir:             ${includedir}
+        pkgconfigdir:           ${pkgconfigdir}
+
+        Build documentation:    ${enable_doc}
+        Doxygen:                ${DOXYGEN}
+        Dot:                    ${DOT}
+])
