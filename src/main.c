@@ -9,7 +9,7 @@
 #include <unistd.h>          // getopt, opterr, optarg, optopt, optind
 #include <getopt.h>          // struct option
 
-#include <pushbullet.h>          // pb_get_user_info
+#include "pushbullet.h"          // pb_get_user_info
 
 
 /**

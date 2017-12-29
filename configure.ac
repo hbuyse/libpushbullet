@@ -61,7 +61,7 @@ AC_CHECK_FUNCS([realloc strcasecmp strdup strerror snprintf vsnprintf vasprintf 
 
 LT_INIT
 
-AC_CONFIG_FILES([Makefile src/Makefile libpushbullet.pc])
+AC_CONFIG_FILES([Makefile src/Makefile lib/Makefile libpushbullet.pc])
 
 # --enable-doc
 AC_ARG_ENABLE([doc],
