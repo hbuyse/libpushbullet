@@ -4,6 +4,9 @@ AC_PREREQ(2.52)
 AC_INIT([pushbullet], [1.0.0], [henri.buyse@gmail.com], [pushbullet], [https://github.com/hbuyse/libpushbullet])
 AM_INIT_AUTOMAKE([foreign])
 
+PACKAGE_DESCRIPTION="Pushbullet library"
+AC_SUBST(PACKAGE_DESCRIPTION)
+
 AC_PROG_MAKE_SET
 
 # enable silent build by default
@@ -19,6 +22,21 @@ AC_PROG_LN_S
 AC_PROG_MKDIR_P
 AC_SYS_LARGEFILE
 PKG_PROG_PKG_CONFIG
+
+
+#AC_REVISION([m4_esyscmd_s([git describe --always --dirty])])
+AC_REVISION([m4_esyscmd_s([git describe --always])])
+# saves revision to configure
+
+GIT_VERSION=`git describe --always --dirty`
+if test x"$GIT_VERSION" = x; then
+   AC_DEFINE(GIT_VERSION, ["unknown"], [Git revision])
+   AC_SUBST(GIT_VERSION)
+else
+   AC_DEFINE_UNQUOTED(GIT_VERSION, "$GIT_VERSION", [Git revision])
+   AC_SUBST(GIT_VERSION)
+fi
+
 
 # Check pkg-config
 PKG_CHECK_MODULES([JSON_GLIB], [json-glib-1.0 >= 0.16.2])
@@ -73,7 +91,7 @@ AC_OUTPUT
 
 # Display infos
 AC_MSG_RESULT([
-    $PACKAGE $VERSION
+    $PACKAGE $VERSION - ${GIT_VERSION}
 
         CC:                     ${CC}
         CFLAGS:                 ${CFLAGS}
