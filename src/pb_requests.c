@@ -9,21 +9,21 @@
 #include <curl/curl.h>          // CURL, CURLcode, struct curl_slist, curl_slist_append, curl_easy_init,
                                 // curl_easy_setopt, curl_easy_perform, curl_easy_cleanup, curl_slist_free_all
 
-#include <structures.h>          // NUMBER_PROXIES, PROXY_MAX_LENGTH, HTTPS_PROXY
-#include <user.h>               // pb_get_https_proxy, pb_get_curl_timeout
-#include <logging.h>             // iprintf, eprintf, cprintf, gprintf
+#include "pb_utils.h"             // iprintf, eprintf, cprintf, gprintf
+#include "pb_internal.h"             // pb_file_get_filepath
+#include "pushbullet.h"          // NUMBER_PROXIES, PROXY_MAX_LENGTH, HTTPS_PROXY
 
 #define CONTENT_TYPE_JSON       "Content-Type: application/json"
 #define CONTENT_TYPE_MULTIPART  "Content-Type: multipart/form-data"
 
-
+#define CURL_USERAGENT "libcurl-agent/1.0"
 /**
- * @struct Memory_struct_s
+ * @struct memory_struct_s
  * @brief      Chunk of memory used by write_memory_callback.
  * @details    It stores its data and its size.
  */
-struct Memory_struct_s {
-    char *memory;          ///< Pointer to the memory
+struct memory_struct_s {
+    char *data;          ///< Pointer to the memory
     size_t size;          ///< Size of the memory allocated
 };
 
@@ -41,19 +41,14 @@ struct Memory_struct_s {
 static size_t write_memory_callback(void *contents, size_t size, size_t nmemb, void *userp);
 
 
-unsigned short pb_get(char              *result,
-                      const char        *url_request,
-                      const pb_user_t   user
-                      )
+http_code_t pb_requests_get(char              **result,
+                            size_t            *length,
+                            const char        *url_request,
+                            const pb_config_t *p_config
+                            )
 {
-    /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
-     */
-    unsigned short              http_code   = 0;
-    struct Memory_struct_s      ms          =
-    {
-        .memory = NULL,
-        .size   = 0
-    };
+    http_code_t http_code = HTTP_UNKNOWN_CODE;
+    struct memory_struct_s ms = { .data = 0, .size = 0};
 
 
     /*  Start a libcurl easy session
@@ -61,7 +56,11 @@ unsigned short pb_get(char              *result,
     CURL     *s = curl_easy_init();
 
 
-    if ( s )
+    if ( ! s )
+    {
+        eprintf("curl_easy_init() could not be initiated.\n");
+    }
+    else
     {
         CURLcode     r = CURLE_OK;
         struct curl_slist     *http_headers = NULL;
@@ -71,58 +70,65 @@ unsigned short pb_get(char              *result,
 
         /*  Specify URL to get
          *  Specify the user using the token key
+         *  Specify the HTTPS proxy
+         *  Specify the timeout
          *  Specify the data we are about to send
          *  Specify the HTTP header
-         *  Send all data to the write_memory_callback method
+         *  Send incomming data to the write_memory_callback method
          */
-        curl_easy_setopt(s, CURLOPT_URL, url_request);
-        curl_easy_setopt(s, CURLOPT_USERPWD, user.token_key);
+        curl_easy_setopt(s, CURLOPT_USERAGENT, CURL_USERAGENT);
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
+        curl_easy_setopt(s, CURLOPT_URL, url_request);
+        curl_easy_setopt(s, CURLOPT_USERPWD, pb_config_get_token_key(p_config));
+        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_https_proxy(p_config) );
+        curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_config_get_timeout(p_config) );
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
-        curl_easy_setopt(s, CURLOPT_WRITEDATA, (void *) &ms);
-
-        if ( pb_get_https_proxy(user) )
-        {
-            curl_easy_setopt(s, CURLOPT_PROXY, pb_get_https_proxy(user) );
-        }
-
-        if ( pb_get_curl_timeout(user) )
-        {
-            curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_get_curl_timeout(user) );
-        }
-
+        curl_easy_setopt(s, CURLOPT_WRITEDATA, (void*) &ms);
 
         /* Get data && http status code
          */
         r = curl_easy_perform(s);
-        curl_easy_getinfo(s, CURLINFO_RESPONSE_CODE, &http_code);
-
 
         /* Checking errors
          */
         if ( r != CURLE_OK )
         {
             eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
-
-            return (http_code);
         }
+        else
+        {
+            if (result && ms.data)
+            {
+                *result = (char*) calloc(ms.size + 1, sizeof(char));
+                memcpy(*result, ms.data, ms.size);
+            }
+
+            if (length)
+            {
+                *length = ms.size;
+            }
+            
+            pb_free(ms.data);
+        }
+
+        curl_easy_getinfo(s, CURLINFO_RESPONSE_CODE, &http_code);
+
+        #ifdef __DEBUG__
+        if (length && result)
+        {
+            if ( http_code == HTTP_OK )
+            {
+                gprintf("\e[37m%s %u\e[0m %zu %s\n", url_request, http_code, *length, *result);
+            }
+            else
+            {
+                eprintf("\e[37m%s %u\e[0m %zu %s\n", url_request, http_code, *length, *result);
+            }
+        }
+        #endif
 
         curl_easy_cleanup(s);
         curl_slist_free_all(http_headers);
-    }
-    else
-    {
-        eprintf("curl_easy_init() could not be initiated.\n");
-
-        return (0);
-    }
-
-
-    // Copy the data before removing them.
-    if ( ms.memory )
-    {
-        memcpy(result, ms.memory, ms.size);
-        free(ms.memory);
     }
 
     return (http_code);
@@ -130,20 +136,17 @@ unsigned short pb_get(char              *result,
 
 
 
-unsigned short pb_post(char             *result,
-                       const char       *url_request,
-                       const pb_user_t  user,
-                       const char       *data
+http_code_t pb_requests_post(char              *result,
+                       size_t            *length, 
+                       const char        *url_request,
+                       const pb_config_t *p_config,
+                       const char        *data
                        )
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
      */
-    unsigned short              http_code   = 0;
-    struct Memory_struct_s      ms          =
-    {
-        .memory = NULL,
-        .size   = 0
-    };
+    unsigned short http_code  = HTTP_UNKNOWN_CODE;
+    struct memory_struct_s ms = {0};
 
 
     /*  Start a libcurl easy session
@@ -151,7 +154,11 @@ unsigned short pb_post(char             *result,
     CURL     *s = curl_easy_init();
 
 
-    if ( s )
+    if ( ! s )
+    {
+        eprintf("curl_easy_init() could not be initiated.\n");
+    }
+    else
     {
         CURLcode     r = CURLE_OK;
         struct curl_slist     *http_headers = NULL;
@@ -167,21 +174,13 @@ unsigned short pb_post(char             *result,
          *  Send all data to the WriteMemoryCallback method
          */
         curl_easy_setopt(s, CURLOPT_URL, url_request);
-        curl_easy_setopt(s, CURLOPT_USERPWD, user.token_key);
+        curl_easy_setopt(s, CURLOPT_USERPWD, pb_config_get_token_key(p_config));
+        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_https_proxy(p_config) );
+        curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_config_get_timeout(p_config) );
         curl_easy_setopt(s, CURLOPT_POSTFIELDS, data);
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
         curl_easy_setopt(s, CURLOPT_WRITEDATA, (void *) &ms);
-
-        if ( pb_get_https_proxy(user) )
-        {
-            curl_easy_setopt(s, CURLOPT_PROXY, pb_get_https_proxy(user) );
-        }
-
-        if ( pb_get_curl_timeout(user) )
-        {
-            curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_get_curl_timeout(user) );
-        }
 
 
         /* Get data
@@ -195,37 +194,40 @@ unsigned short pb_post(char             *result,
         if ( r != CURLE_OK )
         {
             eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
-
-            return (http_code);
         }
 
         curl_easy_cleanup(s);
         curl_slist_free_all(http_headers);
-    }
-    else
-    {
-        eprintf("curl_easy_init() could not be initiated.\n");
 
-        return (0);
-    }
+        // Copy the data before removing them.
+        if ( ms.data )
+        {
+            *length = ms.size;
+            memcpy(result, ms.data, ms.size);
+            free(ms.data);
+        }
 
-
-    // Copy the data before removing them.
-    if ( ms.memory )
-    {
-        memcpy(result, ms.memory, ms.size);
-        free(ms.memory);
+        #ifdef __DEBUG__
+        if ( http_code == HTTP_OK )
+        {
+            gprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+        }
+        else
+        {
+            eprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+        }
+        #endif
     }
 
     return (http_code);
 }
 
 
-
-short pb_post_multipart(char            *result,
-                        const char      *url_request,
-                        const pb_user_t user __attribute__( (unused) ),
-                        const pb_file_t file
+http_code_t pb_requests_post_multipart(char              *result,
+                        size_t            *length, 
+                        const char        *url_request,
+                        const pb_config_t *p_config,
+                        const pb_file_t   *file
                         )
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
@@ -233,11 +235,7 @@ short pb_post_multipart(char            *result,
 
 
     unsigned short              http_code   = 0;
-    struct Memory_struct_s      ms          =
-    {
-        .memory = NULL,
-        .size   = 0
-    };
+    struct memory_struct_s      ms          = {0};
 
 
     /*  Start a libcurl easy session
@@ -255,16 +253,23 @@ short pb_post_multipart(char            *result,
 
     /* Fill in the file upload field
      */
-    curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "file", CURLFORM_FILE, file.file_path, CURLFORM_END);
+    curl_formadd(&formpost, &lastptr, CURLFORM_COPYNAME, "file", CURLFORM_FILE, pb_file_get_filepath(file), CURLFORM_END);
 
 
     /* Initialize the session
      */
     s = curl_easy_init();
 
-    if ( s )
+    if ( ! s )
+    {
+        eprintf("curl_easy_init() could not be initiated.\n");
+    }
+    else
     {
         http_headers = curl_slist_append(http_headers, CONTENT_TYPE_MULTIPART);
+        curl_easy_setopt(s, CURLOPT_USERPWD, pb_config_get_token_key(p_config));
+        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_https_proxy(p_config) );
+        curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_config_get_timeout(p_config) );
         curl_easy_setopt(s, CURLOPT_URL, url_request);
         curl_easy_setopt(s, CURLOPT_HTTPPOST, formpost);
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
@@ -289,40 +294,41 @@ short pb_post_multipart(char            *result,
         curl_easy_cleanup(s);
         curl_formfree(formpost);
         curl_slist_free_all(http_headers);
-    }
-    else
-    {
-        eprintf("curl_easy_init() could not be initiated.\n");
 
-        return (0);
-    }
+        // Copy the data before removing them.
+        if ( ms.data )
+        {
+            *length = ms.size;
+            memcpy(result, ms.data, ms.size);
+            free(ms.data);
+        }
 
-
-    // Copy the data before removing them.
-    if ( ms.memory )
-    {
-        memcpy(result, ms.memory, ms.size);
-        free(ms.memory);
+        #ifdef __DEBUG__
+        if ( http_code == HTTP_OK )
+        {
+            gprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+        }
+        else
+        {
+            eprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+        }
+        #endif
     }
 
     return (http_code);
 }
 
 
-
-unsigned short pb_delete(char               *result,
+http_code_t pb_requests_delete(char               *result,
+                         size_t             *length,
                          const char         *url_request,
-                         const pb_user_t    user
+                         const pb_config_t *p_config
                          )
 {
     /*  Documentation on CURL for C can be found at http://curl.haxx.se/libcurl/c/
      */
-    unsigned short              http_code   = 0;
-    struct Memory_struct_s      ms          =
-    {
-        .memory = NULL,
-        .size   = 0
-    };
+    unsigned short              http_code   = HTTP_UNKNOWN_CODE;
+    struct memory_struct_s      ms          = {0};
 
 
     /*  Start a libcurl easy session
@@ -330,7 +336,11 @@ unsigned short pb_delete(char               *result,
     CURL     *s = curl_easy_init();
 
 
-    if ( s )
+    if ( ! s )
+    {
+        eprintf("curl_easy_init() could not be initiated.\n");
+    }
+    else
     {
         CURLcode     r = CURLE_OK;
         struct curl_slist     *http_headers = NULL;
@@ -343,20 +353,12 @@ unsigned short pb_delete(char               *result,
          *  Specify the HTTP header
          */
         curl_easy_setopt(s, CURLOPT_URL, url_request);
-        curl_easy_setopt(s, CURLOPT_USERPWD, user.token_key);
+        curl_easy_setopt(s, CURLOPT_USERPWD, pb_config_get_token_key(p_config));
+        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_https_proxy(p_config) );
+        curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_config_get_timeout(p_config) );
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
         curl_easy_setopt(s, CURLOPT_WRITEDATA, (void *) &ms);
-
-        if ( pb_get_https_proxy(user) )
-        {
-            curl_easy_setopt(s, CURLOPT_PROXY, pb_get_https_proxy(user) );
-        }
-
-        if ( pb_get_curl_timeout(user) )
-        {
-            curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_get_curl_timeout(user) );
-        }
 
 
         /* Set the DELETE command
@@ -375,26 +377,29 @@ unsigned short pb_delete(char               *result,
         if ( r != CURLE_OK )
         {
             eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
-
-            return (http_code);
         }
 
         curl_easy_cleanup(s);
         curl_slist_free_all(http_headers);
-    }
-    else
-    {
-        eprintf("curl_easy_init() could not be initiated.\n");
 
-        return (0);
-    }
+        // Copy the data before removing them.
+        if ( ms.data )
+        {
+            *length = ms.size;
+            memcpy(result, ms.data, ms.size);
+            free(ms.data);
+        }
 
-
-    // Copy the data before removing them.
-    if ( ms.memory )
-    {
-        memcpy(result, ms.memory, ms.size);
-        free(ms.memory);
+        #ifdef __DEBUG__
+        if ( http_code == HTTP_OK )
+        {
+            gprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+        }
+        else
+        {
+            eprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+        }
+        #endif
     }
 
     return (http_code);
@@ -408,24 +413,24 @@ unsigned short pb_delete(char               *result,
  * @param contents Downloaded content
  * @param size Size of the buffer
  * @param nmemb Size of each element of that buffer
- * @param userp The pointer to the memory
+ * @param userdata The pointer to the memory
  *
- * @return Return the size of the downloaded element
+ * @return Return the size of the downloaded chunk
  */
 static size_t write_memory_callback(void    *contents,
                                     size_t  size,
                                     size_t  nmemb,
-                                    void    *userp
+                                    void    *userdata
                                     )
 {
-    size_t     realsize = size * nmemb;
-    struct Memory_struct_s     *mem = (struct Memory_struct_s *) userp;
-
+    size_t realsize            = size * nmemb;
+    struct memory_struct_s *ms = (struct memory_struct_s *) userdata;
 
     // Resize the buffer to hold the old data + the new data.
-    mem->memory = realloc(mem->memory, mem->size + realsize + 1);
+    ms->data = realloc(ms->data, ms->size + realsize + 1);
 
-    if ( mem->memory == NULL )
+
+    if ( ms->data == NULL )
     {
         // Out of memory!
         eprintf("Not enough memory (realloc returned NULL)\n");
@@ -435,15 +440,13 @@ static size_t write_memory_callback(void    *contents,
     else
     {
         // Copy the new data into the buffer.
-        memcpy(mem->memory +mem->size, contents, realsize);
-
+        memcpy(ms->data + ms->size, contents, realsize);
 
         // Update the size of the buffer.
-        mem->size += realsize;
-
+        ms->size += realsize;
 
         // Null terminate the buffer/string.
-        mem->memory[mem->size] = 0;
+        ms->data[ms->size] = 0;
     }
 
     return (realsize);

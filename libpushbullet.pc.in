@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libpushbullet
+Description: Pushbullet library
+Version: @VERSION@
+Requires:
+Conflicts:
+Libs: -L${libdir} -lpushbullet
+Cflags: -I${includedir}
+Requires: glib-2.0 >= 2.40.2 json-glib-1.0 >= 0.16.2 libcurl >= 7.35.0
