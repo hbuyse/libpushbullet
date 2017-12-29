@@ -13,6 +13,7 @@ AM_SILENT_RULES([yes])
 AC_USE_SYSTEM_EXTENSIONS
 # AC_PROG_CC
 AC_PROG_CC_STDC
+#AC_PROG_CXX
 AM_PROG_AR
 AC_PROG_LN_S
 AC_PROG_MKDIR_P
@@ -55,6 +56,15 @@ if test "${enable_doc}" = "yes"; then
   AC_CHECK_PROG([DOT], [dot], [yes], [no])
 fi
 
+AC_ARG_ENABLE([debug],
+  AS_HELP_STRING([--enable-debug], [enable debugging, default: no]),
+  [enable_debug=$enableval],[enable_debug=no])
+AM_CONDITIONAL([ENABLE_DEBUG], [test x"$enable_debug" = x"yes"])
+
+AC_CHECK_LIB(magic, [magic_open], [], [
+  AC_MSG_ERROR([unable to find the magic_open() function])
+])
+
 # Output files.
 AC_OUTPUT
 
@@ -67,6 +77,7 @@ AC_MSG_RESULT([
         CPPFLAGS:               ${CPPFLAGS}
         LDFLAGS:                ${LDFLAGS}
         LIBS:                   ${LIBS}
+        DEBUG:                  ${enable_debug}
 
         prefix:                 ${prefix}
         sysconfdir:             ${sysconfdir}

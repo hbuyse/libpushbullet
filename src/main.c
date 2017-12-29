@@ -9,10 +9,7 @@
 #include <unistd.h>          // getopt, opterr, optarg, optopt, optind
 #include <getopt.h>          // struct option
 
-#include <user.h>          // pb_get_user_info
-#include <devices.h>          // pb_get_devices
-#include <http_code.h>          // HTTP_OK
-#include <pushes.h>          // pb_push_note
+#include <pushbullet.h>          // pb_get_user_info
 
 
 /**
@@ -50,15 +47,9 @@ int main(int    argc,
 {
     int                 opt                 = 0;
     int                 long_index          = 0;
-    char                *token_key          = NULL;
-    json_object         *config             = NULL;
+    pb_config_t         *p_config = pb_config_new();
 
-    pb_user_t           user;
-    char                *result             = NULL;
-    unsigned short      res                 = 0;
-
-
-    memset(&user, 0, sizeof(pb_user_t) );
+    pb_user_t           *user = pb_user_new();
 
     opterr = 0;
 
@@ -88,13 +79,13 @@ int main(int    argc,
         {
             case 't':
                 {
-                    token_key = optarg;
+                    pb_config_set_token_key(p_config, optarg);
                     break;
                 }
 
             case 'c':
                 {
-                    config = pb_get_config_json(optarg);
+                    pb_config_from_json_file(p_config, optarg);
                     break;
                 }
 
@@ -128,30 +119,33 @@ int main(int    argc,
         }
     }
 
-    res     = pb_get_user_info(&user, token_key, config);
+
+    pb_user_set_config(user, p_config);
+
+    pb_user_get_info(user);
 
 
     // res = pb_get_devices(&user);
 
 
-    result  = (char *) calloc(BUF_MAX_LENGTH, sizeof(char) );
+    // result  = (char *) calloc(BUF_MAX_LENGTH, sizeof(char) );
 
-    pb_file_t     file =
-    {
-        .file_path  = "tests/volley.png",
-        .title      = "Volleyball",
-        .body       = "Volleyball N&B"
-    };
+    // pb_file_t     file =
+    // {
+    //     .file_path  = "tests/volley.png",
+    //     .title      = "Volleyball",
+    //     .body       = "Volleyball N&B"
+    // };
 
-    pb_push_file(result, &file, NULL, user);
+    // pb_push_file(result, &file, NULL, user);
 
-    pb_free_user(&user);
+    pb_user_free(user);
 
-    if ( result )
-    {
-        free(result);
-        result = NULL;
-    }
+    // if ( result )
+    // {
+    //     free(result);
+    //     result = NULL;
+    // }
 
     return (0);
 }
