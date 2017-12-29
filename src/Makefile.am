@@ -1,4 +1,4 @@
-AM_CFLAGS = -W -Wall -Wextra -ggdb -fmessage-length=0 -D_REENTRANT
+AM_CFLAGS = -W -Wall -Wextra -ggdb -fmessage-length=0 -D_REENTRANT -I$(top_builddir)/include/
 
 if ENABLE_DEBUG
 AM_CFLAGS  += -D__DEBUG__
