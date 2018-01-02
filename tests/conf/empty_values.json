@@ -1,6 +1,5 @@
 {
-    "http_proxy": "",
     "https_proxy": "",
-    "curl_timeout": "",
-    "token_key" : "",
+    "timeout": 0,
+    "token_key" : ""
 }

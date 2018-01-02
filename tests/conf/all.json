@@ -1,6 +1,5 @@
 {
-    "http_proxy": "172.25.0.3:8080",
-    "https_proxy": "172.25.0.3:8080",
-    "curl_timeout": "2",
-    "token_key" : "toto_is_in_da_place!",
+    "https_proxy": "localhost",
+    "timeout": 2,
+    "token_key" : "toto_is_in_da_place!"
 }
