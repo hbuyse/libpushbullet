@@ -33,6 +33,13 @@ static void test_config_to_user(void)
     pb_user_free(u);
 }
 
+static void test_get_user_info(void)
+{
+    pb_user_t* u = pb_user_new();
+
+    g_assert( pb_user_get_info(u) == HTTP_UNAUTHORIZED );
+}
+
 // http_code_t pb_user_get_info(pb_user_t *p_user);
 // pb_device_t* pb_user_get_devices_list(const pb_user_t* p_user);
 
@@ -41,7 +48,8 @@ int main (int argc, char *argv[])
     g_test_init (&argc, &argv, NULL);
 
     g_test_add_func("/user/empty-user", test_empty_user);
-    g_test_add_func("/user/config-to_user", test_config_to_user);
+    g_test_add_func("/user/config-to-user", test_config_to_user);
+    g_test_add_func("/user/get-user-info", test_get_user_info);
 
     return g_test_run ();
 }
