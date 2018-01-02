@@ -16,7 +16,15 @@ typedef struct pb_config_s {
 
 pb_config_t* pb_config_new(void)
 {
-    return calloc(1, sizeof(pb_config_t));
+    pb_config_t* c = calloc(1, sizeof(pb_config_t));
+
+    if (c)
+    {
+        // Increase the reference
+        c->ref_count++;
+    }
+
+    return c;
 }
 
 
@@ -109,7 +117,7 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
     JsonNode *node = NULL;
     JsonObject* obj = NULL;
 
-    if (p_config)
+    if (p_config && json_filepath)
     {
         parser = json_parser_new();
 
@@ -125,7 +133,11 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
             node = json_parser_get_root(parser);
 
             // check if it is an JsonObject inside
-            if ( ! JSON_NODE_HOLDS_OBJECT(node))
+            if ( ! node )
+            {
+                eprintf("json_filepath does not contain a valid JSON object");
+            }
+            else if ( ! JSON_NODE_HOLDS_OBJECT(node))
             {
                 eprintf("json_filepath does not contain a valid JSON object");
             }
@@ -133,12 +145,27 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
             {
                 obj = json_node_get_object(node);
 
-                // Before, check if timeout is superior than long_max
-                pb_config_set_timeout(p_config, (const long) json_object_get_int_member(obj, "timeout"));
-                pb_config_set_https_proxy(p_config, strdup(json_object_get_string_member(obj, "https_proxy")));
-                pb_config_set_token_key(p_config, strdup(json_object_get_string_member(obj, "token_key")));
+                if (obj)
+                {
+                    // Before, check if timeout is superior than long_max
+                    if (json_object_has_member(obj, "timeout"))
+                    {
+                        pb_config_set_timeout(p_config, (const long) json_object_get_int_member(obj, "timeout"));
+                    }
 
-                ret = 0;
+                    if (json_object_has_member(obj, "https_proxy"))
+                    {
+                        pb_config_set_https_proxy(p_config, strdup(json_object_get_string_member(obj, "https_proxy")));
+                    }
+
+                    if (json_object_has_member(obj, "token_key"))
+                    {
+                        pb_config_set_token_key(p_config, strdup(json_object_get_string_member(obj, "token_key")));
+                    }
+
+
+                    ret = 0;
+                }
             }
 
             #ifdef __DEBUG__
