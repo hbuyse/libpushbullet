@@ -214,7 +214,7 @@ static const char* _create_link(const char *title, const char *body, const char 
  * @param[in]  file_url     The file url
  * @param[in]  device_iden  The device identification
  *
- * @return     A string containing the JSON link
+ * @return     A newly allocated string containing the JSON link. This string has to be freed after.
  */
 static const char* _create_file(const char  *title,
                                 const char  *body,

@@ -133,11 +133,7 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
             node = json_parser_get_root(parser);
 
             // check if it is an JsonObject inside
-            if ( ! node )
-            {
-                eprintf("json_filepath does not contain a valid JSON object");
-            }
-            else if ( ! JSON_NODE_HOLDS_OBJECT(node))
+            if ( (! node) || (! JSON_NODE_HOLDS_OBJECT(node)) )
             {
                 eprintf("json_filepath does not contain a valid JSON object");
             }
@@ -163,7 +159,6 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
                         pb_config_set_token_key(p_config, strdup(json_object_get_string_member(obj, "token_key")));
                     }
 
-
                     ret = 0;
                 }
             }
@@ -171,8 +166,6 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
             #ifdef __DEBUG__
             print_json_node_to_stream(gprintf, node);
             #endif
-
-            json_object_unref(obj);
         }
 
         // Free the parser
