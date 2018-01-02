@@ -135,7 +135,9 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
             // check if it is an JsonObject inside
             if ( (! node) || (! JSON_NODE_HOLDS_OBJECT(node)) )
             {
+                #ifdef __DEBUG__
                 eprintf("json_filepath does not contain a valid JSON object");
+                #endif
             }
             else
             {
