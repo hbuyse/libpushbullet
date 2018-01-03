@@ -49,7 +49,7 @@ int main (int argc, char *argv[])
 
     g_test_add_func("/user/empty-user", test_empty_user);
     g_test_add_func("/user/config-to-user", test_config_to_user);
-    g_test_add_func("/user/get-user-info", test_get_user_info);
+    // g_test_add_func("/user/get-user-info", test_get_user_info);
 
     return g_test_run ();
 }

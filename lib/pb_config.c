@@ -5,7 +5,6 @@
 
 #include "pb_utils.h"        // eprintf, gprintf, pb_free
 
-
 typedef struct pb_config_s {
     char* https_proxy;             ///< HTTPS proxy
     long  timeout;             ///< CURL timeout
@@ -28,22 +27,23 @@ pb_config_t* pb_config_new(void)
 }
 
 
-void pb_config_ref(pb_config_t* p_config)
+int pb_config_ref(pb_config_t* p_config)
 {
     if (!p_config)
     {
-        return;
+        return -1;
     }
 
     p_config->ref_count++;
+    return 0;
 }
 
 
-void pb_config_unref(pb_config_t* p_config)
+int pb_config_unref(pb_config_t* p_config)
 {
     if (!p_config)
     {
-        return;
+        return -1;
     }
 
     if (--p_config->ref_count <= 0)
@@ -52,6 +52,8 @@ void pb_config_unref(pb_config_t* p_config)
         pb_free(p_config->token_key);
         free(p_config);
     }
+
+    return 0;
 }
 
 

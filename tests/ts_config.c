@@ -6,6 +6,7 @@
 static void test_empty_config(void)
 {
     pb_config_t* c = pb_config_new();
+    pb_config_ref(c);
 
     g_assert( c != NULL );
     

@@ -298,7 +298,7 @@ pb_config_t* pb_config_new(void);
  *
  * @param[in]  p_config  Pointer to the configuration
  */
-void pb_config_ref(pb_config_t* p_config);
+int pb_config_ref(pb_config_t* p_config);
 
 
 /**
@@ -306,7 +306,7 @@ void pb_config_ref(pb_config_t* p_config);
  *
  * @param[in]  p_config  Pointer to the configuration
  */
-void pb_config_unref(pb_config_t* p_config);
+int pb_config_unref(pb_config_t* p_config);
 
 /**
  * @brief      Set the configuration's https_proxy value
