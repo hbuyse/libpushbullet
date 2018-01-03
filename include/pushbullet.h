@@ -196,7 +196,7 @@ void pb_devices_free_list(const pb_user_t *user);
  *
  * @return     Number of active devices
  */
-unsigned char pb_devices_get_number_active(const pb_user_t *user);
+__attribute__((warn_unused_result)) unsigned char pb_devices_get_number_active(const pb_user_t *user);
 
 
 /**
@@ -207,7 +207,7 @@ unsigned char pb_devices_get_number_active(const pb_user_t *user);
  *
  * @return     The device's identification
  */
-const char* pb_devices_get_iden_from_name(const pb_user_t *user, const char *name);
+__attribute__((warn_unused_result)) const char* pb_devices_get_iden_from_name(const pb_user_t *user, const char *name);
 
 /**
  * @}
@@ -264,7 +264,7 @@ http_code_t pb_push_file(char *result, size_t *result_sz, pb_file_t *file, const
  * @{
  */
 
-pb_user_t* pb_user_new(void);
+__attribute__((warn_unused_result)) pb_user_t* pb_user_new(void);
 
 /**
  * @brief      Set the configuration for a user
@@ -276,9 +276,9 @@ pb_user_t* pb_user_new(void);
  * @return     On error: non-zero integer
  */
 int pb_user_set_config(pb_user_t* p_user, pb_config_t* p_config);
-pb_config_t* pb_user_get_config(const pb_user_t* p_user);
+__attribute__((warn_unused_result)) pb_config_t* pb_user_get_config(const pb_user_t* p_user);
 http_code_t pb_user_get_info(pb_user_t *p_user);
-pb_device_t* pb_user_get_devices_list(const pb_user_t* p_user);
+__attribute__((warn_unused_result)) pb_device_t* pb_user_get_devices_list(const pb_user_t* p_user);
 void pb_user_free(pb_user_t *p_user);
 
 /**
@@ -291,7 +291,7 @@ void pb_user_free(pb_user_t *p_user);
  */
 
 
-pb_config_t* pb_config_new(void);
+__attribute__((warn_unused_result)) pb_config_t* pb_config_new(void);
 
 /**
  * @brief      Increase the reference counter of the configuration structure
@@ -349,7 +349,7 @@ int pb_config_set_token_key(pb_config_t* p_config, const char* token_key);
  * @return     On success: pointer to the https_proxy value
  * @return     On error: NULL
  */
-char* pb_config_get_https_proxy(const pb_config_t* p_config);
+__attribute__((warn_unused_result)) char* pb_config_get_https_proxy(const pb_config_t* p_config);
 
 /**
  * @brief      Retrieve the timeout from the configuration
@@ -359,7 +359,7 @@ char* pb_config_get_https_proxy(const pb_config_t* p_config);
  * @return     On success: the timeout value
  * @return     On error: -1
  */
-long pb_config_get_timeout(const pb_config_t* p_config);
+__attribute__((warn_unused_result)) long pb_config_get_timeout(const pb_config_t* p_config);
 
 /**
  * @brief      Retrieve the token_key from the configuration
@@ -369,7 +369,7 @@ long pb_config_get_timeout(const pb_config_t* p_config);
  * @return     On success: pointer to the token_key value
  * @return     On error: NULL
  */
-char* pb_config_get_token_key(const pb_config_t* p_config);
+ __attribute__((warn_unused_result)) char* pb_config_get_token_key(const pb_config_t* p_config);
 
 /**
  * @brief      Fill the configuration structure using the given JSON file path
