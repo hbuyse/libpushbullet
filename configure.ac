@@ -41,7 +41,6 @@ fi
 # Check pkg-config
 PKG_CHECK_MODULES([JSON_GLIB], [json-glib-1.0 >= 0.16.2])
 PKG_CHECK_MODULES([LIBCURL], [libcurl >= 7.35.0])
-PKG_CHECK_MODULES([CHECK], [check >= 0.9.10])
 
 # Checks for header files.
 AC_HEADER_STDC
