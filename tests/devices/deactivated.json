@@ -1,0 +1,37 @@
+{
+    "accounts": [],
+    "blocks": [],
+    "channels": [],
+    "chats": [],
+    "clients": [],
+    "contacts": [],
+    "devices": [
+        {
+            "active": false,
+            "iden": "helloworld0",
+            "created": 1502130939.8669848,
+            "modified": 1516970794.313482,
+            "pushable": false,
+            "icon": "phone"
+        },
+        {
+            "active": false,
+            "iden": "helloworld1",
+            "created": 1414247058.316813,
+            "modified": 1494948688.330863,
+            "type": "firefox",
+            "kind": "firefox",
+            "nickname": "Firefox",
+            "manufacturer": "Mozilla",
+            "model": "Firefox",
+            "app_version": 42,
+            "pushable": true,
+            "icon": "browser"
+        }
+    ],
+    "grants": [],
+    "pushes": [],
+    "profiles": [],
+    "subscriptions": [],
+    "texts": []
+}

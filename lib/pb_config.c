@@ -3,14 +3,8 @@
 #include <json-glib/json-glib.h>    // JsonObject, JsonNode, GError, json_parser_new, json_parser_load_from_file, 
                                     // json_object_new, json_parser_get_root
 
+#include "pb_config_priv.h"     // pb_config_t
 #include "pb_utils.h"        // eprintf, gprintf, pb_free
-
-typedef struct pb_config_s {
-    char* https_proxy;             ///< HTTPS proxy
-    long  timeout;             ///< CURL timeout
-    char* token_key;             ///< Pushbullet token key
-    int   ref_count;          ///< Reference count
-} pb_config_t;
 
 
 pb_config_t* pb_config_new(void)
@@ -20,7 +14,7 @@ pb_config_t* pb_config_new(void)
     if (c)
     {
         // Increase the reference
-        c->ref_count++;
+        c->ref++;
     }
 
     return c;
@@ -34,7 +28,7 @@ int pb_config_ref(pb_config_t* p_config)
         return -1;
     }
 
-    p_config->ref_count++;
+    p_config->ref++;
     return 0;
 }
 
@@ -46,7 +40,7 @@ int pb_config_unref(pb_config_t* p_config)
         return -1;
     }
 
-    if (--p_config->ref_count <= 0)
+    if (--p_config->ref <= 0)
     {
         pb_free(p_config->https_proxy);
         pb_free(p_config->token_key);
@@ -125,7 +119,7 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
 
         if ( ! json_parser_load_from_file(parser, json_filepath, &err) )
         {
-            #ifdef __DEBUG__
+            #ifdef __TRACES__
             eprintf("%s\n", err->message);
             #endif
             g_clear_error(&err);
@@ -137,7 +131,7 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
             // check if it is an JsonObject inside
             if ( (! node) || (! JSON_NODE_HOLDS_OBJECT(node)) )
             {
-                #ifdef __DEBUG__
+                #ifdef __TRACES__
                 eprintf("json_filepath does not contain a valid JSON object");
                 #endif
             }
@@ -167,7 +161,7 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
                 }
             }
 
-            #ifdef __DEBUG__
+            #ifdef __TRACES__
             print_json_node_to_stream(gprintf, node);
             #endif
         }

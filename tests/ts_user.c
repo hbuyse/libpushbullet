@@ -1,5 +1,9 @@
 #include <stdlib.h>
 
+#include <glib.h>
+#include <glib/gi18n.h>
+
+#include "lib/pb_user_prot.h"
 #include "pushbullet.h"
 
 static void test_empty_user(void)
@@ -8,7 +12,7 @@ static void test_empty_user(void)
 
     g_assert( u != NULL );
     
-    pb_user_free(u);
+    pb_user_unref(u);
 }
 
 static void test_config_to_user(void)
@@ -30,7 +34,7 @@ static void test_config_to_user(void)
     g_assert( c2 != NULL );
     g_assert( c1 == c2 );
 
-    pb_user_free(u);
+    pb_user_unref(u);
 }
 
 static void test_get_user_info(void)
@@ -38,6 +42,34 @@ static void test_get_user_info(void)
     pb_user_t* u = pb_user_new();
 
     g_assert( pb_user_get_info(u) == HTTP_UNAUTHORIZED );
+}
+
+static void test_set_devices(void)
+{
+    pb_user_t* u = pb_user_new();
+    pb_devices_t* d = pb_devices_new();
+
+    g_assert( pb_user_set_devices(NULL, NULL) == -1);
+    g_assert( pb_user_set_devices(u, NULL) == -1);
+    g_assert( pb_user_set_devices(NULL, d) == -1);
+    g_assert( pb_user_set_devices(u, d) == 0);
+
+    pb_user_unref(u);
+}
+
+static void test_get_devices(void)
+{
+    pb_user_t* u = pb_user_new();
+    pb_devices_t* d = pb_devices_new();
+
+    g_assert( pb_user_get_devices(NULL) == NULL);
+    g_assert( pb_user_get_devices(u) == NULL);
+
+    pb_user_set_devices(u, d);
+
+    g_assert( pb_user_get_devices(u) == d);
+
+    pb_user_unref(u);
 }
 
 // http_code_t pb_user_get_info(pb_user_t *p_user);

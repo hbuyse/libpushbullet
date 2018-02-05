@@ -11,99 +11,9 @@
 #include <magic.h>          // magic_t, magic_open, magic_close, magic_load, magic_file
 
 #include "pb_utils.h"             // iprintf, eprintf, cprintf, gprintf
-#include "pb_internal.h"
+#include "pb_pushes_priv.h"         // pb_note_t, pb_link_t, pb_file_t, pb_push_t
+#include "pb_requests_prot.h"     // pb_requests_post, pb_requests_get, pb_requests_delete, pb_requests_post_multipart
 #include "pushbullet.h"
-
-
-/**
- * @brief Maximum length of the buffer (4ko - 4096 - 0x1000)
- */
-#define     BUF_MAX_LENGTH              0x1000
-
-
-/**
- * @brief Command format to get the MIME type of a file
- */
-#define MIME_TYPE_CMD_FORMAT            "file -i %s"
-
-
-/**
- * \brief      Macro to get the MIME_TYPE_CMD_FORMAT length
- *
- * \param      file_path  The file path
- *
- * \return     MIME_TYPE_CMD_FORMAT length
- */
-#define MIME_TYPE_CMD_LENGTH(file_path) strlen(file_path) + 8
-
-
-/**
- * @brief Maximum iteration to get the file's MIME type using the system command "file"
- */
-#define     MIME_TYPE_MAX_ITER          2
-
-
-/**
- * @brief Default MIME type
- */
-#define     MIME_TYPE_DEFAULT           "text/plain"
-
-
-/**
- * @brief Default MIME type length
- */
-#define     MIME_TYPE_DEFAULT_LENGTH    10
-
-
-/**
- * \brief    JSON key to get the future url of the file
- * @details  Field containing the URL where the file will be available after it is uploaded.
- */
-#define     JSON_KEY_FILE_URL           "file_url"
-
-
-/**
- * \brief    JSON key to get the upload url of the file
- * @details  Field containing the URL to POST the file to.
- *           The file must be posted using multipart/form-data encoding.
- */
-#define     JSON_KEY_UPLOAD_URL         "upload_url"
-
-/**
- * @brief Maximum length of a MIME type
- * @details According to RFC 4288 "Media Type Specifications and Registration Procedures", type (eg. "application") and
- * subtype (eg "vnd...") both can
- *          be max 127 characters. (256 - 0x100)
- */
-#define     MIME_TYPE_MAX_LENGTH 0x100
-
-
-/**
- * @typedef pb_note_t
- * @brief Type definition of the structure pb_note_s
- */
-typedef struct pb_note_s pb_note_t;
-
-
-/**
- * @typedef pb_link_t
- * @brief Type definition of the structure pb_link_s
- */
-typedef struct pb_link_s pb_link_t;
-
-
-/**
- * @typedef pb_file_t
- * @brief Type definition of the structure pb_file_s
- */
-typedef struct pb_file_s pb_file_t;
-
-
-/**
- * @typedef pb_push_t
- * @brief Type definition of the structure pb_push_s
- */
-typedef struct pb_push_s pb_push_t;
 
 /**
  * @typedef pb_config_t
@@ -116,66 +26,6 @@ typedef struct pb_config_s pb_config_t;
  * @brief Type definition of the structure pb_user_s
  */
 typedef struct pb_user_s pb_user_t;
-
-
-/**
- * @struct pb_note_s
- * @brief Structure containing all the informations concerning a PushBullet note
- */
-struct pb_note_s {
-    char *title;          ///< Push's title
-    char *body;          ///< Push's body
-};
-
-
-/**
- * @struct pb_link_s
- * @brief Structure containing all the informations concerning a PushBullet link
- */
-struct pb_link_s {
-    char *title;          ///< Push's title
-    char *body;          ///< Push's body
-    char *url;          ///< Push's url
-};
-
-
-/**
- * @struct pb_file_s
- * @brief Structure containing all the informations concerning a PushBullet Upload request for a file
- */
-struct pb_file_s {
-    char *title;          ///< Push's title
-    char *body;          ///< Push's body
-    char *file_path;          ///< File path
-    char *file_name;          ///< File name
-    char *file_type;          ///< File's MIME type
-    char *file_url;          ///< File url
-    char *upload_url;          ///< File upload url
-};
-
-
-/**
- * @struct pb_push_s
- * @brief Structure containing all the informations concerning a PushBullet push
- */
-struct pb_push_s {
-    unsigned char active;          ///< Push's activity
-    const char *body;          ///< Push's body
-    double created;          ///< Push's creation
-    const char *direction;          ///< Push's direction
-    unsigned char dismissed;          ///< Is the push dismissed?
-    const char *iden;          ///< Push's identification
-    double modified;          ///< Push's last modification
-    const char *receiver_email;          ///< Receiver email of the push
-    const char *receiver_email_normalized;          ///< Receiver email normalized of the push
-    const char *receiver_iden;          ///< Receiver identification of the push
-    const char *sender_email;          ///< Sender's email of the push
-    const char *sender_email_normalized;          ///< Sender's email normalized of the push
-    const char *sender_iden;          ///< Sender's identification of the push
-    const char *sender_name;          ///< Sender's name of the push
-    const char *title;          ///< Push's title
-    const char *type;          ///< Push's type
-};
 
 
 /**
@@ -309,10 +159,10 @@ http_code_t pb_push_note(char            *result,
 
 
     // Create the JSON data
-    data    = _create_note(note.title, note.body, pb_devices_get_iden_from_name(user, device_nickname) );
+    data    = _create_note(note.title, note.body, pb_user_get_device_iden_from_name(user, device_nickname) );
 
-#ifdef __DEBUG__
-    iprintf("%s\n", data);
+#ifdef __TRACES__
+    iprintf("%s", data);
 #endif
 
 
@@ -321,14 +171,14 @@ http_code_t pb_push_note(char            *result,
 
     if ( res != HTTP_OK )
     {
-        eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
-        eprintf("%s\n", result);
+        eprintf("An error occured when sending the note (HTTP status code : %d)", res);
+        eprintf("%s", result);
     }
 
-#ifdef __DEBUG__
+#ifdef __TRACES__
     else
     {
-        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
+        gprintf("\e[1;37m%u\e[0m %s", res, result);
     }
 #endif
 
@@ -349,10 +199,10 @@ http_code_t pb_push_link(char            *result,
 
 
     // Create the JSON data
-    data    = _create_link(link.title, link.body, link.url, pb_devices_get_iden_from_name(user, device_nickname) );
+    data    = _create_link(link.title, link.body, link.url, pb_user_get_device_iden_from_name(user, device_nickname) );
 
-#ifdef __DEBUG__
-    iprintf("%s\n", data);
+#ifdef __TRACES__
+    iprintf("%s", data);
 #endif
 
 
@@ -361,13 +211,13 @@ http_code_t pb_push_link(char            *result,
 
     if ( res != HTTP_OK )
     {
-        eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
-        eprintf("%s\n", result);
+        eprintf("An error occured when sending the note (HTTP status code : %d)", res);
+        eprintf("%s", result);
     }
-#ifdef __DEBUG__
+#ifdef __TRACES__
     else
     {
-        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
+        gprintf("\e[1;37m%u\e[0m %s", res, result);
     }
 #endif
 
@@ -407,10 +257,10 @@ http_code_t pb_push_file(char            *result,
                         file->file_name,
                         file->file_type,
                         file->file_url,
-                        pb_devices_get_iden_from_name(user, device_nickname) );
+                        pb_user_get_device_iden_from_name(user, device_nickname) );
 
-#ifdef __DEBUG__
-    iprintf("%s\n", data);
+#ifdef __TRACES__
+    iprintf("%s", data);
 #endif
 
 
@@ -419,13 +269,13 @@ http_code_t pb_push_file(char            *result,
 
     if ( res != HTTP_OK )
     {
-        eprintf("An error occured when sending the note (HTTP status code : %d)\n", res);
-        eprintf("%s\n", result);
+        eprintf("An error occured when sending the note (HTTP status code : %d)", res);
+        eprintf("%s", result);
     }
-#ifdef __DEBUG__
+#ifdef __TRACES__
     else
     {
-        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
+        gprintf("\e[1;37m%u\e[0m %s", res, result);
     }
 #endif
 
@@ -679,7 +529,7 @@ static int _post_upload_request(char          **file_url,
 
     if ( ! json_parser_load_from_data(parser, ur_res, strlen(ur_res), &err) )
     {
-        eprintf("%s\n", err->message);
+        eprintf("%s", err->message);
     }
     else
     {
@@ -687,7 +537,7 @@ static int _post_upload_request(char          **file_url,
 
         if ( ! JSON_NODE_HOLDS_OBJECT(root) )
         {
-            eprintf("Not a JsonObject\n");
+            eprintf("Not a JsonObject");
         }
         else
         {
@@ -710,20 +560,20 @@ static int _prepare_upload_request(pb_file_t *file)
     // MAGIC_MIME_TYPE tells magic to return a mime of the file
     if ((magic_cookie = magic_open(MAGIC_MIME_TYPE)) == NULL)
     {
-        eprintf("Unable to initialize magic library\n");
+        eprintf("Unable to initialize magic library");
     }
     else
     {
         if ( magic_load(magic_cookie, NULL) != 0 )
         {
-            eprintf("Impossible to load magic database - %s\n", magic_error(magic_cookie));
+            eprintf("Impossible to load magic database - %s", magic_error(magic_cookie));
         }
         else
         {
             file->file_type = strdup(magic_file(magic_cookie, file->file_path));
             ret = 0;
-            #ifdef __DEBUG__
-            gprintf("%s\n", file->file_type);
+            #ifdef __TRACES__
+            gprintf("%s", file->file_type);
             #endif
         }
         magic_close(magic_cookie);
@@ -751,13 +601,13 @@ static http_code_t _upload_request(char              *result,
 
     if ( res != HTTP_OK )
     {
-        eprintf("An error occured when sending the upload-request (HTTP status code : %d)\n", res);
-        eprintf("%s\n", result);
+        eprintf("An error occured when sending the upload-request (HTTP status code : %d)", res);
+        eprintf("%s", result);
     }
     else
     {
-#ifdef __DEBUG__
-        gprintf("\e[1;37m%u\e[0m %s\n", res, result);
+#ifdef __TRACES__
+        gprintf("\e[1;37m%u\e[0m %s", res, result);
 #endif
         _post_upload_request(&file->file_url, &file->upload_url, result);
     }
@@ -780,16 +630,16 @@ static http_code_t _send_request(char            *result,
 
     if ( res != HTTP_NO_CONTENT )
     {
-        eprintf("An error occured when sending the upload-request (HTTP status code : %d)\n", res);
-        eprintf("%s\n", result);
+        eprintf("An error occured when sending the upload-request (HTTP status code : %d)", res);
+        eprintf("%s", result);
 
         return (res);
     }
 
-#ifdef __DEBUG__
+#ifdef __TRACES__
     else
     {
-        gprintf("\e[1;37m%u\e[0m\n", res);
+        gprintf("\e[1;37m%u\e[0m", res);
     }
 #endif
 
@@ -802,33 +652,10 @@ static http_code_t _send_request(char            *result,
 
 static void _free_pb_file_t(pb_file_t *file)
 {
-    if ( file->title )
-    {
-        free(file->title);
-    }
-
-    if ( file->body )
-    {
-        free(file->body);
-    }
-
-    if ( file->file_path )
-    {
-        free(file->file_path);
-    }
-
-    if ( file->file_name )
-    {
-        free(file->file_name);
-    }
-
-    if ( file->file_url )
-    {
-        free(file->file_url);
-    }
-
-    if ( file->upload_url )
-    {
-        free(file->upload_url);
-    }
+    pb_free(file->title);
+    pb_free(file->body);
+    pb_free(file->file_path);
+    pb_free(file->file_name);
+    pb_free(file->file_url);
+    pb_free(file->upload_url);
 }

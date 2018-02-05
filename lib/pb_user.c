@@ -1,5 +1,5 @@
 /**
- * @file user.c
+ * @file pb_user.c
  * @author hbuyse
  * @date 08/05/2016
  */
@@ -14,39 +14,15 @@
 #include <json-glib/json-glib.h>          // json_object, json_tokener_parse, json_object_get_string, json_object_object_foreach,
                                 // json_object_get_int
 
-#include "pb_internal.h"          // pb_requests_get
+#include "pb_user_priv.h"        // pb_user_t, MAX_SIZE_BUF, JSON_ASSOCIATE_BOOL, JSON_ASSOCIATE_STR, JSON_ASSOCIATE_INT, JSON_ASSOCIATE_DOUBLE
+#include "pb_user_prot.h"          // pb_requests_get
+#include "pb_config_prot.h"          // pb_config_t
+#include "pb_devices_prot.h"        // pb_devices_get_number_active
+#include "pb_requests_prot.h"       // pb_requests_get
 #include "pb_utils.h"          // pb_requests_get
 #include "pushbullet.h"         // pb_config_t, pb_config_get_token_key
-// #include "devices.h"          // pb_free_devices
 
-
-/**
- * @brief Maximum size of the buffer (4ko - 4096 - 0x1000)
- */
-#define     MAX_SIZE_BUF 0x1000
-
-
-
-/**
- * @struct pb_user_s
- * @brief Contains the user informations.
- */
-struct pb_user_s {
-    unsigned char active;          ///< Boolean that tells if the user is active or not
-    double created;             ///< Epoch time when the user was created
-    double modified;            ///< Epoch time when the user was last modified
-    const char *email;          ///< The user's email
-    const char *email_normalized;          ///< The user's email normalized
-    const char *iden;           ///< The user's identification
-    const char *image_url;          ///< The URL to the user's photo
-    const char *name;           ///< The user's name
-    int max_upload_size;          ///< The maximum size of a file the user can upload in bytes
-    pb_config_t *config;            ///< Configuration from the config file
-    pb_device_t *devices;          ///< The list of active devices
-    int32_t     ref_count;          ///< Reference count
-};
-
-#ifdef __DEBUG__
+#ifdef __TRACES__
 /**
  * @brief      Dumps all user informations.
  *
@@ -55,16 +31,97 @@ struct pb_user_s {
 static void _dump_user_info(const pb_user_t);
 #endif
 
-static void _json_to_flat(JsonObject*, const gchar*, JsonNode *, gpointer);
+static void user_json_to_flat(JsonObject*, const gchar*, JsonNode *, gpointer);
 
 
 pb_user_t* pb_user_new(void)
 {
-    return calloc(1, sizeof(pb_user_t));
+    pb_user_t* u = calloc(1, sizeof(pb_user_t));
+
+    if (u)
+    {
+        // Increase the reference counter
+        u->ref++;
+    }
+
+    return u;
 }
 
 
-int pb_user_set_config(pb_user_t* p_user, pb_config_t* p_config)
+int pb_user_ref(pb_user_t* p_user)
+{
+    if (!p_user)
+    {
+        return -1;
+    }
+
+    p_user->ref++;
+    return 0;
+}
+
+
+int pb_user_unref(pb_user_t* p_user)
+{
+    if (!p_user)
+    {
+        return -1;
+    }
+
+    if (--p_user->ref <= 0)
+    {
+        /* Do not remove user->token_key because it causes a munmap_chunk since the token_key is given as an argument of
+         * the program.
+         * The free() function frees the memory space pointed to by ptr, which must have been returned by a previous
+         * call to malloc(), calloc() or realloc(). Otherwise, or if free(ptr) has already been called before, undefined
+         * behavior occurs. If ptr is NULL, no operation is performed.
+         * pb_free(user->token_key);
+         */
+        p_user->active            = 0;
+        p_user->created           = 0;
+        p_user->modified          = 0;
+        p_user->max_upload_size   = 0;
+
+        pb_free(p_user->email);
+        pb_free(p_user->email_normalized);
+        pb_free(p_user->iden);
+        pb_free(p_user->image_url);
+        pb_free(p_user->name);
+        pb_config_unref(p_user->config);
+        pb_devices_unref(p_user->devices);
+
+        free(p_user);
+    }
+
+    return 0;
+}
+
+
+unsigned char pb_user_is_active(const pb_user_t* p_user)
+{
+    return (p_user) ? p_user->active : 0;
+}
+
+
+char* pb_user_get_name(const pb_user_t* p_user)
+{
+    return (p_user) ? p_user->name : NULL;
+}
+
+
+char* pb_user_get_email(const pb_user_t* p_user)
+{
+    return (p_user) ? p_user->email : NULL;
+}
+
+
+char* pb_user_get_iden(const pb_user_t* p_user)
+{
+    return (p_user) ? p_user->iden : NULL;
+}
+
+
+int pb_user_set_config(pb_user_t* p_user,
+                       pb_config_t* p_config)
 {
     if ( (! p_user) || (! p_config) )
     {
@@ -96,102 +153,129 @@ http_code_t pb_user_get_info(pb_user_t *p_user)
     // Access the API using the token
     res = pb_requests_get(&result, &result_sz, API_URL_ME, (pb_config_t*) pb_user_get_config(p_user));
 
-    if ( (res == HTTP_OK) && (json_parser_load_from_data(parser, result, result_sz, &err)) )
+    if ( (res == HTTP_OK) && (json_parser_load_from_data(parser, result, result_sz, NULL)) )
     {
         root = json_parser_get_root(parser);
         obj = json_node_get_object(root);
 
-        json_object_foreach_member(obj, _json_to_flat, p_user);
+        json_object_foreach_member(obj, user_json_to_flat, p_user);
 
-        #ifdef __DEBUG__
+        #ifdef __TRACES__
         _dump_user_info(*p_user);
         #endif
     }
     
+    if (err) g_error_free(err);
+    g_object_unref(parser);
     pb_free(result);
 
     return (res);
 }
 
 
-pb_device_t* pb_user_get_devices_list(const pb_user_t* p_user)
+unsigned short pb_user_retrieve_devices(pb_user_t *user)
+{
+    // CURL results
+    char *result = NULL;
+    size_t result_sz = 0;
+    unsigned short res = 0;
+
+
+    res = pb_requests_get(&result, &result_sz, API_URL_DEVICES, (pb_config_t*) pb_user_get_config(user));
+
+    // If we do not have a 200 OK, we stop the function and we return the HTTP Status code
+    if ( res == HTTP_OK )
+    {
+        // Create the new list and set it into the 
+        pb_devices_t *devices = pb_devices_new();
+
+        // Free the old list of devices
+        pb_user_unref_devices(user);
+
+        // Set the new list
+        pb_user_set_devices(user, devices);
+
+        // Parse and store the new datas
+        pb_devices_load_devices_from_data(devices, result, result_sz);
+    }
+
+    pb_free(result);
+
+    return (res);
+}
+
+
+pb_devices_t* pb_user_get_devices(const pb_user_t* p_user)
 {
     return ( p_user ) ? p_user->devices : NULL;
 }
 
 
-void pb_user_free(pb_user_t *p_user)
+int pb_user_set_devices(pb_user_t* p_user,
+                        pb_devices_t* p_devices)
 {
-    if ( p_user )
+    if ( (! p_user) || (! p_devices) )
     {
-        /* Do not remove user->token_key because it causes a munmap_chunk since the token_key is given as an argument of
-         * the program.
-         * The free() function frees the memory space pointed to by ptr, which must have been returned by a previous
-         * call to malloc(), calloc() or realloc(). Otherwise, or if free(ptr) has already been called before, undefined
-         * behavior occurs. If ptr is NULL, no operation is performed.
-         * pb_free(user->token_key);
-         */
-        p_user->active            = 0;
-        p_user->created           = 0;
-        p_user->modified          = 0;
-        p_user->max_upload_size   = 0;
-
-        pb_free(p_user->email);
-        pb_free(p_user->email_normalized);
-        pb_free(p_user->iden);
-        pb_free(p_user->image_url);
-        pb_free(p_user->name);
-        pb_config_unref(p_user->config);
-
-        // pb_free_devices(user);
+        return -1;
     }
+
+    p_user->devices = p_devices;
+    return 0;
 }
 
-#ifdef __DEBUG__
+
+size_t pb_user_get_number_active_devices(const pb_user_t *p_user)
+{
+    return (p_user) ? pb_devices_get_number_active(p_user->devices) : 0;
+}
+
+
+const char* pb_user_get_device_iden_from_name(const pb_user_t *p_user,
+                                              const char* nickname)
+{
+    return (p_user && nickname) ? pb_devices_get_iden_from_name(p_user->devices, nickname) : NULL;
+}
+
+
+int pb_user_unref_devices(const pb_user_t *p_user)
+{
+    return (p_user) ? pb_devices_unref(p_user->devices) : -1;
+}
+
+
+#ifdef __TRACES__
 static void _dump_user_info(const pb_user_t user)
 {
-    // fprintf(stdout, "\e[1mtoken_key =\e[0m %s\n", user.token_key);
-    fprintf(stdout, "\e[1m[%s]\e[0m %s - %s\n", __func__, user.name, user.email);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tactive : %u\n", __func__, user.active);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tcreated : %f\n", __func__, user.created);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmodified : %f\n", __func__, user.modified);
-    fprintf(stdout, "\e[1m[%s]\e[0m\temail_normalized : %s\n", __func__, user.email_normalized);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tiden : %s\n", __func__, user.iden);
-    fprintf(stdout, "\e[1m[%s]\e[0m\timage_url : %s\n", __func__, user.image_url);
-    fprintf(stdout, "\e[1m[%s]\e[0m\tmax_upload_size : %d\n", __func__, user.max_upload_size);
-    // fprintf(stdout, "\e[1m[%s]\e[0m\tconfig: %s\n", __func__, json_object_to_json_string(user.config) );
+    iprintf(" %s - %s", user.name, user.email);
+    // iprintf("\ttoken_key : %s", pb_config_get_token_key(user.config));
+    iprintf("\tactive : %u", user.active);
+    iprintf("\tcreated : %f", user.created);
+    iprintf("\tmodified : %f", user.modified);
+    iprintf("\temail_normalized : %s", user.email_normalized);
+    iprintf("\tiden : %s", user.iden);
+    iprintf("\timage_url : %s", user.image_url);
+    iprintf("\tmax_upload_size : %d", user.max_upload_size);
 }
 #endif
 
-
-/**
- * @brief      Macro to associate a key in a structure
- *
- * @param      type  The type
- * @param      var   The pointer we fill
- * @param      k     The JSON key
- */
-#define     JSON_ASSOCIATE(type, var, k)          \
-    do { if ( strcmp(member_name, # k) == 0 ) {var->k = json_node_get_ ## type(member_node); } } while(0)
-
-static void _json_to_flat(JsonObject *object __attribute__((unused)),
-                          const gchar *member_name,
-                          JsonNode *member_node,
-                          gpointer userdata
-                          )
+static void user_json_to_flat(JsonObject *object __attribute__((unused)),
+                              const gchar *member_name,
+                              JsonNode *member_node,
+                              gpointer userdata
+                              )
 {
     pb_user_t* user = (pb_user_t*) userdata;
 
     if (JSON_NODE_HOLDS_VALUE(member_node))
     {
-        JSON_ASSOCIATE(int, user, active);
-        JSON_ASSOCIATE(double, user, created);
-        JSON_ASSOCIATE(double, user, modified);
-        JSON_ASSOCIATE(string, user, email);
-        JSON_ASSOCIATE(string, user, email_normalized);
-        JSON_ASSOCIATE(string, user, iden);
-        JSON_ASSOCIATE(string, user, image_url);
-        JSON_ASSOCIATE(string, user, name);
-        JSON_ASSOCIATE(int, user, max_upload_size);    
+        JSON_ASSOCIATE_INT(user, active);
+        JSON_ASSOCIATE_DOUBLE(user, created);
+        JSON_ASSOCIATE_DOUBLE(user, modified);
+        JSON_ASSOCIATE_STR(user, email);
+        JSON_ASSOCIATE_STR(user, email_normalized);
+        JSON_ASSOCIATE_STR(user, iden);
+        JSON_ASSOCIATE_STR(user, image_url);
+        JSON_ASSOCIATE_STR(user, name);
+        JSON_ASSOCIATE_INT(user, max_upload_size);    
     }
 }

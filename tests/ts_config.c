@@ -1,16 +1,39 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <glib.h>
+
+#include "lib/pb_config_priv.h"
 #include "pushbullet.h"
 
 static void test_empty_config(void)
 {
     pb_config_t* c = pb_config_new();
-    pb_config_ref(c);
 
     g_assert( c != NULL );
+    g_assert( c->ref == 1 );
     
     pb_config_unref(c);
+    g_assert( c->ref == 0 );
+}
+
+static void test_ref_config(void)
+{
+    pb_config_t* c = NULL;
+    g_assert( pb_config_ref(c) == -1 );
+    g_assert( pb_config_unref(c) == -1 );
+ 
+    c = pb_config_new();
+
+    g_assert( c != NULL );
+    g_assert( c->ref == 1 );
+    g_assert( pb_config_ref(c) == 0 );
+    g_assert( c->ref == 2 );
+    g_assert( pb_config_unref(c) == 0 );
+    g_assert( c->ref == 1 );
+   
+    pb_config_unref(c);
+    g_assert( c->ref == 0 );
 }
 
 static void test_https_proxy(void)
@@ -165,6 +188,7 @@ int main (int argc, char *argv[])
     g_test_init (&argc, &argv, NULL);
 
     g_test_add_func("/user/empty-config", test_empty_config);
+    g_test_add_func("/user/ref-config", test_ref_config);
     g_test_add_func("/user/set-get-https-proxy", test_https_proxy);
     g_test_add_func("/user/set-get-timeout", test_timeout);
     g_test_add_func("/user/set-get-token-key", test_token_key);

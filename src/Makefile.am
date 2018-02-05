@@ -1,7 +1,11 @@
-AM_CFLAGS = -W -Wall -Wextra -ggdb -fmessage-length=0 -D_REENTRANT -I$(top_builddir)/include/
+AM_CFLAGS = -W -Wall -Wextra -fmessage-length=0 -D_REENTRANT -I$(top_builddir)/include/
 
 if ENABLE_DEBUG
-AM_CFLAGS  += -D__DEBUG__
+AM_CFLAGS  += -D__DEBUG__ -ggdb3 -O0
+endif
+
+if ENABLE_TRACES
+AM_CFLAGS  += -D__TRACES__
 endif
 
 bin_PROGRAMS       = pushbullet

@@ -119,33 +119,17 @@ int main(int    argc,
         }
     }
 
+    pb_init();
 
     pb_user_set_config(user, p_config);
 
     pb_user_get_info(user);
 
+    pb_user_retrieve_devices(user);
 
-    // res = pb_get_devices(&user);
+    pb_user_unref(user);
 
-
-    // result  = (char *) calloc(BUF_MAX_LENGTH, sizeof(char) );
-
-    // pb_file_t     file =
-    // {
-    //     .file_path  = "tests/volley.png",
-    //     .title      = "Volleyball",
-    //     .body       = "Volleyball N&B"
-    // };
-
-    // pb_push_file(result, &file, NULL, user);
-
-    pb_user_free(user);
-
-    // if ( result )
-    // {
-    //     free(result);
-    //     result = NULL;
-    // }
+    pb_term();
 
     return (0);
 }

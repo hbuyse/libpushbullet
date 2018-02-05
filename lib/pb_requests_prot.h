@@ -1,16 +1,15 @@
 /**
- * @file requests.h
+ * @file pb_requests_prot.h
  * @author hbuyse
- * @date 08/05/2016
+ * @date 30/01/2018
  *
  * @brief  Functions in order to communicate to the Pushbullet API
  */
 
 
-#ifndef __REQUESTS_H__
-#define __REQUESTS_H__
+#ifndef __PB_REQUESTS_PROT_H__
+#define __PB_REQUESTS_PROT_H__
 
-#include "pushbullet.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,52 +54,10 @@ extern "C" {
 
 
 /**
- * @typedef pb_note_t
- * @brief Type definition of the structure pb_note_s
- */
-typedef struct pb_note_s pb_note_t;
-
-
-/**
- * @typedef pb_link_t
- * @brief Type definition of the structure pb_link_s
- */
-typedef struct pb_link_s pb_link_t;
-
-
-/**
  * @typedef pb_file_t
  * @brief Type definition of the structure pb_file_s
  */
 typedef struct pb_file_s pb_file_t;
-
-
-/**
- * @typedef pb_push_t
- * @brief Type definition of the structure pb_push_s
- */
-typedef struct pb_push_s pb_push_t;
-
-
-/**
- * @typedef pb_phone_t
- * @brief Type definition of the structure pb_phone_s
- */
-typedef struct pb_phone_s pb_phone_t;
-
-
-/**
- * @typedef pb_device_t
- * @brief Type definition of the structure pb_device_s
- */
-typedef struct pb_device_s pb_device_t;
-
-
-/**
- * @typedef pb_browser_t
- * @brief Type definition of the structure pb_browser_s
- */
-typedef struct pb_browser_s pb_browser_t;
 
 /**
  * @ingroup  pb_config
@@ -110,15 +67,10 @@ typedef struct pb_browser_s pb_browser_t;
  */
 typedef struct pb_config_s  pb_config_t;
 
-
 /**
- * @typedef pb_user_t
- * @brief Type definition of the structure pb_user_s
+ * @brief HTTP codes definition
  */
-typedef struct pb_user_s pb_user_t;
-
-
-const char* pb_file_get_filepath(const pb_file_t* file);
+typedef enum http_code_e http_code_t;
 
 /**
  * @brief      GET request for the PushBullet API
@@ -170,8 +122,9 @@ http_code_t pb_requests_post_multipart(char *result, size_t *length,  const char
 http_code_t pb_requests_delete(char *result, size_t* length, const char *url_request, const pb_config_t* p_config);
 
 
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif          // __REQUESTS_H__
+#endif          // __PB_REQUESTS_PROT_H__

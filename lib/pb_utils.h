@@ -24,7 +24,7 @@ extern "C" {
  * @param      format  The format
  * @param      ...     The list of the arguments
  */
-#define iprintf(format, ...)    fprintf(stdout, "\e[1m[%s:%d %s]\e[0m " format, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#define iprintf(format, ...)    fprintf(stdout, "\e[1m[%s:%d %s]\e[0m " format "\n", __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 
 
 /**
@@ -33,7 +33,7 @@ extern "C" {
  * @param      format  The format
  * @param      ...     The list of the arguments
  */
-#define eprintf(format, ...)    fprintf(stderr, "\e[1;31m[%s:%d %s]\e[0m " format, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#define eprintf(format, ...)    fprintf(stderr, "\e[1;31m[%s:%d %s]\e[0m " format "\n", __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 
 
 /**
@@ -42,7 +42,7 @@ extern "C" {
  * @param      format  The format
  * @param      ...     The list of the arguments
  */
-#define cprintf(format, ...)    fprintf(stdout, "\e[1;33m[%s:%d %s]\e[0m " format, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#define cprintf(format, ...)    fprintf(stdout, "\e[1;33m[%s:%d %s]\e[0m " format "\n", __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 
 
 /**
@@ -51,7 +51,7 @@ extern "C" {
  * @param      format  The format
  * @param      ...     The list of the arguments
  */
-#define gprintf(format, ...)    fprintf(stdout, "\e[1;32m[%s:%d %s]\e[0m " format, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#define gprintf(format, ...)    fprintf(stdout, "\e[1;32m[%s:%d %s]\e[0m " format "\n", __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 
 
 #define print_json_node_to_stream(method, jn) \

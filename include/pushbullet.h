@@ -9,7 +9,9 @@
 #ifndef __PUSHBULLET_H__
 #define __PUSHBULLET_H__
 
-#include <json-glib/json-glib.h>
+#define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+#define UNUSED __attribute__((unused))
+#define PB_EXPORT extern
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,6 +58,13 @@ typedef struct pb_phone_s pb_phone_t;
  * @brief Type definition of the structure pb_device_s
  */
 typedef struct pb_device_s pb_device_t;
+
+
+/**
+ * @typedef pb_devices_t
+ * @brief Type definition of the structure pb_devices_s
+ */
+typedef struct pb_devices_s pb_devices_t;
 
 
 /**
@@ -164,12 +173,40 @@ typedef enum http_code_e {
 
 
 /**
+ * @defgroup   pb_session Pushbullet session
+ * @{
+ */
+
+/**
+ * @brief      Initiate the different librairies
+ *
+ * @return     On success: zero
+ * @return     On error: non-zero integer
+ */
+int pb_init(void);
+
+/**
+ * @brief      Terminate the different librairies
+ */
+void pb_term(void);
+
+/**
+ * @}
+ */
+
+
+/**
  * @defgroup   pb_devices Pushbullet devices
  * @{
  */
 
+pb_device_t* pb_device_new();
+int pb_device_ref(pb_device_t* p_device);
+int pb_device_unref(pb_device_t* p_device);
 
-
+pb_devices_t* pb_devices_new();
+int pb_devices_ref(pb_devices_t* p_devices);
+int pb_devices_unref(pb_devices_t* p_devices);
 
 /**
  * @brief      Get the devices informations and stores it int a linked list in the user structure
@@ -178,7 +215,7 @@ typedef enum http_code_e {
  *
  * @return     HTTP status code
  */
-unsigned short pb_devices_get_list(pb_user_t *user);
+unsigned short pb_user_retrieve_devices(pb_user_t *user);
 
 
 /**
@@ -190,16 +227,6 @@ void pb_devices_free_list(const pb_user_t *user);
 
 
 /**
- * @brief      Get the number of active devices of the given user
- *
- * @param[in]  user  The user
- *
- * @return     Number of active devices
- */
-__attribute__((warn_unused_result)) unsigned char pb_devices_get_number_active(const pb_user_t *user);
-
-
-/**
  * @brief      Get the identification of a device from its name
  *
  * @param[in]  user  The user that have the devices
@@ -207,7 +234,7 @@ __attribute__((warn_unused_result)) unsigned char pb_devices_get_number_active(c
  *
  * @return     The device's identification
  */
-__attribute__((warn_unused_result)) const char* pb_devices_get_iden_from_name(const pb_user_t *user, const char *name);
+WARN_UNUSED_RESULT const char* pb_devices_get_iden_from_name(const pb_devices_t *devices, const char *nickname);
 
 /**
  * @}
@@ -244,14 +271,14 @@ http_code_t pb_push_note(char *result, size_t *result_sz, const pb_note_t note, 
 http_code_t pb_push_link(char *result, size_t *result_sz, const pb_link_t link, const char *device_nickname, const pb_user_t* user);
 
 /**
- * @brief      { function_description }
+ * @brief      Send a file on the server
  *
  * @param      result           The result
  * @param      file             The file
  * @param[in]  device_nickname  The device nickname
  * @param[in]  user             The user
  *
- * @return     { description_of_the_return_value }
+ * @return      The HTTP status code to the \a pb_requests_post
  */
 http_code_t pb_push_file(char *result, size_t *result_sz, pb_file_t *file, const char *device_nickname, const pb_user_t* user);
 
@@ -264,7 +291,70 @@ http_code_t pb_push_file(char *result, size_t *result_sz, pb_file_t *file, const
  * @{
  */
 
-__attribute__((warn_unused_result)) pb_user_t* pb_user_new(void);
+/**
+ * @brief      Create a new user
+ * 
+ * @return     Newly allocated user
+ * 
+ * @note       To free the user, use pb_user_unref
+ */
+WARN_UNUSED_RESULT pb_user_t* pb_user_new(void);
+
+/**
+ * @brief      Increase the user's reference counter
+ *
+ * @return     On success: zero
+ * @return     On error: non-zero integer
+ */
+int pb_user_ref(pb_user_t* p_user);
+
+/**
+ * @brief      Decrease the user's reference counter
+ * @details    When the reference counter hits zero, the ressource are freed.
+ *
+ * @param      p_user  The p user
+ *
+ * @return     On success: zero
+ * @return     On error: non-zero integer
+ */
+int pb_user_unref(pb_user_t* p_user);
+
+/**
+ * @brief      Check if the user is active or not
+ *
+ * @param[in]  p_user  Pointer to the user
+ *
+ * @return     True if the user is active. Otherwise it returns false.
+ */
+unsigned char pb_user_is_active(const pb_user_t* p_user);
+
+/**
+ * @brief      Get the user's name
+ *
+ * @param[in]  p_user  Pointer to the user
+ *
+ * @return     The user's name or NULL
+ */
+char* pb_user_get_name(const pb_user_t* p_user);
+
+/**
+ * @brief      Get the user's email
+ *
+ * @param[in]  p_user  Pointer to the user
+ *
+ * @return     The user's email or NULL
+ */
+char* pb_user_get_email(const pb_user_t* p_user);
+
+/**
+ * @brief      Get the user's identification
+ *
+ * @param[in]  p_user  Pointer to the user
+ *
+ * @return     The identification string or NULL
+ */
+char* pb_user_get_iden(const pb_user_t* p_user);
+
 
 /**
  * @brief      Set the configuration for a user
@@ -276,10 +366,47 @@ __attribute__((warn_unused_result)) pb_user_t* pb_user_new(void);
  * @return     On error: non-zero integer
  */
 int pb_user_set_config(pb_user_t* p_user, pb_config_t* p_config);
-__attribute__((warn_unused_result)) pb_config_t* pb_user_get_config(const pb_user_t* p_user);
+
+/**
+ * @brief      Get the configuration for a user
+ *
+ * @param      p_user    Pointer to the user
+ *
+ * @return     On success: pointer to the configuration
+ * @return     On error: NULL
+ */
+WARN_UNUSED_RESULT pb_config_t* pb_user_get_config(const pb_user_t* p_user);
+
+/**
+ * @brief      Get the devices associated to a user
+ *
+ * @param      p_user    Pointer to the user
+ *
+ * @return     On success: pointer to the devices structure (can contain multiple devices)
+ * @return     On error: NULL
+ */
+WARN_UNUSED_RESULT pb_devices_t* pb_user_get_devices(const pb_user_t* p_user);
+
+/**
+ * @brief      Get the number of devices associated to a user
+ *
+ * @param      p_user    Pointer to the user
+ *
+ * @return     The number of devices active
+ */
+WARN_UNUSED_RESULT size_t pb_user_get_number_active_devices(const pb_user_t *p_user);
+
+
+const char* pb_user_get_device_iden_from_name(const pb_user_t *p_user, const char* nickname);
+
+/**
+ * @brief      Get the user's informations from the Pushbullet servers.
+ *
+ * @param      p_user    Pointer to the user
+ *
+ * @return     The HTTP code of the Curl request
+ */
 http_code_t pb_user_get_info(pb_user_t *p_user);
-__attribute__((warn_unused_result)) pb_device_t* pb_user_get_devices_list(const pb_user_t* p_user);
-void pb_user_free(pb_user_t *p_user);
 
 /**
  * @}
@@ -290,8 +417,15 @@ void pb_user_free(pb_user_t *p_user);
  * @{
  */
 
-
-__attribute__((warn_unused_result)) pb_config_t* pb_config_new(void);
+/**
+ * @brief      Create a new configuration
+ * 
+ * @return     On success, a newly allocated configuration.
+ * @return     On error, NULL.
+ * 
+ * @note       To free the configuration, use pb_config_unref
+ */
+WARN_UNUSED_RESULT pb_config_t* pb_config_new(void);
 
 /**
  * @brief      Increase the reference counter of the configuration structure
@@ -299,7 +433,6 @@ __attribute__((warn_unused_result)) pb_config_t* pb_config_new(void);
  * @param[in]  p_config  Pointer to the configuration
  */
 int pb_config_ref(pb_config_t* p_config);
-
 
 /**
  * @brief      Decrease the reference counter of the configuration structure
@@ -349,7 +482,7 @@ int pb_config_set_token_key(pb_config_t* p_config, const char* token_key);
  * @return     On success: pointer to the https_proxy value
  * @return     On error: NULL
  */
-__attribute__((warn_unused_result)) char* pb_config_get_https_proxy(const pb_config_t* p_config);
+WARN_UNUSED_RESULT char* pb_config_get_https_proxy(const pb_config_t* p_config);
 
 /**
  * @brief      Retrieve the timeout from the configuration
@@ -359,7 +492,7 @@ __attribute__((warn_unused_result)) char* pb_config_get_https_proxy(const pb_con
  * @return     On success: the timeout value
  * @return     On error: -1
  */
-__attribute__((warn_unused_result)) long pb_config_get_timeout(const pb_config_t* p_config);
+WARN_UNUSED_RESULT long pb_config_get_timeout(const pb_config_t* p_config);
 
 /**
  * @brief      Retrieve the token_key from the configuration
@@ -369,7 +502,7 @@ __attribute__((warn_unused_result)) long pb_config_get_timeout(const pb_config_t
  * @return     On success: pointer to the token_key value
  * @return     On error: NULL
  */
- __attribute__((warn_unused_result)) char* pb_config_get_token_key(const pb_config_t* p_config);
+WARN_UNUSED_RESULT char* pb_config_get_token_key(const pb_config_t* p_config);
 
 /**
  * @brief      Fill the configuration structure using the given JSON file path

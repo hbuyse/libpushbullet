@@ -13,7 +13,7 @@ AC_PROG_MAKE_SET
 AM_SILENT_RULES([yes])
 
 # Checks for programs.
-AC_USE_SYSTEM_EXTENSIONS
+# AC_USE_SYSTEM_EXTENSIONS
 # AC_PROG_CC
 AC_PROG_CC_STDC
 #AC_PROG_CXX
@@ -79,6 +79,14 @@ AC_ARG_ENABLE([debug],
   [enable_debug=$enableval],[enable_debug=no])
 AM_CONDITIONAL([ENABLE_DEBUG], [test x"$enable_debug" = x"yes"])
 
+AC_ARG_ENABLE([traces],
+  AS_HELP_STRING([--enable-traces], [enable traces, default: no]),
+  [enable_traces=$enableval],[enable_traces=no])
+AM_CONDITIONAL([ENABLE_TRACES], [test x"$enable_traces" = x"yes"])
+if test "${enable_traces}" = "yes"; then
+  AC_DEFINE([TRACES], [1], [Define to 1 to enable the traces])
+fi
+
 AC_CHECK_LIB(magic, [magic_open], [], [
   AC_MSG_ERROR([unable to find the magic_open() function])
 ])
@@ -96,6 +104,7 @@ AC_MSG_RESULT([
         LDFLAGS:                ${LDFLAGS}
         LIBS:                   ${LIBS}
         DEBUG:                  ${enable_debug}
+        TRACES:                 ${enable_traces}
 
         prefix:                 ${prefix}
         sysconfdir:             ${sysconfdir}

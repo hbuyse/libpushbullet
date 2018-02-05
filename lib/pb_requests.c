@@ -10,22 +10,9 @@
                                 // curl_easy_setopt, curl_easy_perform, curl_easy_cleanup, curl_slist_free_all
 
 #include "pb_utils.h"             // iprintf, eprintf, cprintf, gprintf
-#include "pb_internal.h"             // pb_file_get_filepath
+#include "pb_requests_priv.h"             // pb_file_get_filepath
+#include "pb_pushes_prot.h"             // pb_file_get_filepath
 #include "pushbullet.h"          // NUMBER_PROXIES, PROXY_MAX_LENGTH, HTTPS_PROXY
-
-#define CONTENT_TYPE_JSON       "Content-Type: application/json"
-#define CONTENT_TYPE_MULTIPART  "Content-Type: multipart/form-data"
-
-#define CURL_USERAGENT "libcurl-agent/1.0"
-/**
- * @struct memory_struct_s
- * @brief      Chunk of memory used by write_memory_callback.
- * @details    It stores its data and its size.
- */
-struct memory_struct_s {
-    char *data;          ///< Pointer to the memory
-    size_t size;          ///< Size of the memory allocated
-};
 
 
 /**
@@ -93,7 +80,7 @@ http_code_t pb_requests_get(char              **result,
          */
         if ( r != CURLE_OK )
         {
-            eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
+            eprintf("curl_easy_perform() failed: %s", curl_easy_strerror(r) );
         }
         else
         {
@@ -113,16 +100,16 @@ http_code_t pb_requests_get(char              **result,
 
         curl_easy_getinfo(s, CURLINFO_RESPONSE_CODE, &http_code);
 
-        #ifdef __DEBUG__
+        #ifdef __TRACES__
         if (length && result)
         {
             if ( http_code == HTTP_OK )
             {
-                gprintf("\e[37m%s %u\e[0m %zu %s\n", url_request, http_code, *length, *result);
+                gprintf("\e[37m%s %u\e[0m %zu %s", url_request, http_code, *length, *result);
             }
             else
             {
-                eprintf("\e[37m%s %u\e[0m %zu %s\n", url_request, http_code, *length, *result);
+                eprintf("\e[37m%s %u\e[0m %zu %s", url_request, http_code, *length, *result);
             }
         }
         #endif
@@ -193,7 +180,7 @@ http_code_t pb_requests_post(char              *result,
          */
         if ( r != CURLE_OK )
         {
-            eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
+            eprintf("curl_easy_perform() failed: %s", curl_easy_strerror(r) );
         }
 
         curl_easy_cleanup(s);
@@ -207,14 +194,14 @@ http_code_t pb_requests_post(char              *result,
             free(ms.data);
         }
 
-        #ifdef __DEBUG__
+        #ifdef __TRACES__
         if ( http_code == HTTP_OK )
         {
-            gprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+            gprintf("\e[37m %s %u\e[0m %s", url_request, http_code, result);
         }
         else
         {
-            eprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+            eprintf("\e[37m %s %u\e[0m %s", url_request, http_code, result);
         }
         #endif
     }
@@ -286,7 +273,7 @@ http_code_t pb_requests_post_multipart(char              *result,
          */
         if ( r != CURLE_OK )
         {
-            eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
+            eprintf("curl_easy_perform() failed: %s", curl_easy_strerror(r) );
 
             return (http_code);
         }
@@ -303,14 +290,14 @@ http_code_t pb_requests_post_multipart(char              *result,
             free(ms.data);
         }
 
-        #ifdef __DEBUG__
+        #ifdef __TRACES__
         if ( http_code == HTTP_OK )
         {
-            gprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+            gprintf("\e[37m %s %u\e[0m %s", url_request, http_code, result);
         }
         else
         {
-            eprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+            eprintf("\e[37m %s %u\e[0m %s", url_request, http_code, result);
         }
         #endif
     }
@@ -376,7 +363,7 @@ http_code_t pb_requests_delete(char               *result,
          */
         if ( r != CURLE_OK )
         {
-            eprintf("curl_easy_perform() failed: %s\n", curl_easy_strerror(r) );
+            eprintf("curl_easy_perform() failed: %s", curl_easy_strerror(r) );
         }
 
         curl_easy_cleanup(s);
@@ -390,14 +377,14 @@ http_code_t pb_requests_delete(char               *result,
             free(ms.data);
         }
 
-        #ifdef __DEBUG__
+        #ifdef __TRACES__
         if ( http_code == HTTP_OK )
         {
-            gprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+            gprintf("\e[37m %s %u\e[0m %s", url_request, http_code, result);
         }
         else
         {
-            eprintf("\e[37m %s %u\e[0m %s\n", url_request, http_code, result);
+            eprintf("\e[37m %s %u\e[0m %s", url_request, http_code, result);
         }
         #endif
     }
