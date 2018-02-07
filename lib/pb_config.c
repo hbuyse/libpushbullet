@@ -1,5 +1,12 @@
+/**
+ * @file pb_config.c
+ * @author hbuyse
+ * @date 29/12/2017
+ */
+
 #include <stdint.h>     // uint32_t, int32_t
 #include <string.h>     // strdup
+#include <stdlib.h>     // getenv
 #include <json-glib/json-glib.h>    // JsonObject, JsonNode, GError, json_parser_new, json_parser_load_from_file, 
                                     // json_object_new, json_parser_get_root
 
@@ -9,12 +16,38 @@
 
 pb_config_t* pb_config_new(void)
 {
+    char *https_proxy_env = NULL;
+    char *token_key = NULL;
     pb_config_t* c = calloc(1, sizeof(pb_config_t));
 
     if (c)
     {
         // Increase the reference
         c->ref++;
+
+        // Check the environment variable https_proxy then http_proxy
+        if ( (https_proxy_env = getenv(HTTPS_PROXY_KEY_ENV)) )
+        {
+            #ifdef __TRACES__
+            iprintf("Found %s in the environment. Using it for the configuration.", HTTPS_PROXY_KEY_ENV);
+            #endif
+            c->https_proxy = strdup(https_proxy_env);
+        }
+        else if ( (https_proxy_env = getenv(HTTP_PROXY_KEY_ENV)) )
+        {
+            #ifdef __TRACES__
+            iprintf("Found %s in the environment. Using it for the configuration.", HTTP_PROXY_KEY_ENV);
+            #endif
+            c->https_proxy = strdup(https_proxy_env);
+        }
+
+        if ( (token_key = getenv(PB_TOKEN_KEY_ENV)) )
+        {
+            #ifdef __TRACES__
+            iprintf("Found %s in the environment. Using it for the configuration.", PB_TOKEN_KEY_ENV);
+            #endif
+            c->token_key = strdup(token_key);
+        }
     }
 
     return c;
@@ -58,6 +91,7 @@ int pb_config_set_https_proxy(pb_config_t* p_config, const char* https_proxy)
         return -1;
     }
 
+    pb_free(p_config->https_proxy);
     p_config->https_proxy = strdup(https_proxy);
     return 0;
 }
@@ -82,6 +116,7 @@ int pb_config_set_token_key(pb_config_t* p_config, const char* token_key)
         return -1;
     }
 
+    pb_free(p_config->token_key);
     p_config->token_key = strdup(token_key);
     return 0;
 }

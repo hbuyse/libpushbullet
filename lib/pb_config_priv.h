@@ -7,6 +7,30 @@
 #ifndef __PB_CONFIG_PRIV__
 #define __PB_CONFIG_PRIV__
 
+#define HTTP_PROXY_KEY_ENV  "http_proxy"
+#define HTTPS_PROXY_KEY_ENV "https_proxy"
+#define PB_TOKEN_KEY_ENV "PB_TOKEN_KEY"
+
+#ifdef __cplusplus
+
+namespace pushbullet {
+    class Config {
+    private:
+        std::string _https_proxy;
+        long _timeout;
+        std::string _token_key;
+    public:
+        Config(void);
+        Config(std::string https_proxy, long timeout, std::string token_key);
+        ~Config(void);
+
+        int set_https_proxy(std::string https_proxy);
+        int set_timeout(long timeout);
+        int set_token_key(std::string https_proxy);
+    };
+}
+
+#endif
 
 #ifdef __cplusplus
 extern "C" {
