@@ -39,6 +39,13 @@ static void devices_get_phone_device(JsonObject *object __attribute__((unused)),
                                      );
 
 
+static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
+                                      guint idx,
+                                      JsonNode *node_arr,
+                                      gpointer userdata
+                                      );
+
+
 #ifdef __TRACES__
 /**
  * @brief      Display on stdout the informations about the phone
@@ -63,12 +70,6 @@ static void devices_dump_browser_infos(const pb_browser_t browser);
  */
 static void devices_dump_devices_list(const pb_devices_t *p_devices);
 #endif
-
-
-static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
-                                      guint idx,
-                                      JsonNode *node_arr,
-                                      gpointer userdata);
 
 
 pb_device_t* pb_device_new()
@@ -389,6 +390,60 @@ static void devices_get_phone_device(JsonObject *object __attribute__((unused)),
 }
 
 
+static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
+                                      guint idx,
+                                      JsonNode *node_arr,
+                                      gpointer userdata)
+{
+    pb_devices_t* p_devices = (pb_devices_t*) userdata;
+    JsonObject* node_obj = NULL;
+    const char* device_type = NULL;
+
+    if ( ! JSON_NODE_HOLDS_OBJECT(node_arr) )
+    {
+        eprintf("devices[%d] : The node does not contain an JsonObject", idx);
+    }
+    else if ( (node_obj = json_node_get_object(node_arr) ) == NULL)
+    {
+        eprintf("devices[%d] : Impossible to get the object from the node", idx);
+    }
+    else if ( ! json_object_has_member(node_obj, ACTIVE_JSON_KEY) )
+    {
+        eprintf("devices[%d] : The obj does not have the member \"%s\"", idx, ACTIVE_JSON_KEY);
+    }
+    else if ( ! json_object_get_boolean_member(node_obj, ACTIVE_JSON_KEY) )
+    {
+        // Active: false
+        return;
+    }
+    else if ( ! json_object_has_member(node_obj, JSON_KEY_ICON) )
+    {
+        eprintf("devices[%d] : The obj does not have the member \"%s\"", idx, JSON_KEY_ICON);
+    }
+    else if ( (device_type = json_object_get_string_member(node_obj, JSON_KEY_ICON)) == NULL )
+    {
+        eprintf("devices[%d] : Impossible to get the string member \"%s\" from object", idx, JSON_KEY_ICON);
+    }
+    else
+    {
+        pb_device_t* new_device = pb_device_new();
+
+        if ( strcmp(device_type, PHONE_ICON) == 0 )
+        {
+            new_device->type = ICON_PHONE;
+            json_object_foreach_member(node_obj, devices_get_phone_device, &new_device->phone);
+        }
+        else if ( strcmp(device_type, BROWSER_ICON) == 0 )
+        {
+            new_device->type = ICON_BROWSER;
+            json_object_foreach_member(node_obj, devices_get_browser_device, &new_device->browser);
+        }
+
+        pb_devices_add_new_device(p_devices, new_device);
+    }
+}
+
+
 #ifdef __TRACES__
 static void devices_dump_phone_infos(const pb_phone_t phone)
 {
@@ -445,57 +500,3 @@ static void devices_dump_devices_list(const pb_devices_t *p_devices)
     }
 }
 #endif
-
-
-static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
-                                      guint idx,
-                                      JsonNode *node_arr,
-                                      gpointer userdata)
-{
-    pb_devices_t* p_devices = (pb_devices_t*) userdata;
-    JsonObject* node_obj = NULL;
-    const char* device_type = NULL;
-
-    if ( ! JSON_NODE_HOLDS_OBJECT(node_arr) )
-    {
-        eprintf("devices[%d] : The node does not contain an JsonObject", idx);
-    }
-    else if ( (node_obj = json_node_get_object(node_arr) ) == NULL)
-    {
-        eprintf("devices[%d] : Impossible to get the object from the node", idx);
-    }
-    else if ( ! json_object_has_member(node_obj, ACTIVE_JSON_KEY) )
-    {
-        eprintf("devices[%d] : The obj does not have the member \"%s\"", idx, ACTIVE_JSON_KEY);
-    }
-    else if ( ! json_object_get_boolean_member(node_obj, ACTIVE_JSON_KEY) )
-    {
-        // Active: false
-        return;
-    }
-    else if ( ! json_object_has_member(node_obj, JSON_KEY_ICON) )
-    {
-        eprintf("devices[%d] : The obj does not have the member \"%s\"", idx, JSON_KEY_ICON);
-    }
-    else if ( (device_type = json_object_get_string_member(node_obj, JSON_KEY_ICON)) == NULL )
-    {
-        eprintf("devices[%d] : Impossible to get the string member \"%s\" from object", idx, JSON_KEY_ICON);
-    }
-    else
-    {
-        pb_device_t* new_device = pb_device_new();
-
-        if ( strcmp(device_type, PHONE_ICON) == 0 )
-        {
-            new_device->type = ICON_PHONE;
-            json_object_foreach_member(node_obj, devices_get_phone_device, &new_device->phone);
-        }
-        else if ( strcmp(device_type, BROWSER_ICON) == 0 )
-        {
-            new_device->type = ICON_BROWSER;
-            json_object_foreach_member(node_obj, devices_get_browser_device, &new_device->browser);
-        }
-
-        pb_devices_add_new_device(p_devices, new_device);
-    }
-}

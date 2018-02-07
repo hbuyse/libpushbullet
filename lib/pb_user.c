@@ -259,10 +259,10 @@ static void _dump_user_info(const pb_user_t user)
 #endif
 
 static void user_json_to_flat(JsonObject *object __attribute__((unused)),
-                              const gchar *member_name,
-                              JsonNode *member_node,
-                              gpointer userdata
-                              )
+                          const gchar *member_name,
+                          JsonNode *member_node,
+                          gpointer userdata
+                          )
 {
     pb_user_t* user = (pb_user_t*) userdata;
 
