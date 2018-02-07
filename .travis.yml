@@ -15,8 +15,10 @@ os:
   - linux
 
 before_script:
-  - echo ${LANG}
-  - echo ${LC_ALL}
+  - echo "LANG - ${LANG}"
+  - echo "LC_ALL - ${LC_ALL}"
+  - echo "http_proxy - ${http_proxy}"
+  - echo "https_proxy - ${https_proxy}"
   - sudo apt-get update -qq
   - sudo apt-get install -y libcurl4-openssl-dev libjson-glib-dev libmagic-dev
 
