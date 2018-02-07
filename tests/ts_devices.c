@@ -92,6 +92,7 @@ static void test_add_new_device(void)
 
 static void test_load_devices_from_string(void)
 {
+    int i = 0;;
     char not_json[] = "hello world";
     char json[] = "{ \"hello\": \"world\" }";
 
@@ -111,7 +112,7 @@ static void test_load_devices_from_string(void)
 
 
 
-    for (int i = 0; i < (sizeof(tests) / sizeof(tests[0])); i++)
+    for (i = 0; i < (sizeof(tests) / sizeof(tests[0])); i++)
     {
         pb_devices_t* d = pb_devices_new();
         g_assert_nonnull( d );
@@ -157,6 +158,7 @@ static int load_json_from_file(char** result, size_t *len, char* filepath)
 
 static void test_get_nb_device_active(void)
 {
+    int i = 0;
     pb_devices_t* d = NULL;
 
     struct {
@@ -171,7 +173,7 @@ static void test_get_nb_device_active(void)
     g_assert_cmpint( pb_devices_get_number_active(d), ==, -1 );
 
 
-    for (int i = 0; i < (sizeof(tests) / sizeof(tests[0])); i++)
+    for (i = 0; i < (sizeof(tests) / sizeof(tests[0])); i++)
     {
         char* json = NULL;
         size_t json_len = 0;
@@ -192,6 +194,7 @@ static void test_get_nb_device_active(void)
 
 static void test_get_iden_from_name(void)
 {
+    int i = 0;
     pb_devices_t* d = NULL;
 
     struct {
@@ -207,7 +210,7 @@ static void test_get_iden_from_name(void)
     g_assert_cmpint( pb_devices_get_number_active(d), ==, -1 );
 
 
-    for (int i = 0; i < (sizeof(tests) / sizeof(tests[0])); i++)
+    for (i = 0; i < (sizeof(tests) / sizeof(tests[0])); i++)
     {
         char* json = NULL;
         size_t json_len = 0;
