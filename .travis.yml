@@ -3,25 +3,162 @@ language: c
 notifications:
   email: false
 
-sudo: required
-
 dist: trusty
 
-compiler:
-  - clang
-  - gcc
+sudo: false
 
-os:
-  - linux
+matrix:
+  include:
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libcurl4-openssl-dev
+            - libjson-glib-dev
+            - libmagic-dev
+            - g++-4.9
+      env:
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
 
-before_script:
-  - echo "LANG - ${LANG}"
-  - echo "LC_ALL - ${LC_ALL}"
-  - echo "http_proxy - ${http_proxy}"
-  - echo "https_proxy - ${https_proxy}"
-  - sudo apt-get update -qq
-  - sudo apt-get install -y libcurl4-openssl-dev libjson-glib-dev libmagic-dev
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libcurl4-openssl-dev
+            - libjson-glib-dev
+            - libmagic-dev
+            - g++-5
+      env:
+         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libcurl4-openssl-dev
+            - libjson-glib-dev
+            - libmagic-dev
+            - g++-6
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - libcurl4-openssl-dev
+            - libjson-glib-dev
+            - libmagic-dev
+            - g++-7
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - libcurl4-openssl-dev
+            - libjson-glib-dev
+            - libmagic-dev
+            - clang-3.6
+      env:
+        - MATRIX_EVAL="CC=clang-3.6 && CXX=clang++-3.6"
+
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - libcurl4-openssl-dev
+            - libjson-glib-dev
+            - libmagic-dev
+            - clang-3.7
+      env:
+        - MATRIX_EVAL="CC=clang-3.7 && CXX=clang++-3.7"
+
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.8
+          packages:
+            - libcurl4-openssl-dev
+            - libjson-glib-dev
+            - libmagic-dev
+            - clang-3.8
+      env:
+        - MATRIX_EVAL="CC=clang-3.8 && CXX=clang++-3.8"
+
+    # works on Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-3.9
+          packages:
+            - libcurl4-openssl-dev
+            - libjson-glib-dev
+            - libmagic-dev
+            - clang-3.9
+      env:
+        - MATRIX_EVAL="CC=clang-3.9 && CXX=clang++-3.9"
+
+    # works on Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-4.0
+          packages:
+            - libcurl4-openssl-dev
+            - libjson-glib-dev
+            - libmagic-dev
+            - clang-4.0
+      env:
+        - MATRIX_EVAL="CC=clang-4.0 && CXX=clang++-4.0"
+
+    # works on Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - libcurl4-openssl-dev
+            - libjson-glib-dev
+            - libmagic-dev
+            - clang-5.0
+      env:
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+
+before_install:
+    - eval "${MATRIX_EVAL}"
 
 script:
   - ./autogen.sh --enable-debug
+  - make
   - make check
+
+after_failure:
+  - if [ -f "tests/test-suite.log" ]; then cat "tests/test-suite.log"; fi
