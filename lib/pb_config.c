@@ -10,14 +10,13 @@
 #include <json-glib/json-glib.h>    // JsonObject, JsonNode, GError, json_parser_new, json_parser_load_from_file, 
                                     // json_object_new, json_parser_get_root
 
-#include "pb_config_priv.h"     // pb_config_t
+#include "pb_config_priv.h"     // pb_config_t, HTTP_PROXY_KEY_ENV, HTTPS_PROXY_KEY_ENV, PB_TOKEN_KEY_ENV
 #include "pb_utils.h"        // eprintf, gprintf, pb_free
+#include "pushbullet.h"
 
 
 pb_config_t* pb_config_new(void)
 {
-    char *https_proxy_env = NULL;
-    char *token_key = NULL;
     pb_config_t* c = calloc(1, sizeof(pb_config_t));
 
     if (c)
@@ -26,28 +25,14 @@ pb_config_t* pb_config_new(void)
         c->ref++;
 
         // Check the environment variable https_proxy then http_proxy
-        if ( (https_proxy_env = getenv(HTTPS_PROXY_KEY_ENV)) )
+        pb_config_set_https_proxy(c, getenv(HTTPS_PROXY_KEY_ENV));
+
+        if ( ! c->https_proxy )
         {
-            #ifdef __TRACES__
-            iprintf("Found %s in the environment. Using it for the configuration.", HTTPS_PROXY_KEY_ENV);
-            #endif
-            c->https_proxy = strdup(https_proxy_env);
-        }
-        else if ( (https_proxy_env = getenv(HTTP_PROXY_KEY_ENV)) )
-        {
-            #ifdef __TRACES__
-            iprintf("Found %s in the environment. Using it for the configuration.", HTTP_PROXY_KEY_ENV);
-            #endif
-            c->https_proxy = strdup(https_proxy_env);
+            pb_config_set_https_proxy(c, getenv(HTTP_PROXY_KEY_ENV));
         }
 
-        if ( (token_key = getenv(PB_TOKEN_KEY_ENV)) )
-        {
-            #ifdef __TRACES__
-            iprintf("Found %s in the environment. Using it for the configuration.", PB_TOKEN_KEY_ENV);
-            #endif
-            c->token_key = strdup(token_key);
-        }
+        pb_config_set_token_key(c, getenv(PB_TOKEN_KEY_ENV));
     }
 
     return c;
@@ -86,13 +71,20 @@ int pb_config_unref(pb_config_t* p_config)
 
 int pb_config_set_https_proxy(pb_config_t* p_config, const char* https_proxy)
 {
-    if (!p_config)
+    if ( !p_config )
     {
         return -1;
     }
 
+    // Free the field and put it to NULL
     pb_free(p_config->https_proxy);
-    p_config->https_proxy = strdup(https_proxy);
+
+    // If there is a new value, we set it
+    if (https_proxy)
+    {
+        p_config->https_proxy = strdup(https_proxy);
+    }
+
     return 0;
 }
 
@@ -105,6 +97,7 @@ int pb_config_set_timeout(pb_config_t* p_config, const long timeout)
     }
 
     p_config->timeout = (timeout < 0) ? 0 : timeout;
+
     return 0;
 }
 
@@ -116,8 +109,15 @@ int pb_config_set_token_key(pb_config_t* p_config, const char* token_key)
         return -1;
     }
 
+    // Free the field and put it to NULL
     pb_free(p_config->token_key);
-    p_config->token_key = strdup(token_key);
+
+    // If there is a new value, we set it
+    if (token_key)
+    {
+        p_config->token_key = strdup(token_key);
+    }
+
     return 0;
 }
 
