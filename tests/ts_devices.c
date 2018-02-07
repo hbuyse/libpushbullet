@@ -92,24 +92,33 @@ static void test_add_new_device(void)
 
 static void test_load_devices_from_string(void)
 {
-    char *data = NULL;
-    pb_devices_t* d = pb_devices_new();
-
-    g_assert( d != NULL );
-
-    g_assert( pb_devices_load_devices_from_data(NULL, NULL, -1) == -1 );
-    g_assert( pb_devices_load_devices_from_data(NULL, NULL, 0) == -1 );
-    g_assert( pb_devices_load_devices_from_data(d, NULL, 0) == -1 );
-    g_assert( pb_devices_load_devices_from_data(d, NULL, 10) == -1 );
-    g_assert( pb_devices_load_devices_from_data(d, NULL, 10) == -1 );
-
     char not_json[] = "hello world";
-    g_assert( pb_devices_load_devices_from_data(d, not_json, sizeof(not_json) / sizeof(not_json[0])) == -1 );
-
     char json[] = "{ \"hello\": \"world\" }";
-    g_assert( pb_devices_load_devices_from_data(d, json, sizeof(json) / sizeof(json[0])) == 0 );
 
-    pb_devices_unref(d);
+    struct {
+        char* data;
+        size_t len;
+        int result;
+    } tests[] = {
+        {.data = NULL, .len = -1, .result = -1},
+        {.data = NULL, .len = 0, .result = -1},
+        {.data = NULL, .len = 0, .result = -1},
+        {.data = NULL, .len = 10, .result = -1},
+        {.data = NULL, .len = 10, .result = -1},
+        {.data = not_json, .len = sizeof(not_json) / sizeof(not_json[0]), .result = -1},
+        {.data = json, .len = sizeof(json) / sizeof(json[0]), .result = 0}
+    };
+
+
+
+    for (int i = 0; i < (sizeof(tests) / sizeof(tests[0])); i++)
+    {
+        pb_devices_t* d = pb_devices_new();
+        g_assert( d != NULL );
+        g_assert( pb_devices_load_devices_from_data(d, tests[i].data, tests[i].len) == tests[i].result );
+        pb_devices_unref(d);
+    }
+
 }
 
 static int load_json_from_file(char** result, size_t *len, char* filepath)

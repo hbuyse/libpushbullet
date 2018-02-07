@@ -3,6 +3,7 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 
+#include "lib/pb_user_priv.h"
 #include "lib/pb_user_prot.h"
 #include "pushbullet.h"
 
