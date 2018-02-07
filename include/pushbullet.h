@@ -442,15 +442,15 @@ int pb_config_ref(pb_config_t* p_config);
 int pb_config_unref(pb_config_t* p_config);
 
 /**
- * @brief      Set the configuration's https_proxy value
+ * @brief      Set the configuration's proxy value
  *
  * @param      p_config    Pointer to the configuration
- * @param[in]  https_proxy  The https proxy
+ * @param[in]  proxy       The proxy
  *
  * @return     On success: zero
  * @return     On error: non-zero integer
  */
-int pb_config_set_https_proxy(pb_config_t* p_config, const char* https_proxy);
+int pb_config_set_proxy(pb_config_t* p_config, const char* proxy);
 
 /**
  * @brief      Set the configuration's timeout value
@@ -475,14 +475,14 @@ int pb_config_set_timeout(pb_config_t* p_config, const long timeout);
 int pb_config_set_token_key(pb_config_t* p_config, const char* token_key);
 
 /**
- * @brief      Retrieve the https_proxy from the configuration
+ * @brief      Retrieve the proxy from the configuration
  *
  * @param[in]  p_config  Pointer to the configuration
  *
- * @return     On success: pointer to the https_proxy value
+ * @return     On success: pointer to the proxy value
  * @return     On error: NULL
  */
-WARN_UNUSED_RESULT char* pb_config_get_https_proxy(const pb_config_t* p_config);
+WARN_UNUSED_RESULT char* pb_config_get_proxy(const pb_config_t* p_config);
 
 /**
  * @brief      Retrieve the timeout from the configuration

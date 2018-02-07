@@ -1,5 +1,5 @@
 {
-    "https_proxy": "localhost",
+    "proxy": "localhost",
     "timeout": 2,
     "token_key" : "toto_is_in_da_place!"
 }

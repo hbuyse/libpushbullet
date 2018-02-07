@@ -25,11 +25,11 @@ pb_config_t* pb_config_new(void)
         c->ref++;
 
         // Check the environment variable https_proxy then http_proxy
-        pb_config_set_https_proxy(c, getenv(HTTPS_PROXY_KEY_ENV));
+        pb_config_set_proxy(c, getenv(HTTPS_PROXY_KEY_ENV));
 
-        if ( ! c->https_proxy )
+        if ( ! c->proxy )
         {
-            pb_config_set_https_proxy(c, getenv(HTTP_PROXY_KEY_ENV));
+            pb_config_set_proxy(c, getenv(HTTP_PROXY_KEY_ENV));
         }
 
         pb_config_set_token_key(c, getenv(PB_TOKEN_KEY_ENV));
@@ -60,7 +60,7 @@ int pb_config_unref(pb_config_t* p_config)
 
     if (--p_config->ref <= 0)
     {
-        pb_free(p_config->https_proxy);
+        pb_free(p_config->proxy);
         pb_free(p_config->token_key);
         free(p_config);
     }
@@ -69,7 +69,7 @@ int pb_config_unref(pb_config_t* p_config)
 }
 
 
-int pb_config_set_https_proxy(pb_config_t* p_config, const char* https_proxy)
+int pb_config_set_proxy(pb_config_t* p_config, const char* proxy)
 {
     if ( !p_config )
     {
@@ -77,12 +77,12 @@ int pb_config_set_https_proxy(pb_config_t* p_config, const char* https_proxy)
     }
 
     // Free the field and put it to NULL
-    pb_free(p_config->https_proxy);
+    pb_free(p_config->proxy);
 
     // If there is a new value, we set it
-    if (https_proxy)
+    if (proxy)
     {
-        p_config->https_proxy = strdup(https_proxy);
+        p_config->proxy = strdup(proxy);
     }
 
     return 0;
@@ -122,9 +122,9 @@ int pb_config_set_token_key(pb_config_t* p_config, const char* token_key)
 }
 
 
-char* pb_config_get_https_proxy(const pb_config_t* p_config)
+char* pb_config_get_proxy(const pb_config_t* p_config)
 {
-    return (p_config) ? p_config->https_proxy : NULL;
+    return (p_config) ? p_config->proxy : NULL;
 }
 
 
@@ -182,9 +182,9 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
                         pb_config_set_timeout(p_config, (const long) json_object_get_int_member(obj, "timeout"));
                     }
 
-                    if (json_object_has_member(obj, "https_proxy"))
+                    if (json_object_has_member(obj, "proxy"))
                     {
-                        pb_config_set_https_proxy(p_config, strdup(json_object_get_string_member(obj, "https_proxy")));
+                        pb_config_set_proxy(p_config, strdup(json_object_get_string_member(obj, "proxy")));
                     }
 
                     if (json_object_has_member(obj, "token_key"))

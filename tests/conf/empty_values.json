@@ -1,5 +1,5 @@
 {
-    "https_proxy": "",
+    "proxy": "",
     "timeout": 0,
     "token_key" : ""
 }

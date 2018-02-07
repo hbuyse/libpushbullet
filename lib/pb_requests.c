@@ -57,7 +57,7 @@ http_code_t pb_requests_get(char              **result,
 
         /*  Specify URL to get
          *  Specify the user using the token key
-         *  Specify the HTTPS proxy
+         *  Specify the proxy
          *  Specify the timeout
          *  Specify the data we are about to send
          *  Specify the HTTP header
@@ -67,7 +67,7 @@ http_code_t pb_requests_get(char              **result,
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
         curl_easy_setopt(s, CURLOPT_URL, url_request);
         curl_easy_setopt(s, CURLOPT_USERPWD, pb_config_get_token_key(p_config));
-        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_https_proxy(p_config) );
+        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_proxy(p_config) );
         curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_config_get_timeout(p_config) );
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
         curl_easy_setopt(s, CURLOPT_WRITEDATA, (void*) &ms);
@@ -162,7 +162,7 @@ http_code_t pb_requests_post(char              *result,
          */
         curl_easy_setopt(s, CURLOPT_URL, url_request);
         curl_easy_setopt(s, CURLOPT_USERPWD, pb_config_get_token_key(p_config));
-        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_https_proxy(p_config) );
+        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_proxy(p_config) );
         curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_config_get_timeout(p_config) );
         curl_easy_setopt(s, CURLOPT_POSTFIELDS, data);
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
@@ -255,7 +255,7 @@ http_code_t pb_requests_post_multipart(char              *result,
     {
         http_headers = curl_slist_append(http_headers, CONTENT_TYPE_MULTIPART);
         curl_easy_setopt(s, CURLOPT_USERPWD, pb_config_get_token_key(p_config));
-        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_https_proxy(p_config) );
+        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_proxy(p_config) );
         curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_config_get_timeout(p_config) );
         curl_easy_setopt(s, CURLOPT_URL, url_request);
         curl_easy_setopt(s, CURLOPT_HTTPPOST, formpost);
@@ -341,7 +341,7 @@ http_code_t pb_requests_delete(char               *result,
          */
         curl_easy_setopt(s, CURLOPT_URL, url_request);
         curl_easy_setopt(s, CURLOPT_USERPWD, pb_config_get_token_key(p_config));
-        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_https_proxy(p_config) );
+        curl_easy_setopt(s, CURLOPT_PROXY, pb_config_get_proxy(p_config) );
         curl_easy_setopt(s, CURLOPT_TIMEOUT, pb_config_get_timeout(p_config) );
         curl_easy_setopt(s, CURLOPT_HTTPHEADER, http_headers);
         curl_easy_setopt(s, CURLOPT_WRITEFUNCTION, write_memory_callback);
