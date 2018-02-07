@@ -1,6 +1,0 @@
-[submodule "tests/minunit"]
-	path = tests/minunit
-	url = https://github.com/siu/minunit
-[submodule "doxygen/bootstrap"]
-	path = doxygen/bootstrap
-	url = https://github.com/Velron/doxygen-bootstrapped
