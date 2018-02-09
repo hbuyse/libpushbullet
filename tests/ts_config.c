@@ -3,7 +3,7 @@
 
 #include <glib.h>
 
-#include "lib/pb_config_priv.h"
+#include "lib/pb_config_prot.h"
 #include "pushbullet.h"
 
 static void test_empty_config(void)
@@ -11,10 +11,10 @@ static void test_empty_config(void)
     pb_config_t* c = pb_config_new();
 
     g_assert_nonnull( c );
-    g_assert_cmpint( c->ref, ==, 1 );
+    g_assert_cmpint( pb_config_get_ref(c), ==, 1 );
     
     pb_config_unref(c);
-    g_assert_cmpint( c->ref, ==, 0 );
+    g_assert_cmpint( pb_config_get_ref(c), ==, 0 );
 }
 
 static void test_from_env(void)
@@ -70,11 +70,11 @@ static void test_ref_config(void)
     c = pb_config_new();
 
     g_assert_nonnull( c );
-    g_assert_cmpint( c->ref, ==, 1 );
+    g_assert_cmpint( pb_config_get_ref(c), ==, 1 );
     g_assert_cmpint( pb_config_ref(c), ==, 0 );
-    g_assert_cmpint( c->ref, ==, 2 );
+    g_assert_cmpint( pb_config_get_ref(c), ==, 2 );
     g_assert_cmpint( pb_config_unref(c), ==, 0 );
-    g_assert_cmpint( c->ref, ==, 1 );
+    g_assert_cmpint( pb_config_get_ref(c), ==, 1 );
    
     pb_config_unref(c);
 }

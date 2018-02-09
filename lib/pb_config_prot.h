@@ -12,9 +12,19 @@
 extern "C" {
 #endif
 
+#define HTTP_PROXY_KEY_ENV  "http_proxy"
+#define HTTPS_PROXY_KEY_ENV "proxy"
+#define PB_TOKEN_KEY_ENV "PB_TOKEN_KEY"
+
 
 typedef struct pb_config_s pb_config_t;
 
+
+int pb_config_get_ref(const pb_config_t* p_config);
+
+int pb_config_lock(pb_config_t* p_config);
+
+int pb_config_unlock(pb_config_t* p_config);
 
 #ifdef __cplusplus
 }
