@@ -101,7 +101,7 @@ int pb_device_set_type(pb_device_t* p_device, pb_device_icon type)
 }
 
 
-pb_device_icon pb_device_get_type(pb_device_t* p_device)
+pb_device_icon pb_device_get_type(const pb_device_t* p_device)
 {
     return ( p_device ) ? p_device->type : ICON_UNKNOWN;
 }
@@ -120,7 +120,7 @@ int pb_device_set_next(pb_device_t* p_device, pb_device_t* p_next)
 }
 
 
-pb_device_t* pb_device_get_next(pb_device_t* p_device)
+pb_device_t* pb_device_get_next(const pb_device_t* p_device)
 {
     return ( p_device ) ? p_device->next : NULL;
 }

@@ -24,18 +24,16 @@ typedef enum {
 } pb_device_icon;
 
 
-typedef struct pb_phone_s pb_phone_t;
-typedef struct pb_browser_s pb_browser_t;
 typedef struct pb_device_s pb_device_t;
 
 
 int pb_device_set_type(pb_device_t* p_device, pb_device_icon type);
 
-pb_device_icon pb_device_get_type(pb_device_t* p_device);
+pb_device_icon pb_device_get_type(const pb_device_t* p_device);
 
 int pb_device_set_next(pb_device_t* p_device, pb_device_t* p_next);
 
-pb_device_t* pb_device_get_next(pb_device_t* p_device);
+pb_device_t* pb_device_get_next(const pb_device_t* p_device);
 
 char* pb_device_get_iden(const pb_device_t* p_device);
 
