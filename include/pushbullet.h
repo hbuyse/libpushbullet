@@ -9,14 +9,15 @@
 #ifndef __PUSHBULLET_H__
 #define __PUSHBULLET_H__
 
-#define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
-#define UNUSED __attribute__((unused))
-#define PB_EXPORT extern
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include <stddef.h>     // size_t
+
+#define WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+#define UNUSED __attribute__((unused))
+#define PB_EXPORT extern
 
 /**
  * @typedef pb_note_t
@@ -200,11 +201,11 @@ void pb_term(void);
  * @{
  */
 
-pb_device_t* pb_device_new();
+pb_device_t* pb_device_new(void);
 int pb_device_ref(pb_device_t* p_device);
 int pb_device_unref(pb_device_t* p_device);
 
-pb_devices_t* pb_devices_new();
+pb_devices_t* pb_devices_new(void);
 int pb_devices_ref(pb_devices_t* p_devices);
 int pb_devices_unref(pb_devices_t* p_devices);
 
@@ -215,7 +216,7 @@ int pb_devices_unref(pb_devices_t* p_devices);
  *
  * @return     HTTP status code
  */
-unsigned short pb_user_retrieve_devices(pb_user_t *user);
+http_code_t pb_user_retrieve_devices(pb_user_t *user);
 
 
 /**

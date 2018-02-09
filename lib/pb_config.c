@@ -62,6 +62,30 @@ int pb_config_unlock(pb_config_t* p_config)
     return pthread_mutex_unlock(&p_config->mtx);
 }
 
+int pb_config_copy(pb_config_t* p_dst, pb_config_t* p_src)
+{
+    if ( (! p_dst) || (! p_src) )
+    {
+        return -1;
+    }
+
+    pthread_mutex_lock(&p_dst->mtx);
+    pthread_mutex_lock(&p_src->mtx);
+
+    if ( memmove(p_dst, p_src, sizeof(pb_config_t)) )
+    {
+        return -2;
+    }
+
+    // Put the destination reference counter to one
+    p_dst->ref = 1;
+
+    pthread_mutex_unlock(&p_dst->mtx);
+    pthread_mutex_unlock(&p_src->mtx);
+
+    return 0;
+}
+
 int pb_config_ref(pb_config_t* p_config)
 {
     if ( ! p_config )

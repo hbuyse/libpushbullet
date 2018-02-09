@@ -26,6 +26,8 @@ int pb_config_lock(pb_config_t* p_config);
 
 int pb_config_unlock(pb_config_t* p_config);
 
+int pb_config_copy(pb_config_t* p_dst, pb_config_t* p_src);
+
 #ifdef __cplusplus
 }
 #endif

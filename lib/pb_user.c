@@ -48,6 +48,12 @@ pb_user_t* pb_user_new(void)
 }
 
 
+int pb_user_get_ref(const pb_user_t* p_user)
+{
+    return (p_user) ? p_user->ref : -1;
+}
+
+
 int pb_user_ref(pb_user_t* p_user)
 {
     if (!p_user)
@@ -129,6 +135,8 @@ int pb_user_set_config(pb_user_t* p_user,
     }
 
     p_user->config = p_config;
+    pb_config_ref(p_config);
+
     return 0;
 }
 
@@ -173,7 +181,7 @@ http_code_t pb_user_get_info(pb_user_t *p_user)
 }
 
 
-unsigned short pb_user_retrieve_devices(pb_user_t *user)
+http_code_t pb_user_retrieve_devices(pb_user_t *user)
 {
     // CURL results
     char *result = NULL;

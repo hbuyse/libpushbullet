@@ -9,6 +9,8 @@ typedef struct pb_user_s pb_user_t;
 typedef struct pb_devices_s pb_devices_t;
 
 
+int pb_user_get_ref(const pb_user_t *p_user);
+
 /**
  * @brief      Set a new list of devices
  *

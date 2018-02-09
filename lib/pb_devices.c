@@ -4,39 +4,15 @@
  * @date 08/05/2016
  */
 #include <stdlib.h>          // free
-#include <string.h>          // strcmpt
+#include <string.h>          // strcmp
 #include <json-glib/json-glib.h>          // JsonObject, json_tokener_parse, json_object_object_foreach, json_object_get_array,
                                 // array_list
 
 #include "pb_utils.h"             // iprintf, eprintf, cprintf, gprintf
 #include "pb_devices_priv.h"
+#include "pb_device_prot.h"     // pb_device_t, pb_device_new, pb_device_unref, pb_device_set_browser_device, pb_device_set_phone_device
 #include "pushbullet.h"
 
-
-/**
- * @brief      Fill the browser structure with the informations contained in the JSON object
- *
- * @param[out]  browser  The browser structure we fill
- * @param[in]  json_obj  The JSON object
- */
-static void devices_get_browser_device(JsonObject *object __attribute__((unused)),
-                                       const gchar *member_name,
-                                       JsonNode *member_node,
-                                       gpointer userdata
-                                       );
-
-
-/**
- * @brief      Fill the phone structure with the informations contained in the JSON object
- *
- * @param[out]  phone  The phone structure we fill
- * @param[in]  json_obj  The JSON object
- */
-static void devices_get_phone_device(JsonObject *object __attribute__((unused)),
-                                     const gchar *member_name,
-                                     JsonNode *member_node,
-                                     gpointer userdata
-                                     );
 
 
 static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
@@ -47,20 +23,7 @@ static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
 
 
 #ifdef __TRACES__
-/**
- * @brief      Display on stdout the informations about the phone
- *
- * @param[in]  phone  The phone
- */
-static void devices_dump_phone_infos(const pb_phone_t phone);
 
-
-/**
- * @brief      Display on stdout the informations about the browser
- *
- * @param[in]  browser  The browser
- */
-static void devices_dump_browser_infos(const pb_browser_t browser);
 
 
 /**
@@ -72,78 +35,11 @@ static void devices_dump_devices_list(const pb_devices_t *p_devices);
 #endif
 
 
-pb_device_t* pb_device_new()
-{
-    pb_device_t* d = calloc(1, sizeof(*d));
-
-    if (d)
-    {
-        // Increase the reference
-        d->ref++;
-    }
-
-    return d;
-}
-
-
-int pb_device_ref(pb_device_t* p_device)
-{
-    if (!p_device)
-    {
-        return -1;
-    }
-
-    p_device->ref++;
-    return 0;
-}
-
-
-int pb_device_unref(pb_device_t* p_device)
-{
-    if (!p_device)
-    {
-        return -1;
-    }
-
-    if (--p_device->ref <= 0)
-    {
-        switch(p_device->type)
-        {
-            case ICON_PHONE:
-                pb_free(p_device->phone.iden);
-                pb_free(p_device->phone.nickname);
-                pb_free(p_device->phone.manufacturer);
-                pb_free(p_device->phone.model);
-                pb_free(p_device->phone.fingerprint);
-                pb_free(p_device->phone.push_token);
-                pb_free(p_device->phone.icon);
-                pb_free(p_device->phone.remote_files);
-                break;
-
-            case ICON_BROWSER:
-                pb_free(p_device->browser.iden);
-                pb_free(p_device->browser.nickname);
-                pb_free(p_device->browser.manufacturer);
-                pb_free(p_device->browser.model);
-                pb_free(p_device->browser.icon);
-                break;
-
-            default:
-                break;
-        }
-
-        free(p_device);
-    }
-
-    return 0;
-}
-
-
 pb_devices_t* pb_devices_new()
 {
     pb_devices_t* d = calloc(1, sizeof(*d));
 
-    if (d)
+    if ( d )
     {
         // Increase the reference
         d->ref++;
@@ -184,18 +80,24 @@ int pb_devices_unref(pb_devices_t* p_devices)
 
 
             // Pass to the next pointer
-            list   = list->next;
+            list   = pb_device_get_next(list);
 
 
             // Free the temporary pointer
             pb_device_unref(current_device);
-            p_devices->nb--;
+            p_devices->nb_active--;
         }
 
         free(p_devices);
     }
 
     return 0;
+}
+
+
+int pb_devices_get_ref(const pb_devices_t* p_devices)
+{
+    return (p_devices) ? p_devices->ref : 0;
 }
 
 
@@ -231,7 +133,7 @@ int pb_devices_load_devices_from_data(pb_devices_t* p_devices, char* result, siz
                 json_array_foreach_element(devices_arr, devices_fill_devices_list, p_devices);
 
                 #ifdef __TRACES__
-                iprintf("Nb of devices active: %zu", p_devices->nb);
+                iprintf("Nb of devices active: %zu", p_devices->nb_active);
                 devices_dump_devices_list(p_devices);
                 #endif
             }
@@ -258,7 +160,7 @@ pb_device_t* pb_devices_get_list(const pb_devices_t* p_devices)
 
 ssize_t pb_devices_get_number_active(const pb_devices_t *p_devices)
 {
-    return (p_devices) ? p_devices->nb : -1;
+    return (p_devices) ? p_devices->nb_active : -1;
 }
 
 
@@ -278,15 +180,15 @@ int pb_devices_add_new_device(pb_devices_t* p_devices, pb_device_t* p_new_device
     }
     else
     {
-        for ( device = p_devices->list; device->next != NULL; device = device->next )
+        for ( device = p_devices->list; pb_device_get_next(device) != NULL; device = pb_device_get_next(device) )
         {
             ;
         }
 
-        device->next = p_new_device;
+        pb_device_set_next(device, p_new_device);
     }
 
-    p_devices->nb++;
+    p_devices->nb_active++;
 
     return 0;
 }
@@ -304,24 +206,24 @@ const char* pb_devices_get_iden_from_name(const pb_devices_t *p_devices,
         return (NULL);
     }
 
-    for ( node = p_devices->list; node != NULL; node = node->next )
+    for ( node = p_devices->list; node != NULL; node = pb_device_get_next(node) )
     {
-        switch ( node->type )
+        switch ( pb_device_get_type(node) )
         {
             case ICON_PHONE:
 
-                if ( strcmp(node->phone.nickname, nickname) == 0 )
+                if ( strcmp(pb_device_get_nickname(node), nickname) == 0 )
                 {
-                    return (node->phone.iden);
+                    return ( pb_device_get_iden(node) );
                 }
 
                 break;
 
             case ICON_BROWSER:
 
-                if ( strcmp(node->browser.nickname, nickname) == 0 )
+                if ( strcmp(pb_device_get_nickname(node), nickname) == 0 )
                 {
-                    return (node->browser.iden);
+                    return ( pb_device_get_iden(node) );
                 }
 
                 break;
@@ -335,58 +237,6 @@ const char* pb_devices_get_iden_from_name(const pb_devices_t *p_devices,
     }
 
     return (NULL);
-}
-
-
-static void devices_get_browser_device(JsonObject *object __attribute__((unused)),
-                                       const gchar *member_name,
-                                       JsonNode *member_node,
-                                       gpointer userdata
-                                       )
-{
-    pb_browser_t        *browser = (pb_browser_t*) userdata;
-
-    if (JSON_NODE_HOLDS_VALUE(member_node))
-    {
-        JSON_ASSOCIATE_BOOL(browser, active);
-        JSON_ASSOCIATE_STR(browser, iden);
-        JSON_ASSOCIATE_DOUBLE(browser, created);
-        JSON_ASSOCIATE_DOUBLE(browser, modified);
-        JSON_ASSOCIATE_STR(browser, nickname);
-        JSON_ASSOCIATE_STR(browser, manufacturer);
-        JSON_ASSOCIATE_STR(browser, model);
-        JSON_ASSOCIATE_INT(browser, app_version);
-        JSON_ASSOCIATE_STR(browser, icon);
-    }
-}
-
-
-static void devices_get_phone_device(JsonObject *object __attribute__((unused)),
-                                     const gchar *member_name,
-                                     JsonNode *member_node,
-                                     gpointer userdata
-                                     )
-{
-    pb_phone_t        *phone = (pb_phone_t*) userdata;
-
-    if (JSON_NODE_HOLDS_VALUE(member_node))
-    {
-        JSON_ASSOCIATE_BOOL(phone, active);
-        JSON_ASSOCIATE_STR(phone, iden);
-        JSON_ASSOCIATE_DOUBLE(phone, created);
-        JSON_ASSOCIATE_DOUBLE(phone, modified);
-        JSON_ASSOCIATE_STR(phone, nickname);
-        JSON_ASSOCIATE_BOOL(phone, generated_nickname);
-        JSON_ASSOCIATE_STR(phone, manufacturer);
-        JSON_ASSOCIATE_STR(phone, model);
-        JSON_ASSOCIATE_INT(phone, app_version);
-        JSON_ASSOCIATE_STR(phone, push_token);
-        JSON_ASSOCIATE_BOOL(phone, has_sms);
-        JSON_ASSOCIATE_BOOL(phone, has_mms);
-        JSON_ASSOCIATE_STR(phone, icon);
-        JSON_ASSOCIATE_STR(phone, remote_files);
-        JSON_ASSOCIATE_STR(phone, fingerprint);       // JsonObject
-    }
 }
 
 
@@ -430,14 +280,14 @@ static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
 
         if ( strcmp(device_type, PHONE_ICON) == 0 )
         {
-            new_device->type = ICON_PHONE;
-            json_object_foreach_member(node_obj, devices_get_phone_device, &new_device->phone);
+            pb_device_set_type(new_device, ICON_PHONE);
         }
         else if ( strcmp(device_type, BROWSER_ICON) == 0 )
         {
-            new_device->type = ICON_BROWSER;
-            json_object_foreach_member(node_obj, devices_get_browser_device, &new_device->browser);
+            pb_device_set_type(new_device, ICON_BROWSER);
         }
+            
+        json_object_foreach_member(node_obj, pb_device_fill_from_json, new_device);
 
         pb_devices_add_new_device(p_devices, new_device);
     }
@@ -445,58 +295,14 @@ static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
 
 
 #ifdef __TRACES__
-static void devices_dump_phone_infos(const pb_phone_t phone)
-{
-    iprintf("%c%s - %s", phone.icon[0] - 32, phone.icon + 1, phone.iden);
-    iprintf("\tactive : %u", phone.active);
-    iprintf("\tcreated : %f", phone.created);
-    iprintf("\tmodified : %f", phone.modified);
-    iprintf("\tnickname : %s", phone.nickname);
-    iprintf("\tgenerated_nickname : %u", phone.generated_nickname);
-    iprintf("\tmanufacturer : %s", phone.manufacturer);
-    iprintf("\tmodel : %s", phone.model);
-    iprintf("\tapp_version : %hd", phone.app_version);
-    iprintf("\tfingerprint : %s", phone.fingerprint);
-    iprintf("\tpush_token : %s", phone.push_token);
-    iprintf("\thas_sms : %u", phone.has_sms);
-    iprintf("\thas_mms : %u", phone.has_mms);
-    iprintf("\tremote_files : %s", phone.remote_files);
-}
-
-
-static void devices_dump_browser_infos(const pb_browser_t browser)
-{
-    iprintf("%c%s - %s", browser.icon[0] - 32, browser.icon + 1, browser.iden);
-    iprintf("\tactive : %u", browser.active);
-    iprintf("\tcreated : %f", browser.created);
-    iprintf("\tmodified : %f", browser.modified);
-    iprintf("\tnickname : %s", browser.nickname);
-    iprintf("\tmanufacturer : %s", browser.manufacturer);
-    iprintf("\tmodel : %s", browser.model);
-    iprintf("\tapp_version : %hd", browser.app_version);
-}
-
-
 static void devices_dump_devices_list(const pb_devices_t *p_devices)
 {
     pb_device_t     *node = NULL;
 
 
-    for ( node = p_devices->list; node != NULL; node = node->next )
+    for ( node = p_devices->list; node != NULL; node = pb_device_get_next(node) )
     {
-        switch ( node->type )
-        {
-            case ICON_PHONE:
-                devices_dump_phone_infos(node->phone);
-                break;
-
-            case ICON_BROWSER:
-                devices_dump_browser_infos(node->browser);
-                break;
-
-            default:
-                eprintf("Unknown type...");
-        }
+        pb_device_dump_infos(node);
     }
 }
 #endif

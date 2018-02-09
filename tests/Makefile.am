@@ -15,6 +15,13 @@ check_user_CFLAGS  = -I$(top_builddir)/include $(JSON_GLIB_CFLAGS) $(LIBCURL_CFL
 check_user_LDFLAGS = $(JSON_GLIB_LIBS) $(LIBCURL_LIBS)
 check_user_LDADD   = $(top_builddir)/lib/libpushbullet.la
 
+TESTS += check_device
+check_PROGRAMS += check_device
+check_device_SOURCES = ts_device.c $(top_builddir)/include/pushbullet.h
+check_device_CFLAGS  = -I$(top_builddir)/include $(JSON_GLIB_CFLAGS) $(LIBCURL_CFLAGS)
+check_device_LDFLAGS = $(JSON_GLIB_LIBS) $(LIBCURL_LIBS)
+check_device_LDADD   = $(top_builddir)/lib/libpushbullet.la
+
 TESTS += check_devices
 check_PROGRAMS += check_devices
 check_devices_SOURCES = ts_devices.c $(top_builddir)/include/pushbullet.h

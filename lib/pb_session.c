@@ -17,6 +17,7 @@ int pb_init(void)
     {
         eprintf("Error during global initialization of libcurl.");
     }
+
     return (int) res;
 }
 

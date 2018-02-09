@@ -9,6 +9,7 @@ typedef struct pb_device_s pb_device_t;
 typedef struct pb_devices_s pb_devices_t;
 
 
+
 /**
  * @brief      Get the number of active devices of the given user
  *
@@ -17,6 +18,10 @@ typedef struct pb_devices_s pb_devices_t;
  * @return     Number of active devices
  */
 ssize_t pb_devices_get_number_active(const pb_devices_t *p_devices);
+
+pb_device_t* pb_devices_get_list(const pb_devices_t* p_devices);
+
+int pb_devices_get_ref(const pb_devices_t* p_devices);
 
 int pb_devices_load_devices_from_data(pb_devices_t* p_devices, char* result, size_t result_sz);
 

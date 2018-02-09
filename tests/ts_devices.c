@@ -7,40 +7,9 @@
 #include <unistd.h>   // lseek
 #include <stdio.h>
 
-#include "lib/pb_devices_priv.h"
 #include "lib/pb_devices_prot.h"
 #include "pushbullet.h"
 
-
-static void test_empty_device(void)
-{
-    pb_device_t* d = pb_device_new();
-
-    g_assert_nonnull( d );
-    g_assert_cmpint( d->ref, ==, 1 );
-
-    pb_device_unref(d);
-    g_assert_cmpint( d->ref, ==, 0 );
-}
-
-static void test_ref_device(void)
-{
-    pb_device_t* d = NULL;
-    g_assert_cmpint( pb_device_ref(d), ==, -1 );
-    g_assert_cmpint( pb_device_unref(d), ==, -1 );
- 
-    d = pb_device_new();
-
-    g_assert_nonnull( d );
-    g_assert_cmpint( d->ref, ==, 1 );
-    g_assert_cmpint( pb_device_ref(d), ==, 0 );
-    g_assert_cmpint( d->ref, ==, 2 );
-    g_assert_cmpint( pb_device_unref(d), ==, 0 );
-    g_assert_cmpint( d->ref, ==, 1 );
-   
-    pb_device_unref(d);
-    g_assert_cmpint( d->ref, ==, 0 );
-}
 
 static void test_empty_devices(void)
 {
@@ -61,14 +30,14 @@ static void test_ref_devices(void)
     d = pb_devices_new();
 
     g_assert_nonnull( d );
-    g_assert_cmpint( d->ref, ==, 1 );
+    g_assert_cmpint( pb_devices_get_ref(d), ==, 1 );
     g_assert_cmpint( pb_devices_ref(d), ==, 0 );
-    g_assert_cmpint( d->ref, ==, 2 );
+    g_assert_cmpint( pb_devices_get_ref(d), ==, 2 );
     g_assert_cmpint( pb_devices_unref(d), ==, 0 );
-    g_assert_cmpint( d->ref, ==, 1 );
+    g_assert_cmpint( pb_devices_get_ref(d), ==, 1 );
    
     pb_devices_unref(d);
-    g_assert_cmpint( d->ref, ==, 0 );
+    g_assert_cmpint( pb_devices_get_ref(d), ==, 0 );
 }
 
 static void test_add_new_device(void)
@@ -82,12 +51,12 @@ static void test_add_new_device(void)
     g_assert_cmpint( pb_devices_add_new_device(NULL, nd1), ==, -1);
 
     g_assert_cmpint( pb_devices_add_new_device(d, nd1), ==, 0);
-    g_assert_cmpint( d->nb, ==, 1);
+    g_assert_cmpint( pb_devices_get_number_active(d), ==, 1);
     g_assert_cmpint( pb_devices_add_new_device(d, nd2), ==, 0);
-    g_assert_cmpint( d->nb, ==, 2);
+    g_assert_cmpint( pb_devices_get_number_active(d), ==, 2);
 
     pb_devices_unref(d);
-    g_assert_cmpint( d->nb, ==, 0);
+    g_assert_cmpint( pb_devices_get_number_active(d), ==, 0);
 }
 
 static void test_load_devices_from_string(void)
@@ -180,7 +149,7 @@ static void test_get_nb_device_active(void)
 
         d = pb_devices_new();
         g_assert_nonnull( d );
-        g_assert_cmpint( d->ref, ==, 1 );
+        g_assert_cmpint( pb_devices_get_ref(d), ==, 1 );
 
         printf("%s\n", tests[i].filepath);
         g_assert_cmpint( load_json_from_file(&json, &json_len, tests[i].filepath), ==, 0);
@@ -217,7 +186,7 @@ static void test_get_iden_from_name(void)
 
         d = pb_devices_new();
         g_assert_nonnull( d );
-        g_assert_cmpint( d->ref, ==, 1 );
+        g_assert_cmpint( pb_devices_get_ref(d), ==, 1 );
 
         g_assert_cmpint( load_json_from_file(&json, &json_len, tests[i].filepath), ==, 0);
         g_assert_cmpint( pb_devices_load_devices_from_data(d, json, json_len), ==, 0 );
@@ -225,16 +194,13 @@ static void test_get_iden_from_name(void)
         g_assert_cmpstr( pb_devices_get_iden_from_name(d, tests[i].nickname), ==, tests[i].result);
 
         pb_devices_unref(d);
-        g_assert_cmpint( d->ref, ==, 0 );
+        g_assert_cmpint( pb_devices_get_ref(d), ==, 0 );
     }
 }
 
 int main (int argc, char *argv[])
 {
     g_test_init (&argc, &argv, NULL);
-
-    g_test_add_func("/device/empty-device", test_empty_device);
-    g_test_add_func("/device/ref-device", test_ref_device);
 
     g_test_add_func("/devices/empty-devices", test_empty_devices);
     g_test_add_func("/devices/ref-devices", test_ref_devices);
