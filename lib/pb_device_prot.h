@@ -59,7 +59,7 @@ char* pb_device_get_icon(const pb_device_t* p_device);
  */
 void pb_device_fill_from_json(JsonObject *object, const gchar *member_name, JsonNode *member_node, gpointer userdata);
 
-#ifdef __TRACES__
+#ifndef NDEBUG
 /**
  * @brief      Display on stdout the informations about the device
  *

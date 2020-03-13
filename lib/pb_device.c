@@ -94,7 +94,7 @@ int pb_device_set_type(pb_device_t* p_device, pb_device_icon type)
     {
         return -1;
     }
-    
+
     p_device->type = type;
 
     return 0;
@@ -113,7 +113,7 @@ int pb_device_set_next(pb_device_t* p_device, pb_device_t* p_next)
     {
         return -1;
     }
-    
+
     p_device->next = p_next;
 
     return 0;
@@ -178,7 +178,7 @@ char* pb_device_get_iden(const pb_device_t* p_device)
 
 double pb_device_get_created(const pb_device_t* p_device)
 {
-    double ret = 0;    
+    double ret = 0;
 
     if ( p_device )
     {
@@ -203,7 +203,7 @@ double pb_device_get_created(const pb_device_t* p_device)
 
 double pb_device_get_modified(const pb_device_t* p_device)
 {
-    double ret = 0;    
+    double ret = 0;
 
     if ( p_device )
     {
@@ -228,7 +228,7 @@ double pb_device_get_modified(const pb_device_t* p_device)
 
 char* pb_device_get_nickname(const pb_device_t* p_device)
 {
-    char* ret = 0;    
+    char* ret = 0;
 
     if ( p_device )
     {
@@ -253,7 +253,7 @@ char* pb_device_get_nickname(const pb_device_t* p_device)
 
 char* pb_device_get_manufacturer(const pb_device_t* p_device)
 {
-    char* ret = 0;    
+    char* ret = 0;
 
     if ( p_device )
     {
@@ -278,7 +278,7 @@ char* pb_device_get_manufacturer(const pb_device_t* p_device)
 
 char* pb_device_get_model(const pb_device_t* p_device)
 {
-    char* ret = 0;    
+    char* ret = 0;
 
     if ( p_device )
     {
@@ -303,7 +303,7 @@ char* pb_device_get_model(const pb_device_t* p_device)
 
 short pb_device_get_app_version(const pb_device_t* p_device)
 {
-    short  ret = 0;    
+    short  ret = 0;
 
     if ( p_device )
     {
@@ -328,7 +328,7 @@ short pb_device_get_app_version(const pb_device_t* p_device)
 
 char* pb_device_get_icon(const pb_device_t* p_device)
 {
-    char* ret = 0;    
+    char* ret = 0;
 
     if ( p_device )
     {
@@ -406,7 +406,7 @@ void pb_device_fill_from_json(JsonObject *object __attribute__((unused)),
 }
 
 
-#ifdef __TRACES__
+#ifndef NDEBUG
 void pb_device_dump_infos(const pb_device_t* p_device)
 {
     switch ( p_device->type )

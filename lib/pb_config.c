@@ -4,27 +4,29 @@
  * @date 29/12/2017
  */
 
-#include <stdint.h>     // uint32_t, int32_t
-#include <string.h>     // strdup
-#include <stdlib.h>     // getenv
-#include <pthread.h>    // pthread_mutex_t, PTHREAD_MUTEX_INITIALIZER, pthread_mutex_lock, pthread_mutex_unlock
-#include <json-glib/json-glib.h>    // JsonObject, JsonNode, GError, json_parser_new, json_parser_load_from_file, 
-                                    // json_object_new, json_parser_get_root
+#include "config.h"
 
-#include "pb_config_priv.h"     // pb_config_t, HTTP_PROXY_KEY_ENV, HTTPS_PROXY_KEY_ENV, PB_TOKEN_KEY_ENV
-#include "pb_config_prot.h"     // HTTP_PROXY_KEY_ENV, HTTPS_PROXY_KEY_ENV, PB_TOKEN_KEY_ENV
 #include "pb_utils.h"        // eprintf, gprintf, pb_free
 #include "pushbullet.h"
 
 
-pb_config_t* pb_config_new(void)
+#define HTTP_PROXY_KEY_ENV  "http_proxy"
+#define HTTPS_PROXY_KEY_ENV "proxy"
+#define PB_TOKEN_KEY_ENV "PB_TOKEN_KEY"
+
+struct pb_config_s {
+    char* proxy;             ///< HTTP/HTTPS proxy
+    long  timeout;             ///< CURL timeout
+    char* token_key;             ///< Pushbullet token key
+    int   ref;          ///< Reference count
+};
+
+struct pb_config_s* pb_config_new(void)
 {
-    pb_config_t* p_config = calloc(1, sizeof(pb_config_t));
+    struct pb_config_s* p_config = calloc(1, sizeof(*p_config));
 
     if ( p_config )
     {
-        pthread_mutex_init(&p_config->mtx, NULL);
-
         // Increase the reference
         p_config->ref++;
 
@@ -42,37 +44,14 @@ pb_config_t* pb_config_new(void)
     return p_config;
 }
 
-int pb_config_lock(pb_config_t* p_config)
-{
-    if ( ! p_config )
-    {
-        return -1;
-    }
-
-    return pthread_mutex_lock(&p_config->mtx);
-}
-
-int pb_config_unlock(pb_config_t* p_config)
-{
-    if ( ! p_config )
-    {
-        return -1;
-    }
-
-    return pthread_mutex_unlock(&p_config->mtx);
-}
-
-int pb_config_copy(pb_config_t* p_dst, pb_config_t* p_src)
+int pb_config_copy(struct pb_config_s* p_dst, struct pb_config_s* p_src)
 {
     if ( (! p_dst) || (! p_src) )
     {
         return -1;
     }
 
-    pthread_mutex_lock(&p_dst->mtx);
-    pthread_mutex_lock(&p_src->mtx);
-
-    if ( memmove(p_dst, p_src, sizeof(pb_config_t)) )
+    if ( memmove(p_dst, p_src, sizeof(struct pb_config_s)) )
     {
         return -2;
     }
@@ -80,37 +59,28 @@ int pb_config_copy(pb_config_t* p_dst, pb_config_t* p_src)
     // Put the destination reference counter to one
     p_dst->ref = 1;
 
-    pthread_mutex_unlock(&p_dst->mtx);
-    pthread_mutex_unlock(&p_src->mtx);
-
     return 0;
 }
 
-int pb_config_ref(pb_config_t* p_config)
+int pb_config_ref(struct pb_config_s* p_config)
 {
     if ( ! p_config )
     {
         return -1;
     }
-
-    pthread_mutex_lock(&p_config->mtx);
 
     p_config->ref++;
 
-    pthread_mutex_unlock(&p_config->mtx);
-
     return 0;
 }
 
 
-int pb_config_unref(pb_config_t* p_config)
+int pb_config_unref(struct pb_config_s* p_config)
 {
     if ( ! p_config )
     {
         return -1;
     }
-
-    pthread_mutex_lock(&p_config->mtx);
 
     if (--p_config->ref <= 0)
     {
@@ -119,20 +89,16 @@ int pb_config_unref(pb_config_t* p_config)
         free(p_config);
     }
 
-    pthread_mutex_unlock(&p_config->mtx);
-
     return 0;
 }
 
 
-int pb_config_set_proxy(pb_config_t* p_config, const char* proxy)
+int pb_config_set_proxy(struct pb_config_s* p_config, const char* proxy)
 {
     if ( ! p_config )
     {
         return -1;
     }
-
-    pthread_mutex_lock(&p_config->mtx);
 
     // Free the field and put it to NULL
     pb_free(p_config->proxy);
@@ -143,37 +109,29 @@ int pb_config_set_proxy(pb_config_t* p_config, const char* proxy)
         p_config->proxy = strdup(proxy);
     }
 
-    pthread_mutex_unlock(&p_config->mtx);
-
     return 0;
 }
 
 
-int pb_config_set_timeout(pb_config_t* p_config, const long timeout)
+int pb_config_set_timeout(struct pb_config_s* p_config, const long timeout)
 {
     if ( ! p_config )
     {
         return -1;
     }
-
-    pthread_mutex_lock(&p_config->mtx);
 
     p_config->timeout = (timeout < 0) ? 0 : timeout;
 
-    pthread_mutex_unlock(&p_config->mtx);
-
     return 0;
 }
 
 
-int pb_config_set_token_key(pb_config_t* p_config, const char* token_key)
+int pb_config_set_token_key(struct pb_config_s* p_config, const char* token_key)
 {
     if ( ! p_config )
     {
         return -1;
     }
-
-    pthread_mutex_lock(&p_config->mtx);
 
     // Free the field and put it to NULL
     pb_free(p_config->token_key);
@@ -184,37 +142,35 @@ int pb_config_set_token_key(pb_config_t* p_config, const char* token_key)
         p_config->token_key = strdup(token_key);
     }
 
-    pthread_mutex_unlock(&p_config->mtx);
-
     return 0;
 }
 
 
-int pb_config_get_ref(const pb_config_t* p_config)
+int pb_config_get_ref(const struct pb_config_s* p_config)
 {
     return ( p_config ) ? p_config->ref : 0;
 }
 
 
-char* pb_config_get_proxy(const pb_config_t* p_config)
+char* pb_config_get_proxy(const struct pb_config_s* p_config)
 {
     return (p_config) ? p_config->proxy : NULL;
 }
 
 
-long pb_config_get_timeout(const pb_config_t* p_config)
+long pb_config_get_timeout(const struct pb_config_s* p_config)
 {
     return (p_config) ? p_config->timeout : 0;
 }
 
 
-char* pb_config_get_token_key(const pb_config_t* p_config)
+char* pb_config_get_token_key(const struct pb_config_s* p_config)
 {
     return (p_config) ? p_config->token_key : NULL;
 }
 
 
-int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
+int pb_config_from_json_file(struct pb_config_s* p_config, const char *json_filepath)
 {
     int ret = -1;
     JsonParser *parser = NULL;
@@ -228,7 +184,7 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
 
         if ( ! json_parser_load_from_file(parser, json_filepath, &err) )
         {
-            #ifdef __TRACES__
+            #ifndef NDEBUG
             eprintf("%s\n", err->message);
             #endif
             g_clear_error(&err);
@@ -240,7 +196,7 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
             // check if it is an JsonObject inside
             if ( (! node) || (! JSON_NODE_HOLDS_OBJECT(node)) )
             {
-                #ifdef __TRACES__
+                #ifndef NDEBUG
                 eprintf("json_filepath does not contain a valid JSON object");
                 #endif
             }
@@ -270,7 +226,7 @@ int pb_config_from_json_file(pb_config_t* p_config, const char *json_filepath)
                 }
             }
 
-            #ifdef __TRACES__
+            #ifndef NDEBUG
             print_json_node_to_stream(gprintf, node);
             #endif
         }

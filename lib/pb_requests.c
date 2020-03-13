@@ -94,13 +94,13 @@ http_code_t pb_requests_get(char              **result,
             {
                 *length = ms.size;
             }
-            
+
             pb_free(ms.data);
         }
 
         curl_easy_getinfo(s, CURLINFO_RESPONSE_CODE, &http_code);
 
-        #ifdef __TRACES__
+        #ifndef NDEBUG
         if (length && result)
         {
             if ( http_code == HTTP_OK )
@@ -124,7 +124,7 @@ http_code_t pb_requests_get(char              **result,
 
 
 http_code_t pb_requests_post(char              *result,
-                       size_t            *length, 
+                       size_t            *length,
                        const char        *url_request,
                        const pb_config_t *p_config,
                        const char        *data
@@ -194,7 +194,7 @@ http_code_t pb_requests_post(char              *result,
             free(ms.data);
         }
 
-        #ifdef __TRACES__
+        #ifndef NDEBUG
         if ( http_code == HTTP_OK )
         {
             gprintf("\e[37m %s %u\e[0m %s", url_request, http_code, result);
@@ -211,7 +211,7 @@ http_code_t pb_requests_post(char              *result,
 
 
 http_code_t pb_requests_post_multipart(char              *result,
-                        size_t            *length, 
+                        size_t            *length,
                         const char        *url_request,
                         const pb_config_t *p_config,
                         const pb_file_t   *file
@@ -290,7 +290,7 @@ http_code_t pb_requests_post_multipart(char              *result,
             free(ms.data);
         }
 
-        #ifdef __TRACES__
+        #ifndef NDEBUG
         if ( http_code == HTTP_OK )
         {
             gprintf("\e[37m %s %u\e[0m %s", url_request, http_code, result);
@@ -377,7 +377,7 @@ http_code_t pb_requests_delete(char               *result,
             free(ms.data);
         }
 
-        #ifdef __TRACES__
+        #ifndef NDEBUG
         if ( http_code == HTTP_OK )
         {
             gprintf("\e[37m %s %u\e[0m %s", url_request, http_code, result);

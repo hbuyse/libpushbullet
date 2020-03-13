@@ -22,7 +22,7 @@
 #include "pb_utils.h"          // pb_requests_get
 #include "pushbullet.h"         // pb_config_t, pb_config_get_token_key
 
-#ifdef __TRACES__
+#ifndef NDEBUG
 /**
  * @brief      Dumps all user informations.
  *
@@ -168,11 +168,11 @@ http_code_t pb_user_get_info(pb_user_t *p_user)
 
         json_object_foreach_member(obj, user_json_to_flat, p_user);
 
-        #ifdef __TRACES__
+        #ifndef NDEBUG
         _dump_user_info(*p_user);
         #endif
     }
-    
+
     if (err) g_error_free(err);
     g_object_unref(parser);
     pb_free(result);
@@ -194,7 +194,7 @@ http_code_t pb_user_retrieve_devices(pb_user_t *user)
     // If we do not have a 200 OK, we stop the function and we return the HTTP Status code
     if ( res == HTTP_OK )
     {
-        // Create the new list and set it into the 
+        // Create the new list and set it into the
         pb_devices_t *devices = pb_devices_new();
 
         // Free the old list of devices
@@ -251,7 +251,7 @@ int pb_user_unref_devices(const pb_user_t *p_user)
 }
 
 
-#ifdef __TRACES__
+#ifndef NDEBUG
 static void _dump_user_info(const pb_user_t user)
 {
     iprintf(" %s - %s", user.name, user.email);
@@ -284,6 +284,6 @@ static void user_json_to_flat(JsonObject *object __attribute__((unused)),
         JSON_ASSOCIATE_STR(user, iden);
         JSON_ASSOCIATE_STR(user, image_url);
         JSON_ASSOCIATE_STR(user, name);
-        JSON_ASSOCIATE_INT(user, max_upload_size);    
+        JSON_ASSOCIATE_INT(user, max_upload_size);
     }
 }

@@ -22,7 +22,7 @@ static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
                                       );
 
 
-#ifdef __TRACES__
+#ifndef NDEBUG
 
 
 
@@ -132,7 +132,7 @@ int pb_devices_load_devices_from_data(pb_devices_t* p_devices, char* result, siz
 
                 json_array_foreach_element(devices_arr, devices_fill_devices_list, p_devices);
 
-                #ifdef __TRACES__
+                #ifndef NDEBUG
                 iprintf("Nb of devices active: %zu", p_devices->nb_active);
                 devices_dump_devices_list(p_devices);
                 #endif
@@ -229,7 +229,7 @@ const char* pb_devices_get_iden_from_name(const pb_devices_t *p_devices,
                 break;
 
             default:
-                #ifdef __TRACES__
+                #ifndef NDEBUG
                 eprintf("Unknown type...");
                 #endif
                 break;
@@ -286,7 +286,7 @@ static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
         {
             pb_device_set_type(new_device, ICON_BROWSER);
         }
-            
+
         json_object_foreach_member(node_obj, pb_device_fill_from_json, new_device);
 
         pb_devices_add_new_device(p_devices, new_device);
@@ -294,7 +294,7 @@ static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
 }
 
 
-#ifdef __TRACES__
+#ifndef NDEBUG
 static void devices_dump_devices_list(const pb_devices_t *p_devices)
 {
     pb_device_t     *node = NULL;

@@ -161,7 +161,7 @@ http_code_t pb_push_note(char            *result,
     // Create the JSON data
     data    = _create_note(note.title, note.body, pb_user_get_device_iden_from_name(user, device_nickname) );
 
-#ifdef __TRACES__
+#ifndef NDEBUG
     iprintf("%s", data);
 #endif
 
@@ -175,7 +175,7 @@ http_code_t pb_push_note(char            *result,
         eprintf("%s", result);
     }
 
-#ifdef __TRACES__
+#ifndef NDEBUG
     else
     {
         gprintf("\e[1;37m%u\e[0m %s", res, result);
@@ -201,7 +201,7 @@ http_code_t pb_push_link(char            *result,
     // Create the JSON data
     data    = _create_link(link.title, link.body, link.url, pb_user_get_device_iden_from_name(user, device_nickname) );
 
-#ifdef __TRACES__
+#ifndef NDEBUG
     iprintf("%s", data);
 #endif
 
@@ -214,7 +214,7 @@ http_code_t pb_push_link(char            *result,
         eprintf("An error occured when sending the note (HTTP status code : %d)", res);
         eprintf("%s", result);
     }
-#ifdef __TRACES__
+#ifndef NDEBUG
     else
     {
         gprintf("\e[1;37m%u\e[0m %s", res, result);
@@ -259,7 +259,7 @@ http_code_t pb_push_file(char            *result,
                         file->file_url,
                         pb_user_get_device_iden_from_name(user, device_nickname) );
 
-#ifdef __TRACES__
+#ifndef NDEBUG
     iprintf("%s", data);
 #endif
 
@@ -272,7 +272,7 @@ http_code_t pb_push_file(char            *result,
         eprintf("An error occured when sending the note (HTTP status code : %d)", res);
         eprintf("%s", result);
     }
-#ifdef __TRACES__
+#ifndef NDEBUG
     else
     {
         gprintf("\e[1;37m%u\e[0m %s", res, result);
@@ -572,7 +572,7 @@ static int _prepare_upload_request(pb_file_t *file)
         {
             file->file_type = strdup(magic_file(magic_cookie, file->file_path));
             ret = 0;
-            #ifdef __TRACES__
+            #ifndef NDEBUG
             gprintf("%s", file->file_type);
             #endif
         }
@@ -606,7 +606,7 @@ static http_code_t _upload_request(char              *result,
     }
     else
     {
-#ifdef __TRACES__
+#ifndef NDEBUG
         gprintf("\e[1;37m%u\e[0m %s", res, result);
 #endif
         _post_upload_request(&file->file_url, &file->upload_url, result);
@@ -636,7 +636,7 @@ static http_code_t _send_request(char            *result,
         return (res);
     }
 
-#ifdef __TRACES__
+#ifndef NDEBUG
     else
     {
         gprintf("\e[1;37m%u\e[0m", res);
