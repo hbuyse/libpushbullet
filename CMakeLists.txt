@@ -6,6 +6,8 @@ set(PROJECT_DESCRIPTION "Pushbullet library")
 # set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_VERBOSE_MAKEFILE off)
 
+option(BUILD_DOC "Create and install the HTML based API documentation (requires Doxygen)" OFF)
+
 # check_include_files
 include(CheckIncludeFiles)
 
@@ -55,6 +57,13 @@ endif(NOT DEFINED _GNU_SOURCE)
 # Library
 include(lib/CMakeLists.txt)
 
+if(BUILD_DOC)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
+    include(docs/CMakeLists.txt)
+  endif(DOXYGEN_FOUND)
+endif(BUILD_DOC)
+
 # daemon
 if (EVENT_FOUND)
   include(daemon/CMakeLists.txt)
@@ -66,7 +75,5 @@ endif (EVENT_FOUND)
 # FILE CONFIGURATION
 configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake
                ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.cmake
-               ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 configure_file(${CMAKE_SOURCE_DIR}/libpushbullet.pc.cmake
                ${CMAKE_CURRENT_BINARY_DIR}/libpushbullet.pc)

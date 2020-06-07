@@ -14,6 +14,7 @@
 #cmakedefine CURL_FOUND             // Check for libcurl
 #cmakedefine EVENT_FOUND            // Check for libevent
 #cmakedefine JANSSON_FOUND          // Check for jansson
+#cmakedefine CONFIG_FOUND           // Check for libconfig
 
 #ifdef HAVE_ASSERT_H
 #include <assert.h>
@@ -76,5 +77,9 @@
 #endif // EVENT_FOUND
 
 #ifdef JANSSON_FOUND
-#include <jansson.h
+#include <jansson.h>
 #endif // JANSSON_FOUND
+
+#ifdef CONFIG_FOUND
+#include <libconfig.h>
+#endif // CONFIG_FOUND

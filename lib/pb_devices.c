@@ -3,43 +3,20 @@
  * @author hbuyse
  * @date 08/05/2016
  */
-#include <stdlib.h>          // free
-#include <string.h>          // strcmp
-#include <json-glib/json-glib.h>          // JsonObject, json_tokener_parse, json_object_object_foreach, json_object_get_array,
-                                // array_list
+#include <jansson.h>
+#include <stdlib.h>   // free
+#include <string.h>   // strcmp
 
-#include "pb_utils.h"             // iprintf, eprintf, cprintf, gprintf
+#include "pb_device_prot.h"   // pb_device_t, pb_device_new, pb_device_unref, pb_device_set_browser_device, pb_device_set_phone_device
 #include "pb_devices_priv.h"
-#include "pb_device_prot.h"     // pb_device_t, pb_device_new, pb_device_unref, pb_device_set_browser_device, pb_device_set_phone_device
+#include "pb_utils.h"   // iprintf, eprintf, cprintf, gprintf
 #include "pushbullet.h"
-
-
-
-static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
-                                      guint idx,
-                                      JsonNode *node_arr,
-                                      gpointer userdata
-                                      );
-
-
-#ifndef NDEBUG
-
-
-
-/**
- * @brief      Display all the devices of a given user
- *
- * @param      user  The user
- */
-static void devices_dump_devices_list(const pb_devices_t *p_devices);
-#endif
-
 
 pb_devices_t* pb_devices_new()
 {
     pb_devices_t* d = calloc(1, sizeof(*d));
 
-    if ( d )
+    if (d)
     {
         // Increase the reference
         d->ref++;
@@ -47,7 +24,6 @@ pb_devices_t* pb_devices_new()
 
     return d;
 }
-
 
 int pb_devices_ref(pb_devices_t* p_devices)
 {
@@ -59,7 +35,6 @@ int pb_devices_ref(pb_devices_t* p_devices)
     p_devices->ref++;
     return 0;
 }
-
 
 int pb_devices_unref(pb_devices_t* p_devices)
 {
@@ -73,15 +48,13 @@ int pb_devices_unref(pb_devices_t* p_devices)
     if (--p_devices->ref <= 0)
     {
         // Pass through the list
-        for ( list = p_devices->list; list != NULL; )
+        for (list = p_devices->list; list != NULL;)
         {
             // Get the pointer
             pb_device_t* current_device = list;
 
-
             // Pass to the next pointer
-            list   = pb_device_get_next(list);
-
+            list = pb_device_get_next(list);
 
             // Free the temporary pointer
             pb_device_unref(current_device);
@@ -94,93 +67,38 @@ int pb_devices_unref(pb_devices_t* p_devices)
     return 0;
 }
 
-
 int pb_devices_get_ref(const pb_devices_t* p_devices)
 {
     return (p_devices) ? p_devices->ref : 0;
 }
-
-
-int pb_devices_load_devices_from_data(pb_devices_t* p_devices, char* result, size_t result_sz)
-{
-    int ret = -1;
-
-    // JSON variables
-    JsonParser *parser = NULL;
-    JsonNode *root = NULL;
-    JsonNode *devices_node = NULL;
-    JsonArray *devices_arr = NULL;
-    JsonObject *obj = NULL;
-
-    if ( (! p_devices) || (! result) || (result_sz <= 0) )
-    {
-        return -1;
-    }
-    else
-    {
-        parser = json_parser_new();
-
-        if ( json_parser_load_from_data(parser, result, result_sz, NULL) )
-        {
-            root = json_parser_get_root(parser);
-            obj = json_node_get_object(root);
-
-            if ( json_object_has_member(obj, DEVICES_JSON_KEY) )
-            {
-                devices_node = json_object_get_member(obj, DEVICES_JSON_KEY);
-                devices_arr = json_node_get_array(devices_node);
-
-                json_array_foreach_element(devices_arr, devices_fill_devices_list, p_devices);
-
-                #ifndef NDEBUG
-                iprintf("Nb of devices active: %zu", p_devices->nb_active);
-                devices_dump_devices_list(p_devices);
-                #endif
-            }
-            ret = 0;
-        }
-        else
-        {
-            ret = -1;
-        }
-
-        g_object_unref(parser);
-    }
-
-
-    return ret;
-}
-
 
 pb_device_t* pb_devices_get_list(const pb_devices_t* p_devices)
 {
     return (p_devices) ? p_devices->list : NULL;
 }
 
-
-ssize_t pb_devices_get_number_active(const pb_devices_t *p_devices)
+ssize_t pb_devices_get_number_active(const pb_devices_t* p_devices)
 {
     return (p_devices) ? p_devices->nb_active : -1;
 }
 
-
 int pb_devices_add_new_device(pb_devices_t* p_devices, pb_device_t* p_new_device)
 {
-    pb_device_t     *device = NULL;
+    pb_device_t* device = NULL;
 
-    if ( (! p_devices) || (! p_new_device))
+    if ((!p_devices) || (!p_new_device))
     {
         return -1;
     }
 
     // Add the device to the linked list
-    if ( p_devices->list == NULL )
+    if (p_devices->list == NULL)
     {
         p_devices->list = p_new_device;
     }
     else
     {
-        for ( device = p_devices->list; pb_device_get_next(device) != NULL; device = pb_device_get_next(device) )
+        for (device = p_devices->list; pb_device_get_next(device) != NULL; device = pb_device_get_next(device))
         {
             ;
         }
@@ -193,45 +111,41 @@ int pb_devices_add_new_device(pb_devices_t* p_devices, pb_device_t* p_new_device
     return 0;
 }
 
-
-const char* pb_devices_get_iden_from_name(const pb_devices_t *p_devices,
-                                          const char         *nickname
-                                          )
+const char* pb_devices_get_iden_from_name(const pb_devices_t* p_devices, const char* nickname)
 {
-    pb_device_t     *node = NULL;
+    pb_device_t* node = NULL;
 
-
-    if ( ! nickname )
+    if (!nickname)
     {
         return (NULL);
     }
 
-    for ( node = p_devices->list; node != NULL; node = pb_device_get_next(node) )
+    for (node = p_devices->list; node != NULL; node = pb_device_get_next(node))
     {
-        switch ( pb_device_get_type(node) )
+        switch (pb_device_get_type(node))
         {
             case ICON_PHONE:
 
-                if ( strcmp(pb_device_get_nickname(node), nickname) == 0 )
+                if (strcmp(pb_device_get_nickname(node), nickname) == 0)
                 {
-                    return ( pb_device_get_iden(node) );
+                    return (pb_device_get_iden(node));
                 }
 
                 break;
 
             case ICON_BROWSER:
 
-                if ( strcmp(pb_device_get_nickname(node), nickname) == 0 )
+                if (strcmp(pb_device_get_nickname(node), nickname) == 0)
                 {
-                    return ( pb_device_get_iden(node) );
+                    return (pb_device_get_iden(node));
                 }
 
                 break;
 
             default:
-                #ifndef NDEBUG
+#ifndef NDEBUG
                 eprintf("Unknown type...");
-                #endif
+#endif
                 break;
         }
     }
@@ -239,38 +153,29 @@ const char* pb_devices_get_iden_from_name(const pb_devices_t *p_devices,
     return (NULL);
 }
 
-
-static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
-                                      guint idx,
-                                      JsonNode *node_arr,
-                                      gpointer userdata)
+static void devices_fill_devices_list(uint idx, json_t* node, pb_devices_t* p_devices)
 {
-    pb_devices_t* p_devices = (pb_devices_t*) userdata;
-    JsonObject* node_obj = NULL;
+    json_t* val = NULL;
     const char* device_type = NULL;
 
-    if ( ! JSON_NODE_HOLDS_OBJECT(node_arr) )
+    if (!json_is_object(node))
     {
-        eprintf("devices[%d] : The node does not contain an JsonObject", idx);
+        eprintf("devices[%d] : The node does not contain an object", idx);
     }
-    else if ( (node_obj = json_node_get_object(node_arr) ) == NULL)
-    {
-        eprintf("devices[%d] : Impossible to get the object from the node", idx);
-    }
-    else if ( ! json_object_has_member(node_obj, ACTIVE_JSON_KEY) )
+    else if (!(val = json_object_get(node, ACTIVE_JSON_KEY)))
     {
         eprintf("devices[%d] : The obj does not have the member \"%s\"", idx, ACTIVE_JSON_KEY);
     }
-    else if ( ! json_object_get_boolean_member(node_obj, ACTIVE_JSON_KEY) )
+    else if (json_is_false(val))
     {
         // Active: false
         return;
     }
-    else if ( ! json_object_has_member(node_obj, JSON_KEY_ICON) )
+    else if (!(val = json_object_get(node, JSON_KEY_ICON)))
     {
         eprintf("devices[%d] : The obj does not have the member \"%s\"", idx, JSON_KEY_ICON);
     }
-    else if ( (device_type = json_object_get_string_member(node_obj, JSON_KEY_ICON)) == NULL )
+    else if (!(device_type = json_string_value(val)))
     {
         eprintf("devices[%d] : Impossible to get the string member \"%s\" from object", idx, JSON_KEY_ICON);
     }
@@ -278,31 +183,76 @@ static void devices_fill_devices_list(JsonArray *arr __attribute__((unused)),
     {
         pb_device_t* new_device = pb_device_new();
 
-        if ( strcmp(device_type, PHONE_ICON) == 0 )
+        if (strcmp(device_type, PHONE_ICON) == 0)
         {
             pb_device_set_type(new_device, ICON_PHONE);
         }
-        else if ( strcmp(device_type, BROWSER_ICON) == 0 )
+        else if (strcmp(device_type, BROWSER_ICON) == 0)
         {
             pb_device_set_type(new_device, ICON_BROWSER);
         }
 
-        json_object_foreach_member(node_obj, pb_device_fill_from_json, new_device);
-
+        pb_device_fill_from_json(new_device, node);
         pb_devices_add_new_device(p_devices, new_device);
     }
 }
 
-
 #ifndef NDEBUG
-static void devices_dump_devices_list(const pb_devices_t *p_devices)
+/**
+ * @brief      Display all the devices of a given user
+ *
+ * @param      user  The user
+ */
+static void devices_dump_devices_list(const pb_devices_t* p_devices)
 {
-    pb_device_t     *node = NULL;
+    pb_device_t* node = NULL;
 
-
-    for ( node = p_devices->list; node != NULL; node = pb_device_get_next(node) )
+    for (node = p_devices->list; node != NULL; node = pb_device_get_next(node))
     {
         pb_device_dump_infos(node);
     }
 }
 #endif
+
+int pb_devices_load_devices_from_data(pb_devices_t* p_devices, char* result, size_t result_sz)
+{
+    int ret = -1;
+
+    // JSON variables
+
+    if ((!p_devices) || (!result) || (result_sz <= 0))
+    {
+        return -1;
+    }
+    else
+    {
+        json_t *json = NULL;
+        json_t *devices = NULL;
+        json_error_t err = {0};
+
+        if (!(json = json_loadb(result, result_sz, 0, &err))) {
+            eprintf("json_loadb: %s [source: %s / line: %d / column: %d]",
+                    err.text, err.source, err.line, err.column);
+        }
+        else if ( !(devices = json_object_get(json, DEVICES_JSON_KEY))) {
+            eprintf("json_object_get: could not find the \"devices\" key");
+        }
+        else {
+            size_t i = 0;
+            json_t* val = NULL;
+
+            json_array_foreach(devices, i, val) {
+                devices_fill_devices_list(i, val, p_devices);
+            }
+
+#ifndef NDEBUG
+            iprintf("Nb of devices active: %zu", p_devices->nb_active);
+            devices_dump_devices_list(p_devices);
+#endif
+            ret = 0;
+        }
+    }
+
+    return ret;
+}
+

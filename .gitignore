@@ -1,43 +1,6 @@
 
-# Created by https://www.gitignore.io/api/c,autotools
-
-### Autotools ###
-# http://www.gnu.org/software/automake
-
-Makefile.in
-/ar-lib
-/mdate-sh
-/py-compile
-/test-driver
-/ylwrap
-
-# http://www.gnu.org/software/autoconf
-
-/autom4te.cache
-/autoscan.log
-/autoscan-*.log
-/aclocal.m4
-/compile
-/config.guess
-/config.h.in
-/config.sub
-/configure
-/configure.scan
-/depcomp
-/install-sh
-/missing
-/stamp-h1
-
-# https://www.gnu.org/software/libtool/
-
-/ltmain.sh
-
-# http://www.gnu.org/software/texinfo
-
-/texinfo.tex
-
-### Autotools Patch ###
-/config.log
+# Created by https://www.toptal.com/developers/gitignore/api/c,cmake,vim,visualstudiocode
+# Edit at https://www.toptal.com/developers/gitignore?templates=c,cmake,vim,visualstudiocode
 
 ### C ###
 # Prerequisites
@@ -93,5 +56,51 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-# End of https://www.gitignore.io/api/c,autotools
+### CMake ###
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
 
+### CMake Patch ###
+# External projects
+*-prefix/
+
+### Vim ###
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+
+# Temporary
+.netrwhist
+*~
+# Auto-generated tag files
+tags
+# Persistent undo
+[._]*.un~
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
+# End of https://www.toptal.com/developers/gitignore/api/c,cmake,vim,visualstudiocode

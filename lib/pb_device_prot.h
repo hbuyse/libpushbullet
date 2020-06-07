@@ -57,7 +57,7 @@ char* pb_device_get_icon(const pb_device_t* p_device);
  * @param[out]  browser  The browser structure we fill
  * @param[in]  json_obj  The JSON object
  */
-void pb_device_fill_from_json(JsonObject *object, const gchar *member_name, JsonNode *member_node, gpointer userdata);
+void pb_device_fill_from_json(pb_device_t* p_device, json_t *root);
 
 #ifndef NDEBUG
 /**

@@ -170,70 +170,52 @@ char* pb_config_get_token_key(const struct pb_config_s* p_config)
 }
 
 
-int pb_config_from_json_file(struct pb_config_s* p_config, const char *json_filepath)
+int pb_config_from_json_file(struct pb_config_s* p_config, const char *cfg_path)
 {
     int ret = -1;
-    JsonParser *parser = NULL;
-    GError* err = NULL;
-    JsonNode *node = NULL;
-    JsonObject* obj = NULL;
+    config_t* cfg = NULL;
 
-    if ( p_config && json_filepath )
+
+    if ( p_config && cfg_path )
     {
-        parser = json_parser_new();
+        config_init(cfg);
 
-        if ( ! json_parser_load_from_file(parser, json_filepath, &err) )
+        if ( ! config_read_file(cfg, cfg_path) )
         {
             #ifndef NDEBUG
-            eprintf("%s\n", err->message);
+            eprintf("%s\n", config_error_text(cfg));
             #endif
-            g_clear_error(&err);
         }
         else
         {
-            node = json_parser_get_root(parser);
+            const char* proxy = NULL;
+            const char* token = NULL;
+            int timeout = 0;
 
-            // check if it is an JsonObject inside
-            if ( (! node) || (! JSON_NODE_HOLDS_OBJECT(node)) )
-            {
-                #ifndef NDEBUG
-                eprintf("json_filepath does not contain a valid JSON object");
-                #endif
+            if (config_lookup_int(cfg, "timeout", &timeout)) {
+                pb_config_set_timeout(p_config, (long) timeout);
             }
-            else
-            {
-                obj = json_node_get_object(node);
 
-                if (obj)
-                {
-                    // Before, check if timeout is superior than long_max
-                    if (json_object_has_member(obj, "timeout"))
-                    {
-                        pb_config_set_timeout(p_config, (const long) json_object_get_int_member(obj, "timeout"));
-                    }
+            if (config_lookup_string(cfg, "proxy", &proxy)) {
+                pb_config_set_proxy(p_config, strdup(proxy));
+            }
 
-                    if (json_object_has_member(obj, "proxy"))
-                    {
-                        pb_config_set_proxy(p_config, strdup(json_object_get_string_member(obj, "proxy")));
-                    }
-
-                    if (json_object_has_member(obj, "token_key"))
-                    {
-                        pb_config_set_token_key(p_config, strdup(json_object_get_string_member(obj, "token_key")));
-                    }
-
-                    ret = 0;
-                }
+            if (config_lookup_string(cfg, "token", &token)) {
+                pb_config_set_token_key(p_config, strdup(token));
             }
 
             #ifndef NDEBUG
-            print_json_node_to_stream(gprintf, node);
+            iprintf("timeout : %ld\n", pb_config_get_timeout(p_config));
+            iprintf("proxy   : %s\n", pb_config_get_proxy(p_config));
+            iprintf("token   : %s\n", pb_config_get_token_key(p_config));
             #endif
-        }
 
-        // Free the parser
-        g_object_unref(parser);
+            ret = 0;
+        }
     }
+
+    if (cfg)
+        config_destroy(cfg);
 
     return ret;
 }

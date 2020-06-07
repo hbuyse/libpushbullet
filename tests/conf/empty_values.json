@@ -1,5 +1,3 @@
-{
-    "proxy": "",
-    "timeout": 0,
-    "token_key" : ""
-}
+proxy = "";
+timeout = 0;
+token = "";

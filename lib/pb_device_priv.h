@@ -16,16 +16,28 @@ extern "C" {
  * @param      k     The JSON key
  */
 #define     JSON_ASSOCIATE_BOOL(var, k)          \
-    do { if ( strcmp(member_name, # k) == 0 ) var.k = json_node_get_boolean(member_node); } while(0)
+    do { \
+        if ( strcmp(member_name, # k) == 0 ) \
+            var.k = json_node_get_boolean(member_node); \
+    } while(0)
 
 #define     JSON_ASSOCIATE_STR(var, k)          \
-    do { if ( strcmp(member_name, # k) == 0 ) var.k = json_node_dup_string(member_node); } while(0)
+    do { \
+        if ( strcmp(member_name, # k) == 0 ) \
+        var.k = json_node_dup_string(member_node); \
+        } while(0)
 
 #define     JSON_ASSOCIATE_INT(var, k)          \
-    do { if ( strcmp(member_name, # k) == 0 ) var.k = json_node_get_int(member_node); } while(0)
+    do { \
+        if ( strcmp(member_name, # k) == 0 ) \
+            var.k = json_node_get_int(member_node); \
+    } while(0)
 
 #define     JSON_ASSOCIATE_DOUBLE(var, k)          \
-    do { if ( strcmp(member_name, # k) == 0 ) var.k = json_node_get_double(member_node); } while(0)
+    do { \
+        if ( strcmp(member_name, # k) == 0 ) \
+            var.k = json_node_get_double(member_node); \
+    } while(0)
 
 
 
@@ -34,21 +46,21 @@ extern "C" {
  * @brief Structure containing all the informations concerning a PushBullet phone
  */
 typedef struct pb_phone_s {
-    unsigned char active;           ///< Activity of the phone
     char *iden;           ///< Phone's indentification
-    double created;           ///< Phone's creation
-    double modified;           ///< Phone's modification
     char *nickname;           ///< Phone's nickname
-    unsigned char generated_nickname;          ///< Has the nickname been generated automatically?
     char *manufacturer;          ///< Phone's manufacturer
     char *model;          ///< Phone's model
-    short app_version;          ///< Phone's application version
     char *fingerprint;          ///< Phone's fingerprint
     char *push_token;          ///< Phone's push token
-    unsigned char has_sms;          ///< Can we send SMS?
-    unsigned char has_mms;          ///< Can we send MMS?
     char *icon;          ///< Phone's icon
     char *remote_files;          ///< Remote files
+    double modified;           ///< Phone's modification
+    double created;           ///< Phone's creation
+    int active;           ///< Activity of the phone
+    int has_sms;          ///< Can we send SMS?
+    int has_mms;          ///< Can we send MMS?
+    int generated_nickname;          ///< Has the nickname been generated automatically?
+    short app_version;          ///< Phone's application version
 } pb_phone_t;
 
 
@@ -57,15 +69,15 @@ typedef struct pb_phone_s {
  * @brief Structure containing all the informations concerning a PushBullet browser
  */
 typedef struct pb_browser_s {
-    unsigned char active;          ///< Activity of the browser
     char *iden;          ///< Browser's indentification
-    double created;          ///< Browser's creation
-    double modified;          ///< Browser's modifications
     char *nickname;          ///< Browser's nickname
     char *manufacturer;          ///< Browser's manufacturer
     char *model;          ///< Browser's model
-    short app_version;          ///< Browser's application version
     char *icon;          ///< Browser's icon
+    double created;          ///< Browser's creation
+    double modified;          ///< Browser's modifications
+    int active;          ///< Activity of the browser
+    short app_version;          ///< Browser's application version
 } pb_browser_t;
 
 

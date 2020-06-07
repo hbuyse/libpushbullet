@@ -5,8 +5,7 @@
  */
 #include <stdlib.h>          // free
 #include <string.h>          // strcmp
-#include <json-glib/json-glib.h>          // JsonObject, json_tokener_parse, json_object_object_foreach, json_object_get_array,
-                                // array_list
+#include <jansson.h>
 
 #include "pb_utils.h"             // iprintf, eprintf, cprintf, gprintf
 #include "pb_device_priv.h"
@@ -351,56 +350,72 @@ char* pb_device_get_icon(const pb_device_t* p_device)
 }
 
 
-void pb_device_fill_from_json(JsonObject *object __attribute__((unused)),
-                              const gchar *member_name,
-                              JsonNode *member_node,
-                              gpointer userdata
+void pb_device_fill_from_json(pb_device_t* p_device,
+                              json_t *root
                               )
 {
-    pb_device_t *p_device = (pb_device_t*) userdata;
-
     if ( ! p_device )
-    {
-        return;
-    }
-    else if ( ! JSON_NODE_HOLDS_VALUE(member_node) )
     {
         return;
     }
     else
     {
-        switch(p_device->type)
-        {
-            case ICON_BROWSER:
-                JSON_ASSOCIATE_BOOL(p_device->browser, active);
-                JSON_ASSOCIATE_STR(p_device->browser, iden);
-                JSON_ASSOCIATE_DOUBLE(p_device->browser, created);
-                JSON_ASSOCIATE_DOUBLE(p_device->browser, modified);
-                JSON_ASSOCIATE_STR(p_device->browser, nickname);
-                JSON_ASSOCIATE_STR(p_device->browser, manufacturer);
-                JSON_ASSOCIATE_STR(p_device->browser, model);
-                JSON_ASSOCIATE_INT(p_device->browser, app_version);
-                JSON_ASSOCIATE_STR(p_device->browser, icon);
-                break;
-            case ICON_PHONE:
-                JSON_ASSOCIATE_BOOL(p_device->phone, active);
-                JSON_ASSOCIATE_STR(p_device->phone, iden);
-                JSON_ASSOCIATE_DOUBLE(p_device->phone, created);
-                JSON_ASSOCIATE_DOUBLE(p_device->phone, modified);
-                JSON_ASSOCIATE_STR(p_device->phone, nickname);
-                JSON_ASSOCIATE_BOOL(p_device->phone, generated_nickname);
-                JSON_ASSOCIATE_STR(p_device->phone, manufacturer);
-                JSON_ASSOCIATE_STR(p_device->phone, model);
-                JSON_ASSOCIATE_INT(p_device->phone, app_version);
-                JSON_ASSOCIATE_STR(p_device->phone, push_token);
-                JSON_ASSOCIATE_BOOL(p_device->phone, has_sms);
-                JSON_ASSOCIATE_BOOL(p_device->phone, has_mms);
-                JSON_ASSOCIATE_STR(p_device->phone, icon);
-                JSON_ASSOCIATE_STR(p_device->phone, remote_files);
-                JSON_ASSOCIATE_STR(p_device->phone, fingerprint);       // JsonObject
-                break;
-            default:
-                break;
+        json_error_t err = {0};
+        int ret = -1;
+        int active = 0;
+        json_t *val = NULL;
+
+        if (! (val = json_object_get(root, "active")))
+            eprintf("json_object_get: could not find the active key");
+        else if (json_is_false(val))
+            return;
+
+        else {
+            switch(p_device->type)
+            {
+                case ICON_BROWSER:
+                    gprintf("browser");
+                    ret = json_unpack_ex(root, &err, 0,
+                        "{sbsssfsfsssssssiss}",
+                        "active", &p_device->browser.active,
+                        "iden", &p_device->browser.iden,
+                        "created", &p_device->browser.created,
+                        "modified", &p_device->browser.modified,
+                        "nickname", &p_device->browser.nickname,
+                        "manufacturer", &p_device->browser.manufacturer,
+                        "model", &p_device->browser.model,
+                        "app_version", &p_device->browser.app_version,
+                        "icon", &p_device->browser.icon
+                        );
+                    break;
+                case ICON_PHONE:
+                    ret = json_unpack_ex(root, &err, 0,
+                        "{sbsssfsfsssbsssssisssbsbssssss}",
+                        "active", &p_device->phone.active,
+                        "iden", &p_device->phone.iden,
+                        "created", &p_device->phone.created,
+                        "modified", &p_device->phone.modified,
+                        "nickname", &p_device->phone.nickname,
+                        "generated_nickname", &p_device->phone.generated_nickname,
+                        "manufacturer", &p_device->phone.manufacturer,
+                        "model", &p_device->phone.model,
+                        "app_version", &p_device->phone.app_version,
+                        "push_token", &p_device->phone.push_token,
+                        "has_sms", &p_device->phone.has_sms,
+                        "has_mms", &p_device->phone.has_mms,
+                        "icon", &p_device->phone.icon,
+                        "remote_files", &p_device->phone.remote_files,
+                        "fingerprint", &p_device->phone.fingerprint
+                    );
+                    break;
+                default:
+                    break;
+            }
+
+            if (ret) {
+                gprintf("%s", json_dumps(root, 0));
+                eprintf("json_unpack_ex: %s [source: %s / line: %d / column: %d]", err.text, err.source, err.line, err.column);
+            }
         }
     }
 }
@@ -412,7 +427,7 @@ void pb_device_dump_infos(const pb_device_t* p_device)
     switch ( p_device->type )
     {
         case ICON_BROWSER:
-            iprintf("%c%s - %s", p_device->browser.icon[0] - 32, p_device->browser.icon + 1, p_device->browser.iden);
+            iprintf("%s - %s", p_device->browser.icon, p_device->browser.iden);
             iprintf("\tactive : %u", p_device->browser.active);
             iprintf("\tcreated : %f", p_device->browser.created);
             iprintf("\tmodified : %f", p_device->browser.modified);
@@ -423,7 +438,7 @@ void pb_device_dump_infos(const pb_device_t* p_device)
             break;
 
         case ICON_PHONE:
-            iprintf("%c%s - %s", p_device->phone.icon[0] - 32, p_device->phone.icon + 1, p_device->phone.iden);
+            iprintf("%s - %s", p_device->phone.icon, p_device->phone.iden);
             iprintf("\tactive : %u", p_device->phone.active);
             iprintf("\tcreated : %f", p_device->phone.created);
             iprintf("\tmodified : %f", p_device->phone.modified);
