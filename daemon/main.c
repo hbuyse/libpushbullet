@@ -11,7 +11,6 @@
 
 #include "pushbullet.h"          // pb_get_user_info
 
-
 /**
  * @brief Maximum length of the buffer (4ko - 4096 - 0x1000)
  */
@@ -60,13 +59,6 @@ int main(int    argc,
         {"config", required_argument, 0, 'c'},
         {0, 0, 0, 0}
     };
-
-    if ( argc == 1 )
-    {
-        usage(argv[0]);
-        exit(EXIT_FAILURE);
-    }
-
 
     /* CAREFUL:
      * An option character in this string can be followed by a colon (‘:’) to indicate that it takes a required
